@@ -1,0 +1,17 @@
+{
+  "skill_name": "rex-implement",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "The implementation capability has already been activated for a validated CLI flag. Implement only the approved parser-to-runtime slice and report the diff plus focused verification refs.",
+      "expected_output": "A bounded implementation that stays inside the approved behavior and returns implementation-diff-recorded plus focused-tests-pass evidence refs.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "The implementation capability has already been activated for a cache invalidation fix with an agreed public test seam. Apply the smallest correct slice and return control after focused tests pass.",
+      "expected_output": "A minimal vertical fix with no new workflow decisions and a typed evidence handoff backed by real diff and test references.",
+      "files": []
+    }
+  ]
+}

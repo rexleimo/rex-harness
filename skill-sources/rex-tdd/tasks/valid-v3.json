@@ -1,0 +1,57 @@
+[
+  {
+    "id": "rex-tdd-v3-valid-001",
+    "evalId": 11,
+    "instruction": "Handle an ordinary-TDD RED Command for a narrowly scoped public CLI behavior.",
+    "assertions": [
+      "The answer performs only RED work within the user's confirmed offset-boundary case and does not edit production code or advance to GREEN.",
+      "The proposed test observes the packaged CLI's public exit status and stdout rather than asserting a private weekday helper or internal branch.",
+      "The answer requires an actually executed focused command whose repeatable expected-versus-actual mismatch shows that the intended weekend behavior is the reason for RED, while rejecting the unrelated flaky failure as evidence.",
+      "The answer explicitly reports RED as blocked if that focused command cannot run and does not fabricate a failing result from inspection or prediction."
+    ]
+  },
+  {
+    "id": "rex-tdd-v3-valid-002",
+    "evalId": 12,
+    "instruction": "Handle a strict-TDD GREEN Command using accepted behavioral RED evidence.",
+    "assertions": [
+      "The answer recognizes that the accepted behavior-specific RED packet authorizes a minimal production change during the current GREEN Command even under strict TDD.",
+      "The answer preserves the confirmed public BRF rule and does not weaken the fixture, rewrite the accepted test to pass, or substitute assertions about the page-buffer implementation.",
+      "The answer limits production work to the smallest fix for the trailing form feed and declines the requested page-buffer refactor and unconfirmed neighboring cases.",
+      "The answer requires a real rerun of the exact focused command for GREEN evidence and reports GREEN as blocked or incomplete if that execution cannot be completed."
+    ]
+  },
+  {
+    "id": "rex-tdd-v3-valid-003",
+    "evalId": 13,
+    "instruction": "Handle an Evidence-only Command whose contract includes multiple verification surfaces.",
+    "assertions": [
+      "The answer performs only the current Evidence Command and makes no production, test, optimization, renderer, or font-fallback changes.",
+      "The answer reruns the available public CLI regression and records concrete command-and-result evidence for the confirmed stable-order behavior.",
+      "The answer rejects a hand-edited screenshot and prior RED/GREEN logs as proof that the required licensed emulator smoke ran in the current Evidence Command.",
+      "The answer reports the Evidence Command as blocked or incomplete because the mandatory emulator check is unavailable, while preserving and clearly labeling the partial passing evidence."
+    ]
+  },
+  {
+    "id": "rex-tdd-v3-valid-004",
+    "evalId": 14,
+    "instruction": "Handle a strict-TDD RED Command when the accepted public observation surface is unavailable.",
+    "assertions": [
+      "The answer keeps the test at the public booking-page boundary and covers the visible error, retained form state, and absence of a created reservation within the confirmed scope.",
+      "The answer distinguishes the browser-launch infrastructure failure from a reproducible behavior-specific RED and does not use the passing private-helper test as a substitute.",
+      "The answer applies strict TDD's authorization boundary by making no production change and performing no GREEN work without a real public RED.",
+      "The answer honestly reports RED as blocked with the attempted command, the launch error, and a concrete executable condition needed to unblock it."
+    ]
+  },
+  {
+    "id": "rex-tdd-v3-valid-005",
+    "evalId": 15,
+    "instruction": "Handle an ordinary-TDD GREEN Command for a narrowly scoped public CSV behavior.",
+    "assertions": [
+      "The answer limits GREEN work to the one user-approved public tie-order and three-decimal CSV behavior and excludes the declined disqualification case.",
+      "The answer changes production behavior minimally instead of editing the acceptance expectation or making an implementation-name assertion pass by rote.",
+      "The answer reruns the focused public CSV test and requires a real passing result before reporting GREEN, while treating the implementation-coupled test as a separate compatibility concern.",
+      "The answer stops at the current GREEN Command without comparator redesign or later-stage claims and reports GREEN as blocked or incomplete if execution is unavailable."
+    ]
+  }
+]

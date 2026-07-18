@@ -1,0 +1,17 @@
+{
+  "skill_name": "rex-wayfinder",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "The wayfinding capability has already been activated because the request lifecycle is unknown. Locate the smallest set of code entry points and tests needed to understand how a browser command reaches its handler.",
+      "expected_output": "A concise navigation map from entry point to handler and relevant tests, with evidence paths and no speculative implementation plan.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "The wayfinding capability has already been activated for an unfamiliar checkpoint recovery flow. Identify ownership boundaries, callers, persistence adapters, and the most relevant tests.",
+      "expected_output": "An evidence-based ownership and dependency map that highlights the next files to inspect while avoiding broad repository dumps.",
+      "files": []
+    }
+  ]
+}

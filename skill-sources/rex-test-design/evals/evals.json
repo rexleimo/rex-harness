@@ -1,0 +1,17 @@
+{
+  "skill_name": "rex-test-design",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "The test-design capability has already been activated for a cache invalidation change. Design the smallest test matrix that covers expiration, replacement, and concurrent readers.",
+      "expected_output": "A risk-ranked test matrix with observable outcomes, explicit boundaries, and a clear distinction between unit and integration coverage.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "The test-design capability has already been activated for a CLI that resumes interrupted jobs. Define tests for clean resume, stale checkpoint, corrupt state, and an idempotent second resume.",
+      "expected_output": "A focused suite of executable scenarios covering normal, failure, recovery, and idempotency behavior without prescribing production code.",
+      "files": []
+    }
+  ]
+}

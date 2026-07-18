@@ -1,0 +1,17 @@
+{
+  "skill_name": "rex-requirements",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "The requirements capability has already been activated because acceptance criteria are missing. Clarify the expected behavior for adding automatic retry to a payment callback without designing the implementation yet.",
+      "expected_output": "A compact requirements record that identifies the unresolved behavior, asks only decision-changing questions, and defines observable acceptance criteria.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "The requirements capability has already been activated because two teams use the term workspace differently. Resolve the vocabulary and acceptance boundary before planning the migration.",
+      "expected_output": "A terminology decision with explicit in-scope and out-of-scope meanings, remaining unknowns, and testable acceptance conditions.",
+      "files": []
+    }
+  ]
+}

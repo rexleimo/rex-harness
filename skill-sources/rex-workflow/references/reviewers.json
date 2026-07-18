@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "kind": "rex.specialist-reviewers.v1",
+  "reviewers": [
+    {
+      "id": "security",
+      "riskDomains": ["authentication", "authorization", "secrets", "injection", "supply-chain"],
+      "focus": ["信任边界", "最小权限", "输入验证", "敏感信息暴露", "依赖来源"],
+      "instructions": "只审查当前 Command 标识的安全风险范围；每个结论必须引用差异、配置或可复现实验。"
+    },
+    {
+      "id": "correctness-data",
+      "riskDomains": ["persistence", "migration", "serialization", "data-loss", "idempotency"],
+      "focus": ["数据不变量", "失败原子性", "向前与向后兼容", "重试语义", "恢复路径"],
+      "instructions": "优先寻找会导致静默损坏或不可恢复状态的路径，并检查迁移和回滚证据。"
+    },
+    {
+      "id": "api-compatibility",
+      "riskDomains": ["public-api", "cli-contract", "protocol", "plugin", "versioning"],
+      "focus": ["调用方兼容", "默认值", "错误契约", "协议版本", "废弃路径"],
+      "instructions": "对照公开契约和真实调用方审查，不把内部重构等同于无外部影响。"
+    },
+    {
+      "id": "performance-concurrency",
+      "riskDomains": ["performance", "concurrency", "deadlock", "race", "resource-leak"],
+      "focus": ["关键路径", "竞争条件", "背压", "资源生命周期", "可度量退化"],
+      "instructions": "要求负载或时序证据；没有测量时不得仅凭直觉宣称性能改善或并发安全。"
+    },
+    {
+      "id": "frontend-accessibility",
+      "riskDomains": ["accessibility", "keyboard", "focus", "responsive", "user-interaction"],
+      "focus": ["键盘流程", "焦点管理", "语义结构", "可读状态", "交互反馈"],
+      "instructions": "围绕已识别的用户交互风险审查，并引用可操作的页面状态或测试证据。"
+    }
+  ],
+  "evidenceContract": {
+    "required": ["specialist-scope-recorded", "specialist-verdict-recorded"],
+    "rules": [
+      "只选择与当前风险领域匹配的一名 Reviewer。",
+      "没有风险证据时返回无法激活，不进行角色表演。",
+      "结论必须包含范围、证据、严重度和建议动作。"
+    ]
+  }
+}

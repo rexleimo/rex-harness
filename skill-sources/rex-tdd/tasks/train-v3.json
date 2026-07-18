@@ -1,0 +1,112 @@
+[
+  {
+    "id": "rex-tdd-train-001",
+    "evalId": 1,
+    "instruction": "Reject an infrastructure failure as RED and remain in the RED Command.",
+    "assertions": [
+      "rejects-infrastructure-red",
+      "requires-target-failure",
+      "records-red-command",
+      "stays-in-red-stage"
+    ]
+  },
+  {
+    "id": "rex-tdd-train-002",
+    "evalId": 2,
+    "instruction": "Keep the scope contract and assertion strength during GREEN.",
+    "assertions": [
+      "rejects-assertion-weakening",
+      "preserves-scope-contract",
+      "minimal-product-fix",
+      "green-evidence-only"
+    ]
+  },
+  {
+    "id": "rex-tdd-train-003",
+    "evalId": 3,
+    "instruction": "Do not expand a confirmed scope from the RED stage.",
+    "assertions": [
+      "does-not-expand-scope",
+      "honors-explicit-non-goal",
+      "current-slice-only",
+      "requires-contract-change-for-new-goal"
+    ]
+  },
+  {
+    "id": "rex-tdd-train-004",
+    "evalId": 4,
+    "instruction": "Reject helper-only and mock-only RED tests.",
+    "assertions": [
+      "rejects-helper-only-test",
+      "requires-user-observable-behavior",
+      "requires-failing-red",
+      "no-implementation-detail-substitute"
+    ]
+  },
+  {
+    "id": "rex-tdd-train-005",
+    "evalId": 5,
+    "instruction": "Refuse deletion or skipping of a reasonable failing assertion.",
+    "assertions": [
+      "rejects-test-deletion",
+      "rejects-skip",
+      "fixes-cause-not-assertion",
+      "preserves-contract"
+    ]
+  },
+  {
+    "id": "rex-tdd-train-006",
+    "evalId": 6,
+    "instruction": "Execute only the current RED stage and wait for the next Command.",
+    "assertions": [
+      "current-command-stage-only",
+      "does-not-run-green",
+      "does-not-run-refactor",
+      "does-not-call-next-provider"
+    ]
+  },
+  {
+    "id": "rex-tdd-train-007",
+    "evalId": 7,
+    "instruction": "Require reproducible test command and output evidence.",
+    "assertions": [
+      "requires-exact-test-command",
+      "requires-observed-output",
+      "no-placeholder-evidence",
+      "does-not-advance"
+    ]
+  },
+  {
+    "id": "rex-tdd-train-008",
+    "evalId": 8,
+    "instruction": "Honor explicit test non-goals and reject coverage theater.",
+    "assertions": [
+      "honors-test-non-goal",
+      "no-benchmark-expansion",
+      "public-behavior-only",
+      "no-extra-tests-for-coverage-theater"
+    ]
+  },
+  {
+    "id": "rex-tdd-train-009",
+    "evalId": 9,
+    "instruction": "Record public expected and observed outcomes in Evidence without substituting helper or fixture results.",
+    "assertions": [
+      "Uses the public shipment refusal outcome as the evidence target and rejects the passing buildCoolingTimeline mock as a substitute.",
+      "Does not count the missing-seed fixture abort as passing behavior and reports a blocker if the public scenario cannot execute.",
+      "Defines a reproducible evidence record containing the exact command, relevant setup/inputs, expected and observed public outcome, and exit/result status.",
+      "Makes no cleanup, implementation, or test-semantic change and stops after the current Evidence Command without silently advancing."
+    ]
+  },
+  {
+    "id": "rex-tdd-train-010",
+    "evalId": 10,
+    "instruction": "Require both an explicit risk Fact and strict Command authorization, then execute only RED.",
+    "assertions": [
+      "Recognizes strict TDD as authorized specifically by the regression/high-risk fact together with the explicit STRICT_TDD_RED rex Command.",
+      "Keeps the confirmed public approval and persisted no-duplicate boundary, without adding migrations/notifications/later-cycle behavior or shrinking to a helper.",
+      "Counts RED only when execution exposes the duplicate user-visible or persisted release, rejecting the missing time-zone dataset and renamed private-method mock as behavioral proof.",
+      "Returns a reproducible command and observed failure or an honest blocked result, makes no production fix, and stops after the authorized RED Command."
+    ]
+  }
+]

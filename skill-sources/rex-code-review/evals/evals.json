@@ -1,0 +1,17 @@
+{
+  "skill_name": "rex-code-review",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "The standards-and-spec review capability has already been activated. Review a bounded diff that changes session timeout parsing and report only defects supported by the stated contract or repository conventions.",
+      "expected_output": "Evidence-linked findings ordered by impact, each tied to a violated requirement or convention, with unsupported style preferences omitted.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "The standards-and-spec review capability has already been activated after a documentation generator change. Check correctness, compatibility, and missing verification evidence without redesigning the component.",
+      "expected_output": "A scoped review separating confirmed defects from verification gaps and noting when the diff satisfies the declared contract.",
+      "files": []
+    }
+  ]
+}
