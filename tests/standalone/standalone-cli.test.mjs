@@ -1,6 +1,12 @@
 import assert from 'node:assert/strict';
 import { execFileSync, spawnSync } from 'node:child_process';
-import { mkdtemp, readFile, readdir, rm } from 'node:fs/promises';
+import {
+  mkdtemp,
+  readFile,
+  readdir,
+  rm,
+  writeFile,
+} from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
@@ -13,6 +19,18 @@ function runCli(rootDir, ...args) {
   const output = execFileSync(process.execPath, [cliPath, ...args, '--root', rootDir], {
     encoding: 'utf8',
   });
+  return JSON.parse(output);
+}
+
+function runReceipt(rootDir, ...command) {
+  const output = execFileSync(process.execPath, [
+    cliPath,
+    'receipt',
+    '--root',
+    rootDir,
+    '--',
+    ...command,
+  ], { encoding: 'utf8' });
   return JSON.parse(output);
 }
 
@@ -152,6 +170,80 @@ test('standalone CLI returns full diagnostics only when explicitly requested', a
     const resumed = runCli(rootDir, 'resume', '--work-item', 'full-check', '--full');
     assert.equal(resumed.kind, 'rex.standalone.workflow-result.v1');
     assert.equal(resumed.workflow.workflowActivationId, started.workflow.workflowActivationId);
+  } finally {
+    await rm(rootDir, { recursive: true, force: true });
+  }
+});
+
+test('standalone evidence rejects a testability receipt from a different declared public scenario', async () => {
+  const rootDir = await mkdtemp(path.join(os.tmpdir(), 'rex-standalone-testability-'));
+  try {
+    const started = runCli(
+      rootDir,
+      'start',
+      '--work-item',
+      'checkout-validation',
+      '--message',
+      'Update checkout validation behavior.',
+    );
+    assert.equal(started.command.providerId, 'rex-test-design');
+
+    const designed = runCli(
+      rootDir,
+      'evidence',
+      '--activation',
+      started.command.activationId,
+      '--command-token',
+      started.command.commandToken,
+      '--evidence',
+      'test-scope-contract-recorded=artifact:test-design',
+      '--evidence',
+      'acceptance-test-mapping-recorded=artifact:test-design',
+      '--evidence',
+      'test-seam-recorded=artifact:test-design',
+    );
+    assert.equal(designed.command.stageId, 'decide-testability');
+
+    await writeFile(
+      path.join(rootDir, 'checkout-validation.test.mjs'),
+      "import assert from 'node:assert/strict';\nimport test from 'node:test';\n\ntest('rejects invalid checkout', () => assert.fail('validation is not implemented'));\n",
+      'utf8',
+    );
+    const unrelatedReceipt = runReceipt(rootDir, process.execPath, '-e', 'process.exit(7)');
+    await writeFile(path.join(rootDir, 'testability.json'), `${JSON.stringify({
+      kind: 'behavior-delta',
+      decisionRef: 'artifact:testability-decision',
+      redCandidate: {
+        publicEntry: 'checkout validation endpoint',
+        setup: 'Submit an invalid checkout request.',
+        command: {
+          executable: process.execPath,
+          args: ['--test', 'checkout-validation.test.mjs'],
+          cwd: rootDir,
+        },
+        expected: 'The invalid checkout is rejected.',
+        observed: 'The invalid checkout is accepted before implementation.',
+        failureReason: 'The requested validation behavior is absent.',
+        receiptRef: unrelatedReceipt.ref,
+      },
+    }, null, 2)}\n`, 'utf8');
+
+    const rejected = spawnSync(process.execPath, [
+      cliPath,
+      'evidence',
+      '--activation',
+      designed.command.activationId,
+      '--command-token',
+      designed.command.commandToken,
+      '--evidence',
+      'testability-decision-recorded=artifact:testability-decision',
+      '--testability-file',
+      'testability.json',
+      '--root',
+      rootDir,
+    ], { encoding: 'utf8' });
+    assert.equal(rejected.status, 1);
+    assert.match(rejected.stderr, /does not match the declared scenario command/u);
   } finally {
     await rm(rootDir, { recursive: true, force: true });
   }

@@ -4,7 +4,7 @@
 
 它可以单独辅助 Codex、Claude、Gemini、OpenCode、Hermes、Grok Build 或其他支持目录型 Skill 的 Agent；接入 `harness-cli / AIOS` 后，再获得模型执行、ContextDB、Team、长任务恢复和安全治理等宿主增强。
 
-独立安装默认使用 rex 自己实现的需求、设计、规划、测试设计、基础/严格 TDD、根因调试、最小构造、实施、代码审查、专项审查和 Wayfinding Provider。Matt、Superpowers、ECC、Ponytail 只属于显式兼容适配，不是默认路径，也不是运行依赖。
+独立安装只使用 rex 自己实现的需求、设计、规划、测试设计、基础/严格 TDD、根因调试、最小构造、实施、代码审查、专项审查和 Wayfinding Provider。外部 playbook 不属于支持路径，也不是运行依赖。
 
 ## 独立使用
 
@@ -89,16 +89,16 @@ Request / Observation
 | Fact、Capability、阶段顺序、Evidence Contract | rex 拥有 | 复用 rex |
 | Workflow Activation、start/status/evidence/resume | `.rex-harness/` | AIOS 持久化为宿主投影 |
 | 对外协议 | `rex-workflow` + compact CLI，`--full` 诊断 | 直接调用完整 JS API |
-| 内置 Provider 与可用性检查 | rex 提供并由 Doctor 验证 | 默认复用 rex；可显式启用兼容覆盖 |
+| 内置 Provider 与可用性检查 | rex 提供并由 Doctor 验证 | 复用 rex；不支持外部覆盖 |
 | 调用 Coding Agent / 模型 | 外部 Agent 或人工执行当前 Command | AIOS runner 执行 |
 | ContextDB、Team、可恢复 Harness | 不包含 | AIOS 提供 |
 | RTK、Headroom、隐私、安全门、审计 | 不包含 | AIOS 提供 |
 
-AIOS Adapter 默认保留 rex-native Provider，并直接调用 JS API，不解析 CLI stdout，也不注册 rex MCP。只有调用方显式启用 `compatibilityMode` 时，才允许替换为外部 Provider；它仍不能重选 Capability、重排阶段或从 Team/Harness 路由覆盖 Provider。软件工作流的唯一运行时事实源是 `src/workflows/software-workflow-runtime.mjs`。
+AIOS Adapter 只保留 rex-native Provider，并直接调用 JS API，不解析 CLI stdout，也不注册 rex MCP。它不能替换 Provider、重选 Capability、重排阶段或从 Team/Harness 路由覆盖 Provider。软件工作流的唯一运行时事实源是 `src/workflows/software-workflow-runtime.mjs`。
 
 ## Provider 组合
 
-Capability ID 与 Provider 无关。默认 Catalog 只包含 `rex-*` 内置 Provider；外部 Matt/Superpowers/ECC/Ponytail 绑定只在宿主显式兼容模式中出现。Provider 不拥有触发权，也不能自行调用下一 Provider。
+Capability ID 与 Provider 无关。Catalog 只包含 `rex-*` 内置 Provider。Provider 不拥有触发权，也不能自行调用下一 Provider。
 
 ## 开发验证
 

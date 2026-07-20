@@ -3,7 +3,13 @@ import { randomUUID } from 'node:crypto';
 import { advanceActivation } from '../application/advance-activation.mjs';
 import { evaluateSoftwareRequest } from '../application/evaluate-request.mjs';
 import { nextCommand, startActivation } from '../application/start-activation.mjs';
+import { validateCommandEvidence } from '../application/validate-command-evidence.mjs';
 import { CAPABILITY } from '../domain/capability-ids.mjs';
+import {
+  TESTABILITY_DECISION,
+  normalizeTestabilityDecision,
+  validateTestabilityDecisionReceipt,
+} from '../domain/testability-decision.mjs';
 import { analyzeExecutionProfile } from './execution-profile.mjs';
 
 export const SOFTWARE_WORKFLOW_ID = 'adaptive-software-delivery';
@@ -56,6 +62,7 @@ function completedForSelection(completedCapabilities) {
   if (
     completed.has(CAPABILITY.TESTING_TDD)
     || completed.has(CAPABILITY.TESTING_STRICT_TDD)
+    || completed.has(CAPABILITY.TESTING_HARDENING)
   ) {
     completed.add(CAPABILITY.TESTING_DESIGN);
     completed.add(CAPABILITY.IMPLEMENTATION_EXECUTE);
@@ -63,11 +70,12 @@ function completedForSelection(completedCapabilities) {
   return [...completed];
 }
 
-function evaluateNext(request, completedCapabilities, profile) {
+function evaluateNext(request, completedCapabilities, profile, testabilityDecision = null) {
   return evaluateSoftwareRequest({
     ...request,
     profile,
     completedCapabilities: completedForSelection(completedCapabilities),
+    testabilityDecision,
   });
 }
 
@@ -104,6 +112,75 @@ function executionProfile(activationHistory, currentActivation) {
   ]);
 }
 
+function isTestabilityStage(activation) {
+  return activation?.capabilityId === CAPABILITY.TESTING_DESIGN
+    && activation.stageId === 'decide-testability';
+}
+
+function decisionEvidenceRefs(evidence) {
+  return new Set((evidence || [])
+    .filter((item) => item?.kind === 'testability-decision-recorded')
+    .flatMap((item) => item.refs || []));
+}
+
+function resolveTestabilityDecision(workflow, evidence, suppliedDecision, resolveReceipt) {
+  if (!isTestabilityStage(workflow.currentActivation)) {
+    if (suppliedDecision !== undefined) {
+      throw new Error('testability decision can only be submitted at the decide-testability stage');
+    }
+    return workflow.testabilityDecision || null;
+  }
+
+  const refs = decisionEvidenceRefs(evidence);
+  if (refs.size === 0) {
+    if (suppliedDecision !== undefined) {
+      throw new Error('testability decision requires testability-decision-recorded evidence');
+    }
+    return null;
+  }
+  if (suppliedDecision === undefined) {
+    throw new Error('testability-decision-recorded evidence requires a typed testability decision');
+  }
+  const decision = validateTestabilityDecisionReceipt(
+    normalizeTestabilityDecision(suppliedDecision),
+    { resolveReceipt },
+  );
+  if (!refs.has(decision.decisionRef)) {
+    throw new Error('testability decisionRef must be included in testability-decision-recorded evidence');
+  }
+  return decision;
+}
+
+function expectedScenarioCommand(workflow) {
+  const activation = workflow.currentActivation;
+  if (!activation) return null;
+  const decision = workflow.testabilityDecision;
+  const isTdd = activation.capabilityId === CAPABILITY.TESTING_TDD
+    || activation.capabilityId === CAPABILITY.TESTING_STRICT_TDD;
+  const isHardeningBaseline = activation.capabilityId === CAPABILITY.TESTING_HARDENING
+    && activation.stageId === 'baseline';
+  if (!isTdd && !isHardeningBaseline) return null;
+
+  // Old workflows stored an unbound command string. Do not reinterpret it at
+  // resume time: a new test-design activation must record a typed scenario.
+  let normalized;
+  try {
+    normalized = normalizeTestabilityDecision(decision);
+  } catch (error) {
+    throw new Error(
+      'legacy or invalid testability scenario cannot resume delivery; start a fresh test-design activation',
+      { cause: error },
+    );
+  }
+  if (isTdd && normalized.kind !== TESTABILITY_DECISION.BEHAVIOR_DELTA) {
+    throw new Error('TDD requires a behavior-delta testability scenario');
+  }
+  if (isHardeningBaseline && normalized.kind !== TESTABILITY_DECISION.HARDENING) {
+    throw new Error('hardening baseline requires a hardening testability scenario');
+  }
+  return (normalized.redCandidate || normalized.baseline).command;
+}
+
 function createWorkflowState({
   workflowActivationId,
   workItemKey,
@@ -116,6 +193,7 @@ function createWorkflowState({
   currentCommand,
   facts,
   promotion,
+  testabilityDecision,
   createdAt,
   updatedAt,
 }) {
@@ -137,6 +215,7 @@ function createWorkflowState({
     currentCommand,
     facts: Object.freeze([...(facts || [])]),
     promotion: promotion || null,
+    testabilityDecision: testabilityDecision || null,
     executionProfile: executionProfile(activationHistory, currentActivation),
     createdAt,
     updatedAt,
@@ -169,7 +248,7 @@ export function startSoftwareWorkflow({
     })
     : decision
       ? Object.freeze({ facts: Object.freeze([]), decision, promotion: null })
-      : evaluateNext(normalizedRequest, [], profile);
+      : evaluateNext(normalizedRequest, [], profile, null);
   const current = startCapability(evaluated.decision, {
     workflowActivationId: id,
     stepIndex: 0,
@@ -191,6 +270,7 @@ export function startSoftwareWorkflow({
     currentCommand: current.command,
     facts: evaluated.facts,
     promotion: evaluated.promotion,
+    testabilityDecision: null,
     createdAt,
     updatedAt: createdAt,
   });
@@ -204,6 +284,8 @@ export function advanceSoftwareWorkflow(workflow, evidence = [], {
   providerBindings = [],
   createActivationId,
   now = new Date(),
+  testabilityDecision,
+  resolveReceipt,
 } = {}) {
   if (workflow?.kind !== 'rex.software-workflow-activation.v1') {
     throw new TypeError('advanceSoftwareWorkflow requires a rex software workflow activation');
@@ -221,7 +303,21 @@ export function advanceSoftwareWorkflow(workflow, evidence = [], {
     throw new Error('active software workflow is missing its current activation or command');
   }
 
-  const capabilityResult = advanceActivation(workflow.currentActivation, evidence, {
+  // This is a public state-machine API, so enforce the same receipt boundary
+  // used by persisted CLI and AIOS entry points before accepting any evidence.
+  const normalizedEvidence = validateCommandEvidence(workflow.currentCommand, evidence, {
+    resolveReceipt,
+    expectedScenarioCommand: expectedScenarioCommand(workflow),
+  });
+
+  const resolvedTestabilityDecision = resolveTestabilityDecision(
+    workflow,
+    normalizedEvidence,
+    testabilityDecision,
+    resolveReceipt,
+  );
+
+  const capabilityResult = advanceActivation(workflow.currentActivation, normalizedEvidence, {
     profile: workflow.profile,
     providerBindings,
   });
@@ -233,6 +329,7 @@ export function advanceSoftwareWorkflow(workflow, evidence = [], {
       status: 'active',
       currentActivation: capabilityResult.activation,
       currentCommand: capabilityResult.command,
+      testabilityDecision: workflow.testabilityDecision,
       updatedAt,
     });
     return Object.freeze({
@@ -249,7 +346,34 @@ export function advanceSoftwareWorkflow(workflow, evidence = [], {
     ...new Set([...workflow.completedCapabilities, completedActivation.capabilityId]),
   ];
   const activationHistory = [...workflow.activationHistory, completedActivation];
-  const evaluated = evaluateNext(workflow.request, completedCapabilities, workflow.profile);
+  const nextTestabilityDecision = isTestabilityStage(workflow.currentActivation)
+    ? resolvedTestabilityDecision
+    : workflow.testabilityDecision;
+  if (nextTestabilityDecision?.kind === TESTABILITY_DECISION.BLOCKED) {
+    const blockedWorkflow = createWorkflowState({
+      ...workflow,
+      status: 'blocked',
+      completedCapabilities,
+      activationHistory,
+      currentActivation: null,
+      currentCommand: null,
+      testabilityDecision: nextTestabilityDecision,
+      updatedAt,
+    });
+    return Object.freeze({
+      outcome: 'replan',
+      workflow: blockedWorkflow,
+      completedActivation,
+      missingEvidence: Object.freeze([]),
+      nextCapability: null,
+    });
+  }
+  const evaluated = evaluateNext(
+    workflow.request,
+    completedCapabilities,
+    workflow.profile,
+    nextTestabilityDecision,
+  );
   const current = startCapability(evaluated.decision, {
     workflowActivationId: workflow.workflowActivationId,
     stepIndex: activationHistory.length,
@@ -266,6 +390,7 @@ export function advanceSoftwareWorkflow(workflow, evidence = [], {
     currentCommand: current.command,
     facts: evaluated.facts,
     promotion: evaluated.promotion,
+    testabilityDecision: nextTestabilityDecision,
     updatedAt,
   });
 

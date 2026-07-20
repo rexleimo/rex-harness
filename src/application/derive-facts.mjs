@@ -2,6 +2,11 @@ import { CAPABILITY } from '../domain/capability-ids.mjs';
 import { FACT } from '../domain/fact-kinds.mjs';
 import { normalizeFacts } from '../domain/facts.mjs';
 import { OBSERVATION, normalizeObservations } from '../domain/observation-kinds.mjs';
+import {
+  TESTABILITY_DECISION,
+  normalizeTestabilityDecision,
+  testabilityEvidenceRefs,
+} from '../domain/testability-decision.mjs';
 
 const OBSERVATION_TO_FACT = new Map([
   [OBSERVATION.EXECUTION_FAILED, FACT.EXECUTION_FAILED],
@@ -79,6 +84,7 @@ export function deriveSoftwareFacts({
   explicitIntent = null,
   observations = [],
   completedCapabilities = [],
+  testabilityDecision = null,
 } = {}) {
   const facts = new Map();
   const addFact = (kind, evidenceRefs) => {
@@ -128,6 +134,15 @@ export function deriveSoftwareFacts({
   const completed = new Set(completedCapabilities);
   if (facts.has(FACT.BEHAVIOR_CHANGE) && completed.has(CAPABILITY.TESTING_DESIGN)) {
     addFact(FACT.TEST_SCOPE_CONFIRMED, [`activation:${CAPABILITY.TESTING_DESIGN}:completed`]);
+    if (testabilityDecision) {
+      const decision = normalizeTestabilityDecision(testabilityDecision);
+      if (decision.kind === TESTABILITY_DECISION.BEHAVIOR_DELTA) {
+        addFact(FACT.HONEST_RED_CANDIDATE, testabilityEvidenceRefs(decision));
+      }
+      if (decision.kind === TESTABILITY_DECISION.HARDENING) {
+        addFact(FACT.BEHAVIOR_PRESERVING_HARDENING, testabilityEvidenceRefs(decision));
+      }
+    }
   }
   if (completed.has(CAPABILITY.DEBUG_ROOT_CAUSE)) {
     addFact(FACT.IMPLEMENTATION_READY, [`activation:${CAPABILITY.DEBUG_ROOT_CAUSE}:completed`]);
@@ -136,12 +151,15 @@ export function deriveSoftwareFacts({
     completed.has(CAPABILITY.IMPLEMENTATION_EXECUTE)
     || completed.has(CAPABILITY.TESTING_TDD)
     || completed.has(CAPABILITY.TESTING_STRICT_TDD)
+    || completed.has(CAPABILITY.TESTING_HARDENING)
   ) {
     const source = completed.has(CAPABILITY.IMPLEMENTATION_EXECUTE)
       ? CAPABILITY.IMPLEMENTATION_EXECUTE
       : completed.has(CAPABILITY.TESTING_TDD)
         ? CAPABILITY.TESTING_TDD
-        : CAPABILITY.TESTING_STRICT_TDD;
+        : completed.has(CAPABILITY.TESTING_STRICT_TDD)
+          ? CAPABILITY.TESTING_STRICT_TDD
+          : CAPABILITY.TESTING_HARDENING;
     addFact(FACT.DIFF_READY, [`activation:${source}:completed`]);
   }
 

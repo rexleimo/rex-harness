@@ -21,6 +21,7 @@ export const rexNativeProviderBindings = Object.freeze([
   bundledSkill(CAPABILITY.TESTING_DESIGN, 'rex-test-design'),
   bundledSkill(CAPABILITY.TESTING_TDD, 'rex-tdd'),
   bundledSkill(CAPABILITY.TESTING_STRICT_TDD, 'rex-strict-tdd'),
+  bundledSkill(CAPABILITY.TESTING_HARDENING, 'rex-refactor-hardening'),
   bundledSkill(CAPABILITY.DEBUG_ROOT_CAUSE, 'rex-debug'),
   bundledSkill(CAPABILITY.IMPLEMENTATION_MINIMIZE, 'rex-minimal-construction'),
   bundledSkill(CAPABILITY.IMPLEMENTATION_EXECUTE, 'rex-implement'),

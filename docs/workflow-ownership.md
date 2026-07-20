@@ -32,7 +32,7 @@ AIOS 必须调用 rex 的 `startSoftwareWorkflow()` / `advanceSoftwareWorkflow()
 父项目注册表组合两种不同对象：
 
 - rex 的 `adaptive-software-delivery` 只读投影，readiness 范围是 `current-command`；
-- AIOS 自有的 `ecc-uplift-governed`、`loop-operation` 等治理/运行时 Recipe。
+- AIOS 自有的治理/运行时 Recipe。
 
 因此父项目可以展示 rex 工作流，但不能把全部条件候选 Agent 当成固定流水线，也不能要求所有 Provider 同时 ready。软件阶段发生变化时，只应修改 rex；AIOS 自有治理阶段发生变化时，才修改父项目。
 
@@ -44,7 +44,7 @@ AIOS 必须调用 rex 的 `startSoftwareWorkflow()` / `advanceSoftwareWorkflow()
 - `rex-debug` / `rex-minimal-construction` / `rex-implement`：根因、最小构造和有边界实施；
 - `rex-code-review` / `rex-specialist-review`：标准与规格审查、风险域专项审查。
 
-Provider 不拥有触发权。首次请求不能预装整条 Provider 链；每个 Provider 只执行当前 Command，返回 Evidence 后停止。AIOS 显式启用兼容模式时可以替换为 Matt/Superpowers/ECC/Ponytail；默认不能替换。风险域 Agent 在 AIOS 中可进一步解析为 security、React 或 TypeScript Reviewer，无法验证角色、smoke、provenance 或压缩证据时必须阻塞。
+Provider 不拥有触发权。首次请求不能预装整条 Provider 链；每个 Provider 只执行当前 Command，返回 Evidence 后停止。AIOS 不能以外部 playbook 替换 Rex Provider。风险域 Agent 在 AIOS 中可进一步解析为 security、React 或 TypeScript Reviewer，无法验证角色、smoke、provenance 或压缩证据时必须阻塞。
 
 ## 独立模式如何辅助 Coding Agent
 

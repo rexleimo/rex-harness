@@ -14,6 +14,23 @@ export { nextCommand, startActivation } from './application/start-activation.mjs
 export { CAPABILITY } from './domain/capability-ids.mjs';
 export { FACT } from './domain/fact-kinds.mjs';
 export { OBSERVATION } from './domain/observation-kinds.mjs';
+export {
+  TESTABILITY_DECISION,
+  normalizeTestabilityDecision,
+  testabilityEvidenceRefs,
+  validateTestabilityDecisionReceipt,
+} from './domain/testability-decision.mjs';
+export {
+  assertExecutionReceiptMatchesCommand,
+  executionCommandsMatch,
+  executionReceiptRef,
+  normalizeExecutionCommand,
+  normalizeExecutionReceipt,
+} from './domain/execution-receipts.mjs';
+export {
+  advanceLongRunningDelivery,
+  startLongRunningDelivery,
+} from './domain/long-running-delivery.mjs';
 export { listProfiles, resolveProfile } from './profiles/index.mjs';
 export { listSoftwareWorkflowRecipes } from './workflows/software-recipes.mjs';
 export { analyzeExecutionProfile } from './workflows/execution-profile.mjs';
@@ -25,6 +42,8 @@ export {
 export {
   presentStandaloneWorkflow,
   readStandaloneWorkflow,
+  captureStandaloneExecutionReceipt,
+  resolveStandaloneExecutionReceipt,
   startStandaloneWorkflow,
   submitStandaloneEvidence,
 } from './standalone/store.mjs';

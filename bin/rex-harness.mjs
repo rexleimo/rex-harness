@@ -4,6 +4,7 @@ import { runDoctorArgs } from '../src/cli/doctor.mjs';
 import { runEvidence } from '../src/cli/evidence.mjs';
 import { explainFacts } from '../src/cli/explain.mjs';
 import { runInit } from '../src/cli/init.mjs';
+import { runReceipt } from '../src/cli/receipt.mjs';
 import { runStart } from '../src/cli/start.mjs';
 import { runResume, runStatus } from '../src/cli/status.mjs';
 
@@ -29,9 +30,11 @@ try {
     result = runResume(args);
   } else if (command === 'evidence') {
     result = runEvidence(args);
+  } else if (command === 'receipt') {
+    result = runReceipt(args);
   } else {
     result = {
-      usage: 'rex-harness <doctor|init|explain|start|status|evidence|resume>',
+      usage: 'rex-harness <doctor|init|explain|start|status|evidence|receipt|resume>',
     };
   }
   console.log(JSON.stringify(result, null, 2));

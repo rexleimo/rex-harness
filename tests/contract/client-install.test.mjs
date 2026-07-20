@@ -85,6 +85,28 @@ test('client projection preserves a conflicting user skill instead of overwritin
   }
 });
 
+test('client projection honors an explicit client discovery root', async () => {
+  const rootDir = await mkdtemp(path.join(os.tmpdir(), 'rex-client-target-root-'));
+  const targetRoot = path.join(rootDir, 'global-grok-home', 'skills');
+  try {
+    const result = installClientProjection({
+      client: 'grok',
+      rootDir,
+      targetRoot,
+    });
+
+    assert.equal(result.status, 'installed');
+    assert.equal(result.skillRoot, targetRoot);
+    assert.deepEqual((await readdir(targetRoot)).sort(), expectedSkills);
+    await assert.rejects(
+      () => readdir(path.join(rootDir, '.grok', 'skills')),
+      { code: 'ENOENT' },
+    );
+  } finally {
+    await rm(rootDir, { recursive: true, force: true });
+  }
+});
+
 test('client projection rejects unsupported clients', () => {
   assert.throws(
     () => installClientProjection({ client: 'unknown', rootDir: process.cwd() }),

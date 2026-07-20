@@ -8,6 +8,26 @@ import {
   evaluateSoftwareRequest,
 } from '../../src/index.mjs';
 
+function honestRedDecision() {
+  return {
+    kind: 'behavior-delta',
+    decisionRef: 'artifact:testability-decision',
+    redCandidate: {
+      publicEntry: 'validation endpoint',
+      setup: 'Submit an invalid request before the behavior is implemented.',
+      command: {
+        executable: 'node',
+        args: ['--test', 'tests/application/request-evaluation.test.mjs'],
+        cwd: '/tmp/rex-request-evaluation',
+      },
+      expected: 'The invalid request is rejected.',
+      observed: 'The invalid request is accepted before the behavior is implemented.',
+      failureReason: 'The requested validation behavior is absent.',
+      receiptRef: 'receipt:request-evaluation-red',
+    },
+  };
+}
+
 test('request observation derives traceable facts and selects only requirements clarification', () => {
   const result = evaluateSoftwareRequest({
     message: 'Clarify the domain vocabulary and acceptance criteria before implementing checkout.',
@@ -39,6 +59,7 @@ test('completed test design unlocks TDD without replaying the completed capabili
   const result = evaluateSoftwareRequest({
     message: 'Update the public input validation behavior.',
     completedCapabilities: [CAPABILITY.TESTING_DESIGN],
+    testabilityDecision: honestRedDecision(),
   });
 
   assert.ok(result.facts.some((fact) => fact.kind === FACT.TEST_SCOPE_CONFIRMED));
@@ -69,6 +90,7 @@ test('confirmed high-risk test scope upgrades baseline TDD to strict TDD', () =>
       },
     ],
     completedCapabilities: [CAPABILITY.TESTING_DESIGN],
+    testabilityDecision: honestRedDecision(),
   });
 
   assert.equal(result.decision.capabilityId, CAPABILITY.TESTING_STRICT_TDD);

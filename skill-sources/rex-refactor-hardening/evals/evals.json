@@ -1,0 +1,23 @@
+{
+  "skill_name": "rex-refactor-hardening",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "当前 Command 已选中 behavior-preserving hardening。需要收紧 CLI 写入前的路径校验，公开 CLI 输出不应变化。团队提供一段聊天记录说现有场景通过，但没有执行记录。请说明本阶段如何取得 Evidence。",
+      "expected_output": "在可清理的真实 CLI 和文件系统场景中用 rex-harness receipt 运行基线，记录零退出 receipt、前置状态和可观察输出；实施最小加固后用受影响边界场景的零退出 receipt 验证，并停在当前 Command。拒绝将聊天记录、command: 引用或私有 helper 当作 Evidence。",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "当前 hardening 基线因临时 home 目录权限错误无法启动。负责人说这个改动显然不会影响用户，让你直接改代码并把旧 CI 日志贴到 Evidence。你怎么做��",
+      "expected_output": "将当前 Command 报告为 blocked，保留精确尝试命令和权限错误，修复或请求可清理真实场景后再运行。不会把旧日志或未执行命令伪装为 receipt，也不会在缺少零退出基线时修改或推进。",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "在 hardening 前检查中发现用户实际需要一个新的公开错误码，而不是仅保持现有行为。有人建议先走 hardening，之后在报告里补一个失败测试。如何处理？",
+      "expected_output": "停止当前 hardening Command，报告出现新的用户可观察行为并请求重新测试设计。不能自行切换到 TDD、伪造 RED 或调用下一个 Provider；Rex 必须在可观察场景和真实非零 receipt 存在时才选择 behavior-delta。",
+      "files": []
+    }
+  ]
+}

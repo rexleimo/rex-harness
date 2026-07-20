@@ -14,6 +14,7 @@ function strictTddDecision() {
   return decideNextCapability([
     { kind: FACT.BEHAVIOR_CHANGE, evidenceRefs: ['request:current'] },
     { kind: FACT.TEST_SCOPE_CONFIRMED, evidenceRefs: ['contract:test-scope'] },
+    { kind: FACT.HONEST_RED_CANDIDATE, evidenceRefs: ['receipt:auth-red'] },
     { kind: FACT.HIGH_RISK_BOUNDARY, evidenceRefs: ['risk:auth'] },
   ]);
 }
@@ -24,11 +25,21 @@ test('strict TDD activation advances red, green, and refactor one evidence gate 
 
   assert.equal(activation.capabilityId, CAPABILITY.TESTING_STRICT_TDD);
   assert.equal(activation.reasonCode, FACT.HIGH_RISK_BOUNDARY);
-  assert.deepEqual(activation.triggerEvidenceRefs, ['request:current', 'contract:test-scope', 'risk:auth']);
+  assert.deepEqual(activation.triggerEvidenceRefs, [
+    'request:current',
+    'contract:test-scope',
+    'receipt:auth-red',
+    'risk:auth',
+  ]);
   assert.equal(red.type, 'provider.invoke');
   assert.equal(red.stageId, 'red');
   assert.equal(red.reasonCode, FACT.HIGH_RISK_BOUNDARY);
-  assert.deepEqual(red.triggerEvidenceRefs, ['request:current', 'contract:test-scope', 'risk:auth']);
+  assert.deepEqual(red.triggerEvidenceRefs, [
+    'request:current',
+    'contract:test-scope',
+    'receipt:auth-red',
+    'risk:auth',
+  ]);
   assert.deepEqual(red.expectedEvidence, [
     'failing-test-observed',
     'red-failure-reason-recorded',

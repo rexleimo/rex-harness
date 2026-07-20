@@ -7,6 +7,8 @@ export const FACT = Object.freeze({
   DEPENDENT_WORK_ITEMS: 'dependent-work-items',
   BEHAVIOR_CHANGE: 'behavior-change',
   TEST_SCOPE_CONFIRMED: 'test-scope-confirmed',
+  HONEST_RED_CANDIDATE: 'honest-red-candidate',
+  BEHAVIOR_PRESERVING_HARDENING: 'behavior-preserving-hardening',
   HIGH_RISK_BOUNDARY: 'high-risk-boundary',
   REGRESSION_OBSERVED: 'regression-observed',
   EXECUTION_FAILED: 'execution-failed',

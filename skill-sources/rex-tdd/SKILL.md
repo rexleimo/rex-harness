@@ -38,7 +38,7 @@ description: Use only after rex-harness selects scope-bound baseline TDD and sup
 
 ## Evidence
 
-按当前阶段返回真实、可核验的引用。测试 Evidence 必须分别记录与契约相关的输入或前置条件、契约预期的用户可观察结果、实际观察到的用户可观察结果、精确测试命令、退出状态和关键失败或通过输出；聊天结论、`TODO`、文件存在或未运行的测试都不是证据。RED 为 `failing-test-observed`、`red-failure-reason-recorded`；GREEN 为 `passing-test-observed`、`implementation-diff-recorded`；REFACTOR 为 `refactor-check-recorded`、`test-diff-review-recorded`。
+按当前阶段返回真实、可核验的引用。测试 Evidence 必须分别记录与契约相关的输入或前置条件、契约预期的用户可观察结果、实际观察到的用户可观察结果、精确测试命令、退出状态和关键失败或通过输出；聊天结论、`TODO`、文件存在或未运行的测试都不是证据。使用 `rex-harness receipt --root <project-root> -- <focused-test-command>` 执行命令：RED 的 `failing-test-observed` 必须引用该次真实非零退出的 `receipt:<id>`；GREEN 的 `passing-test-observed` 与 REFACTOR 的 `refactor-check-recorded` 必须引用真实零退出的 `receipt:<id>`。自然语言、`command:`、先前日志和未执行命令不是 receipt，不能推进阶段。RED 同时返回 `red-failure-reason-recorded`；GREEN 同时返回 `implementation-diff-recorded`；REFACTOR 同时返回 `test-diff-review-recorded`。
 
 凡当前 Command 或 Evidence Contract 要求执行命令，都必须实际运行该命令。若无法执行，明确报告当前阶段 `blocked` 或 `incomplete`，并分别记录已尝试的精确命令、具体错误和可执行的解阻条件；不得用静态推断、手工截图、未执行引用、其他测试结果或前序阶段日志替代本阶段要求的执行结果。可以保留已经取得的部分证据，但必须标注为 partial，且不得据此推进 Command。
 

@@ -34,6 +34,7 @@ test('high-risk regression with a confirmed test scope activates strict TDD', ()
   const decision = decideNextCapability([
     { kind: FACT.BEHAVIOR_CHANGE, evidenceRefs: ['diff:auth/session.mjs'] },
     { kind: FACT.TEST_SCOPE_CONFIRMED, evidenceRefs: ['contract:test-scope'] },
+    { kind: FACT.HONEST_RED_CANDIDATE, evidenceRefs: ['receipt:auth-red'] },
     { kind: FACT.HIGH_RISK_BOUNDARY, evidenceRefs: ['risk:auth'] },
     { kind: FACT.REGRESSION_OBSERVED, evidenceRefs: ['test:session-regression'] },
   ]);
@@ -42,6 +43,7 @@ test('high-risk regression with a confirmed test scope activates strict TDD', ()
   assert.deepEqual(decision.evidenceRefs, [
     'diff:auth/session.mjs',
     'contract:test-scope',
+    'receipt:auth-red',
     'risk:auth',
   ]);
 });
@@ -66,6 +68,7 @@ test('a completed capability is skipped so the next eligible capability can run'
   const facts = [
     { kind: FACT.BEHAVIOR_CHANGE, evidenceRefs: ['diff:auth/session.mjs'] },
     { kind: FACT.TEST_SCOPE_CONFIRMED, evidenceRefs: ['contract:test-scope'] },
+    { kind: FACT.HONEST_RED_CANDIDATE, evidenceRefs: ['receipt:auth-red'] },
     { kind: FACT.HIGH_RISK_BOUNDARY, evidenceRefs: ['risk:auth'] },
     { kind: FACT.DIFF_READY, evidenceRefs: ['diff:working-tree'] },
     { kind: FACT.SPECIALIST_REVIEW_REQUIRED, evidenceRefs: ['risk-domain:security'] },

@@ -49,7 +49,9 @@ rex-harness resume --work-item <key> --root <project-root>
 rex-harness evidence --activation <activationId> --command-token <commandToken> --evidence <kind>=<protocol:real-ref> --root <project-root>
 ```
 
-7. Evidence 被接受后只读取返回的下一条 compact Command，重复以上步骤直到完成。
+7. 需要证明命令执行时，先建立回执：`rex-harness receipt --root <project-root> -- <command>`。失败测试的退出码写入回执而不是让 receipt 命令失败；RED 引用非零 `receipt:<id>`，通过和 hardening 场景引用零退出 `receipt:<id>`。
+8. `rex-test-design` 的 `decide-testability` 阶段将类型化结论写入 JSON 文件，并通过 `rex-harness evidence ... --testability-file <decision.json>` 连同 `testability-decision-recorded=<decision-ref>` 提交。`behavior-delta` 只能带真实失败回执；`behavior-preserving-hardening` 只能带真实通过基线；`blocked` 会 replan 而不是重派发旧 Command。
+9. Evidence 被接受后只读取返回的下一条 compact Command，重复以上步骤直到完成。
 
 ## 上下文和安全边界
 

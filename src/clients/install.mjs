@@ -67,6 +67,7 @@ function installSkill(source, target) {
 export function installClientProjection({
   client,
   rootDir = process.cwd(),
+  targetRoot,
   packageRoot = PACKAGE_ROOT,
 } = {}) {
   const clientId = String(client || '').trim().toLowerCase();
@@ -74,7 +75,11 @@ export function installClientProjection({
   if (!relativeSkillRoot) throw new Error(`unsupported rex-harness client: ${clientId || '(empty)'}`);
 
   const projectRoot = path.resolve(rootDir);
-  const targetRoot = path.join(projectRoot, relativeSkillRoot);
+  // A host installer can select a global discovery root; standalone Rex keeps
+  // its project-root default without depending on the host's client registry.
+  const resolvedTargetRoot = targetRoot
+    ? path.resolve(targetRoot)
+    : path.join(projectRoot, relativeSkillRoot);
   const installed = [];
   const skipped = [];
   const conflicts = [];
@@ -84,7 +89,7 @@ export function installClientProjection({
   for (const id of skillIds()) {
     const source = path.resolve(packageRoot, 'skill-sources', id);
     if (!fs.existsSync(source)) throw new Error(`bundled rex skill is missing: ${id}`);
-    const outcome = installSkill(source, path.join(targetRoot, id));
+    const outcome = installSkill(source, path.join(resolvedTargetRoot, id));
     if (outcome === 'installed') installed.push(id);
     if (outcome === 'skipped') skipped.push(id);
     if (outcome === 'conflict') conflicts.push(id);
@@ -98,7 +103,7 @@ export function installClientProjection({
     kind: 'rex.client-install-result.v1',
     status,
     client: clientId,
-    skillRoot: targetRoot,
+    skillRoot: resolvedTargetRoot,
     installed: Object.freeze(installed),
     skipped: Object.freeze(skipped),
     conflicts: Object.freeze(conflicts),

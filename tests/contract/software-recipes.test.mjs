@@ -15,7 +15,7 @@ test('software workflow registry describes one adaptive runtime instead of fixed
   assert.equal(workflow.runtimeManaged, true);
   assert.equal(workflow.executionSemantics, 'fact-and-evidence-driven');
   assert.match(workflow.runtimeAuthority, /software-workflow-runtime\.mjs$/u);
-  assert.equal(workflow.stages.length, 12);
+  assert.equal(workflow.stages.length, 13);
   assert.ok(workflow.stages.every((stage) => stage.mode === 'conditional'));
 
   for (const candidate of workflow.stages) {

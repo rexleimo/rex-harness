@@ -1,4 +1,5 @@
 import { designCapability } from '../capabilities/design/capability.mjs';
+import { hardeningCapability } from '../capabilities/hardening/capability.mjs';
 import { implementationCapability } from '../capabilities/implementation/capability.mjs';
 import { minimalImplementationCapability } from '../capabilities/minimal-implementation/capability.mjs';
 import { planningCapability } from '../capabilities/planning/capability.mjs';
@@ -22,6 +23,7 @@ const CAPABILITIES = Object.freeze([
   testDesignCapability,
   tddCapability,
   strictTddCapability,
+  hardeningCapability,
   rootCauseDebuggingCapability,
   minimalImplementationCapability,
   implementationCapability,

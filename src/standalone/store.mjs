@@ -1,8 +1,13 @@
 import { createHash, randomUUID } from 'node:crypto';
+import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 
 import { validateCommandEvidence } from '../application/validate-command-evidence.mjs';
+import {
+  executionReceiptRef,
+  normalizeExecutionReceipt,
+} from '../domain/execution-receipts.mjs';
 import {
   advanceSoftwareWorkflow,
   startSoftwareWorkflow,
@@ -23,6 +28,7 @@ function statePaths(rootDir) {
     workflows: path.join(stateRoot, 'workflows'),
     activations: path.join(stateRoot, 'activations'),
     evidence: path.join(stateRoot, 'evidence'),
+    receipts: path.join(stateRoot, 'receipts'),
   });
 }
 
@@ -45,6 +51,16 @@ function activationFile(paths, workflowActivationId) {
 
 function evidenceFile(paths, workflowActivationId) {
   return path.join(paths.evidence, `${safeId(workflowActivationId, 'workflowActivationId')}.ndjson`);
+}
+
+function receiptFile(paths, receiptId) {
+  return path.join(paths.receipts, `${safeId(receiptId, 'receiptId')}.json`);
+}
+
+function receiptIdFromRef(ref) {
+  const value = text(ref);
+  if (!value.startsWith('receipt:')) return '';
+  return safeId(value.slice('receipt:'.length), 'receiptId');
 }
 
 function atomicWriteJson(target, value) {
@@ -136,6 +152,81 @@ function appendEvidence(paths, workflow, command, evidence, now) {
   );
 }
 
+function sha256(value) {
+  return createHash('sha256').update(value).digest('hex');
+}
+
+function observedAt(now) {
+  const value = now instanceof Date ? now : new Date(now);
+  if (Number.isNaN(value.getTime())) throw new TypeError('execution receipt now must be a valid date');
+  return value.toISOString();
+}
+
+/**
+ * 在 standalone 的受控边界执行一条显式命令，并保存最小、可校验的执行回执。
+ * 此命令自身总是成功返回回执；被观察命令的退出码记录在 receipt.exitCode 中。
+ */
+export function captureStandaloneExecutionReceipt({
+  rootDir = process.cwd(),
+  executable,
+  args = [],
+  now = new Date(),
+} = {}) {
+  const paths = statePaths(rootDir);
+  const command = text(executable);
+  if (!command) throw new TypeError('execution receipt requires command executable');
+  if (!Array.isArray(args) || args.some((arg) => typeof arg !== 'string')) {
+    throw new TypeError('execution receipt command args must be an array of strings');
+  }
+
+  const result = spawnSync(command, args, {
+    cwd: paths.root,
+    encoding: 'buffer',
+    shell: false,
+  });
+  if (result.error) {
+    throw new Error(`execution receipt command could not start: ${result.error.message}`, { cause: result.error });
+  }
+  if (!Number.isInteger(result.status)) {
+    throw new Error('execution receipt command did not produce an exit code');
+  }
+
+  const receipt = normalizeExecutionReceipt({
+    receiptId: randomUUID(),
+    command: {
+      executable: command,
+      args,
+      cwd: paths.root,
+    },
+    exitCode: result.status,
+    stdoutSha256: sha256(result.stdout || Buffer.alloc(0)),
+    stderrSha256: sha256(result.stderr || Buffer.alloc(0)),
+    observedAt: observedAt(now),
+  });
+  atomicWriteJson(receiptFile(paths, receipt.receiptId), receipt);
+  return Object.freeze({
+    ref: executionReceiptRef(receipt),
+    receipt,
+  });
+}
+
+/** Resolve only receipts created in this workspace's standalone state directory. */
+export function resolveStandaloneExecutionReceipt({
+  rootDir = process.cwd(),
+  ref,
+} = {}) {
+  const receiptId = receiptIdFromRef(ref);
+  if (!receiptId) return null;
+  const paths = statePaths(rootDir);
+  const target = receiptFile(paths, receiptId);
+  if (!fs.existsSync(target)) return null;
+  const receipt = normalizeExecutionReceipt(readJson(target, 'rex.execution-receipt.v1'));
+  if (receipt.receiptId !== receiptId) {
+    throw new Error(`execution receipt id does not match its file: ${receiptId}`);
+  }
+  return receipt;
+}
+
 export function presentStandaloneWorkflow(workflow, {
   stateRoot,
   outcome = 'status',
@@ -207,6 +298,7 @@ export function submitStandaloneEvidence({
   activationId,
   commandToken,
   evidence = [],
+  testabilityDecision,
   now = new Date(),
 } = {}) {
   const paths = statePaths(rootDir);
@@ -219,8 +311,13 @@ export function submitStandaloneEvidence({
   if (!command || text(command.executionToken) !== text(commandToken)) {
     throw new Error('rex standalone evidence requires the current Command token');
   }
-  const normalizedEvidence = validateCommandEvidence(command, evidence);
-  const advanced = advanceSoftwareWorkflow(workflow, normalizedEvidence, { now });
+  const resolveReceipt = (ref) => resolveStandaloneExecutionReceipt({ rootDir: paths.root, ref });
+  const normalizedEvidence = validateCommandEvidence(command, evidence, { resolveReceipt });
+  const advanced = advanceSoftwareWorkflow(workflow, normalizedEvidence, {
+    now,
+    testabilityDecision,
+    resolveReceipt,
+  });
   const sealedWorkflow = sealCurrentCommand(advanced.workflow);
   writeWorkflow(paths, sealedWorkflow);
   appendEvidence(paths, workflow, command, normalizedEvidence, now);

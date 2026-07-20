@@ -51,8 +51,9 @@ export const strictTddCapability = Object.freeze({
   activate(facts) {
     const behavior = findFact(facts, FACT.BEHAVIOR_CHANGE);
     const scope = findFact(facts, FACT.TEST_SCOPE_CONFIRMED);
-    if (!behavior || !scope) return null;
+    const redCandidate = findFact(facts, FACT.HONEST_RED_CANDIDATE);
+    if (!behavior || !scope || !redCandidate) return null;
     const risk = findFact(facts, FACT.REGRESSION_OBSERVED, FACT.HIGH_RISK_BOUNDARY);
-    return createCapabilityTrigger({ reason: risk, prerequisites: [behavior, scope] });
+    return createCapabilityTrigger({ reason: risk, prerequisites: [behavior, scope, redCandidate] });
   },
 });

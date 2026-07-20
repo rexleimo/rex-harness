@@ -1,14 +1,13 @@
 # Provider 契约
 
-Provider Binding 是某个语义 Capability 的可执行入口。默认 Catalog 只绑定 rex 自己打包的 Skill 或 Reviewer；集成宿主可以显式覆盖，但不能让外部 Provider 静默成为默认依赖。
+Provider Binding 是某个语义 Capability 的可执行入口。Catalog 只绑定 rex 自己打包的 Skill 或 Reviewer；集成宿主不能覆盖为外部 Provider。
 
 支持的 Provider 类型：
 
 - `skill`：可发现的 Coding Agent Skill；
-- `playbook`：外部兼容适配器可使用的流程类型；
 - `agent`：根据 `risk-domain` 选择的专项 Reviewer。
 
-Binding 不能包含触发规则。Provider 可用性和替换策略属于执行宿主；不可用时必须报告，而不是改选一个语义不同的 Provider。
+Binding 不能包含触发规则。Provider 可用性属于执行宿主；不可用时必须报告，而不是改选一个语义不同的 Provider。
 
 ## Command
 
@@ -59,7 +58,7 @@ rex-harness evidence \
   --evidence acceptance-criteria-recorded=artifact:requirements
 ```
 
-AIOS 中的 Skill/Playbook runner 使用单行 Envelope：
+AIOS 中的 Skill runner 使用单行 Envelope：
 
 ```text
 AIOS_REX_EVIDENCE={"schemaVersion":1,"activationId":"activation-1","evidence":[...]}
@@ -74,4 +73,4 @@ evidenceRefs, filesReviewed, recommendedNextSteps
 
 AIOS 额外验证 Agent 身份、角色、晋级和执行证据，保存 Handoff artifact，再适配为 rex typed Evidence。这个协议与 Team/Subagent 的通用交接协议不同，不能混用。
 
-AIOS 的 `compatibilityMode` 可以显式绑定 Matt、Superpowers、ECC 或 Ponytail，并记录 provenance；默认模式不会加载这些外部实现，也不会把第三方仓库 vendoring 到 `rex-harness`。
+AIOS 只能执行当前 Rex Command 中绑定的内置 Provider；它不会加载外部 playbook 或把第三方仓库 vendoring 到 `rex-harness`。

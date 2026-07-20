@@ -68,7 +68,7 @@ test('explain selects root-cause debugging for an observed execution failure', (
   assert.equal(decision.provider.id, 'rex-debug');
 });
 
-test('explain selects strict TDD only after the test scope is confirmed', () => {
+test('explain keeps high-risk behavior in test design until a typed honest RED decision exists', () => {
   const decision = runCli(
     'explain',
     'behavior-change',
@@ -77,24 +77,46 @@ test('explain selects strict TDD only after the test scope is confirmed', () => 
     'regression-observed',
   );
 
-  assert.equal(decision.capabilityId, 'software.testing.strict-tdd');
-  assert.equal(decision.provider.id, 'rex-strict-tdd');
+  assert.equal(decision.capabilityId, 'software.testing.design');
+  assert.equal(decision.provider.id, 'rex-test-design');
 });
 
-test('explain selects baseline TDD for an ordinary confirmed behavior scope', () => {
+test('explain keeps ordinary behavior in test design until a typed honest RED decision exists', () => {
   const decision = runCli(
     'explain',
     'behavior-change',
     'test-scope-confirmed',
   );
 
-  assert.equal(decision.capabilityId, 'software.testing.tdd');
-  assert.equal(decision.provider.id, 'rex-tdd');
+  assert.equal(decision.capabilityId, 'software.testing.design');
+  assert.equal(decision.provider.id, 'rex-test-design');
 });
 
 test('CLI usage exposes the CLI-first protocol without a core MCP command', () => {
   const help = runCli('help');
 
-  assert.match(help.usage, /doctor\|init\|explain\|start\|status\|evidence\|resume/u);
+  assert.match(help.usage, /doctor\|init\|explain\|start\|status\|evidence\|receipt\|resume/u);
   assert.doesNotMatch(help.usage, /mcp/iu);
+});
+
+test('receipt captures a command exit code without treating a failed test as a CLI failure', async () => {
+  const rootDir = await mkdtemp(path.join(os.tmpdir(), 'rex-cli-receipt-'));
+  try {
+    const result = runCli(
+      'receipt',
+      '--root',
+      rootDir,
+      '--',
+      process.execPath,
+      '-e',
+      'process.exit(7)',
+    );
+
+    assert.equal(result.kind, 'rex.cli.execution-receipt.v1');
+    assert.match(result.ref, /^receipt:/u);
+    assert.equal(result.receipt.exitCode, 7);
+    assert.equal(result.receipt.command.executable, process.execPath);
+  } finally {
+    await rm(rootDir, { recursive: true, force: true });
+  }
 });

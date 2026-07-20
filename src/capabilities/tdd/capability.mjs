@@ -49,6 +49,7 @@ export const tddCapability = Object.freeze({
   activate(facts) {
     const behavior = findFact(facts, FACT.BEHAVIOR_CHANGE);
     const scope = findFact(facts, FACT.TEST_SCOPE_CONFIRMED);
-    return createCapabilityTrigger({ reason: scope, prerequisites: [behavior] });
+    const redCandidate = findFact(facts, FACT.HONEST_RED_CANDIDATE);
+    return createCapabilityTrigger({ reason: redCandidate, prerequisites: [behavior, scope] });
   },
 });

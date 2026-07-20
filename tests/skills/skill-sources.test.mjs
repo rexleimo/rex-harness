@@ -132,4 +132,15 @@ test('TDD skills enforce the confirmed test scope instead of rewarding test weak
   assert.match(baseline, /(?:命令|command).*(?:输出|失败)|(?:输出|失败).*(?:命令|command)/iu);
   assert.match(baseline, /当前 Command.*阶段|阶段.*当前 Command/u);
   assert.match(baseline, /不得.*(?:升级|切换).*严格 TDD|严格 TDD.*不得.*(?:升级|切换)/u);
+  assert.match(baseline, /rex-harness receipt/u);
+  assert.match(baseline, /非零.*receipt/u);
+
+  const hardening = await readFile(
+    path.join(process.cwd(), 'skill-sources', 'rex-refactor-hardening', 'SKILL.md'),
+    'utf8',
+  );
+  assert.match(hardening, /rex-harness receipt/u);
+  assert.match(hardening, /零退出.*receipt/u);
+  assert.match(hardening, /恰好一个.*信封/u);
+  assert.match(hardening, /不要.*下一个 Provider/u);
 });
