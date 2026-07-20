@@ -1,0 +1,58 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: |
+          npm install --no-audit --no-fund
+
+      - name: Run tests
+        run: |
+          npm test || npm run test:architecture
+
+      - name: Run doctor
+        run: |
+          npm run doctor || true
+
+      - name: Package release tarball
+        run: |
+          mkdir -p dist/release
+          PACKAGE_NAME="rex-harness-$(node -p "require('./package.json').version")"
+          tar -czf "dist/release/${PACKAGE_NAME}.tar.gz" \
+            --exclude='.git' \
+            --exclude='node_modules' \
+            --exclude='dist' \
+            bin/ src/ docs/ skill-sources/ tests/ \
+            package.json package-lock.json CHANGELOG.md README.md \
+            .node-version .nvmrc 2>/dev/null || true
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          PACKAGE_NAME="rex-harness-$(node -p "require('./package.json').version")"
+          gh release create "${TAG}" \
+            --generate-notes \
+            "dist/release/${PACKAGE_NAME}.tar.gz"
