@@ -20,7 +20,7 @@ test('canonical skills are discoverable and keep activation logic out of prompts
   );
   for (const entry of skillDirectories.filter((candidate) => expectedSkills.includes(candidate.name))) {
     const file = path.join(root, entry.name, 'SKILL.md');
-    const content = await readFile(file, 'utf8');
+    const content = (await readFile(file, 'utf8')).replace(/\r\n/g, '\n');
     assert.match(content, /^---\nname: [a-z0-9-]+\ndescription: .+\n---\n/u);
     assert.match(content, /^description: Use only after rex-harness selects .+ and supplies the current Command\.$/mu);
     assert.match(content, /已经.*激活|激活.*Capability/u);
@@ -56,7 +56,7 @@ test('canonical skills are discoverable and keep activation logic out of prompts
 
 test('rex-workflow is a CLI-first orchestration skill with bounded context', async () => {
   const root = path.join(process.cwd(), 'skill-sources', 'rex-workflow');
-  const content = await readFile(path.join(root, 'SKILL.md'), 'utf8');
+  const content = (await readFile(path.join(root, 'SKILL.md'), 'utf8')).replace(/\r\n/g, '\n');
 
   assert.match(content, /^---\nname: rex-workflow\ndescription: .+\n---\n/u);
   assert.match(content, /rex-harness CLI/u);
