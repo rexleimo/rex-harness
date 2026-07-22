@@ -47,6 +47,16 @@ function normalizeVerificationScenario(value, label) {
   });
 }
 
+function normalizeDependsOn(value, label) {
+  if (value === undefined) return Object.freeze([]);
+  if (!Array.isArray(value)) {
+    throw new TypeError(`long-running delivery requires ${label} to be an array`);
+  }
+  return Object.freeze(value.map((dependencyId, index) => (
+    text(dependencyId, `${label}[${index}]`)
+  )));
+}
+
 function normalizeFeatures(features) {
   if (!Array.isArray(features) || features.length === 0) {
     throw new TypeError('long-running delivery requires at least one feature');
@@ -64,6 +74,7 @@ function normalizeFeatures(features) {
     ids.add(id);
     return Object.freeze({
       id,
+      dependsOn: normalizeDependsOn(feature.dependsOn, `feature[${index}].dependsOn`),
       acceptance: text(feature.acceptance, `feature[${index}].acceptance`),
       verificationScenario: normalizeVerificationScenario(
         feature.verificationScenario,
@@ -109,7 +120,10 @@ export function startLongRunningDelivery({
   resolveReceipt,
 } = {}) {
   const normalizedFeatures = normalizeFeatures(features);
-  const currentFeatureId = normalizedFeatures[0].id;
+  const currentFeatureId = normalizedFeatures.find((feature) => feature.dependsOn.length === 0)?.id;
+  if (!currentFeatureId) {
+    throw new TypeError('long-running delivery requires at least one dependency-ready feature');
+  }
   const normalizedBaseline = verifyBaseline(normalizeBaseline(baseline), resolveReceipt);
   const maxRetries = Number(retryPolicy?.maxRetries ?? 2);
   if (!Number.isInteger(maxRetries) || maxRetries < 0) {

@@ -1,4 +1,5 @@
 import { CAPABILITY } from '../domain/capability-ids.mjs';
+import { deriveChangeRiskFacts } from '../domain/change-risk-assessment.mjs';
 import { FACT } from '../domain/fact-kinds.mjs';
 import { normalizeFacts } from '../domain/facts.mjs';
 import { OBSERVATION, normalizeObservations } from '../domain/observation-kinds.mjs';
@@ -87,14 +88,23 @@ export function deriveSoftwareFacts({
   testabilityDecision = null,
 } = {}) {
   const facts = new Map();
-  const addFact = (kind, evidenceRefs) => {
-    const refs = new Set([...(facts.get(kind) || []), ...evidenceRefs]);
-    facts.set(kind, refs);
+  const addFact = (kind, evidenceRefs, value) => {
+    const current = facts.get(kind);
+    if (current?.value !== undefined && value !== undefined && current.value !== value) {
+      throw new TypeError(`conflicting values for fact ${kind}`);
+    }
+    const refs = new Set([...(current?.evidenceRefs || []), ...evidenceRefs]);
+    facts.set(kind, { evidenceRefs: refs, value: current?.value ?? value });
   };
 
   for (const observation of normalizeObservations(observations)) {
     const factKind = OBSERVATION_TO_FACT.get(observation.kind);
     if (factKind) addFact(factKind, observation.evidenceRefs);
+    if (observation.kind === OBSERVATION.CHANGE_RISK_ASSESSED) {
+      for (const fact of deriveChangeRiskFacts(observation.changeRisk, observation.evidenceRefs)) {
+        addFact(fact.kind, fact.evidenceRefs, fact.value);
+      }
+    }
   }
 
   const value = String(message || '').trim();
@@ -163,8 +173,9 @@ export function deriveSoftwareFacts({
     addFact(FACT.DIFF_READY, [`activation:${source}:completed`]);
   }
 
-  return normalizeFacts([...facts.entries()].map(([kind, evidenceRefs]) => ({
+  return normalizeFacts([...facts.entries()].map(([kind, fact]) => ({
     kind,
-    evidenceRefs: [...evidenceRefs],
+    evidenceRefs: [...fact.evidenceRefs],
+    ...(fact.value === undefined ? {} : { value: fact.value }),
   })));
 }

@@ -1,3 +1,5 @@
+import { normalizeChangeRiskAssessment } from './change-risk-assessment.mjs';
+
 // Observation 是 AIOS 在系统边界提供的原始事实来源；它与 rex 内部
 // 用于选择 Capability 的 Fact 分离，避免宿主直接操纵领域路由结果。
 export const OBSERVATION = Object.freeze({
@@ -13,6 +15,7 @@ export const OBSERVATION = Object.freeze({
   CONTINUITY_REQUIRED: 'runtime.continuity-required',
   DESIGN_DECISION_BLOCKED: 'design.decision-blocked',
   PATH_UNKNOWN: 'navigation.path-unknown',
+  CHANGE_RISK_ASSESSED: 'change.risk-assessed',
 });
 
 export function normalizeObservations(observations = []) {
@@ -28,7 +31,13 @@ export function normalizeObservations(observations = []) {
       ? observation.evidenceRefs.map((ref) => String(ref).trim()).filter(Boolean)
       : [];
     if (evidenceRefs.length === 0) throw new TypeError(`observation ${kind} requires evidenceRefs`);
+    if (kind === OBSERVATION.CHANGE_RISK_ASSESSED) {
+      return Object.freeze({
+        kind,
+        evidenceRefs: Object.freeze(evidenceRefs),
+        changeRisk: normalizeChangeRiskAssessment(observation.changeRisk),
+      });
+    }
     return Object.freeze({ kind, evidenceRefs: Object.freeze(evidenceRefs) });
   });
 }
-

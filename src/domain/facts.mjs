@@ -13,7 +13,12 @@ export function normalizeFacts(facts = []) {
       ? fact.evidenceRefs.map((ref) => String(ref).trim()).filter(Boolean)
       : [];
     if (evidenceRefs.length === 0) throw new TypeError(`fact ${kind} requires evidenceRefs`);
-    return Object.freeze({ kind, evidenceRefs: Object.freeze(evidenceRefs) });
+    if (fact.value === undefined) {
+      return Object.freeze({ kind, evidenceRefs: Object.freeze(evidenceRefs) });
+    }
+    const value = String(fact.value || '').trim();
+    if (!value) throw new TypeError(`fact ${kind} requires a non-empty value when provided`);
+    return Object.freeze({ kind, value, evidenceRefs: Object.freeze(evidenceRefs) });
   });
 }
 

@@ -19,4 +19,9 @@ export const FACT = Object.freeze({
   PATH_UNKNOWN: 'path-unknown',
   INDEPENDENT_WORKSTREAMS: 'independent-workstreams',
   CONTINUITY_REQUIRED: 'continuity-required',
+  CHANGE_KIND: 'change-kind',
+  CHANGE_BLAST_RADIUS: 'change-blast-radius',
+  CHANGE_EXTERNAL_EFFECT: 'change-external-effect',
+  CHANGE_REVERSIBILITY: 'change-reversibility',
+  CHANGE_UNCERTAINTY: 'change-uncertainty',
 });
