@@ -191,18 +191,18 @@ test('test design requires an explicit testability decision before selecting del
   assert.equal(redirected.workflow.currentCommand.provider.id, 'rex-refactor-hardening');
   assert.equal(redirected.workflow.testabilityDecision.kind, 'behavior-preserving-hardening');
 
-  assert.throws(
-    () => advanceSoftwareWorkflow(redirected.workflow, [
-      { kind: 'baseline-scenario-observed', refs: ['receipt:wrong-zero'] },
-    ], {
-      createActivationId,
-      resolveReceipt: resolveReceiptWithWrongScenario,
-    }),
-    /does not match the declared scenario command/u,
-  );
+  const blocked = advanceSoftwareWorkflow(redirected.workflow, [
+    { kind: 'baseline-scenario-observed', refs: ['receipt:wrong-zero'] },
+  ], {
+    createActivationId,
+    resolveReceipt: resolveReceiptWithWrongScenario,
+  });
+  assert.equal(blocked.outcome, 'blocked');
+  assert.equal(blocked.blockedReason, 'evidence-invalid');
+  assert.equal(blocked.workflow.currentCommand.executionToken, redirected.workflow.currentCommand.executionToken);
 });
 
-test('public workflow advancement rejects a claimed RED without a receipt', () => {
+test('public workflow advancement blocks a claimed RED without a receipt without replacing its command', () => {
   const createActivationId = sequentialIds('forged-red');
   const workflow = startSoftwareWorkflow({
     workflowActivationId: 'workflow-forged-red',
@@ -212,16 +212,19 @@ test('public workflow advancement rejects a claimed RED without a receipt', () =
   });
   const designed = completeTestDesignWithHonestRed(workflow, createActivationId);
 
-  assert.throws(
-    () => advanceSoftwareWorkflow(designed.workflow, [
-      { kind: 'failing-test-observed', refs: ['command:claimed-red'] },
-      { kind: 'red-failure-reason-recorded', refs: ['artifact:test:red-reason'] },
-    ], workflowOptions(createActivationId)),
-    /requires at least one receipt/u,
-  );
+  const blocked = advanceSoftwareWorkflow(designed.workflow, [
+    { kind: 'failing-test-observed', refs: ['command:claimed-red'] },
+    { kind: 'red-failure-reason-recorded', refs: ['artifact:test:red-reason'] },
+  ], workflowOptions(createActivationId));
+
+  assert.equal(blocked.outcome, 'blocked');
+  assert.equal(blocked.blockedReason, 'evidence-invalid');
+  assert.equal(blocked.workflow.workflowActivationId, designed.workflow.workflowActivationId);
+  assert.equal(blocked.workflow.currentActivation.activationId, designed.workflow.currentActivation.activationId);
+  assert.equal(blocked.workflow.currentCommand.executionToken, designed.workflow.currentCommand.executionToken);
 });
 
-test('TDD rejects same-exit receipts that do not execute the declared scenario', () => {
+test('TDD blocks same-exit receipts that do not execute the declared scenario', () => {
   const createActivationId = sequentialIds('scenario-bound');
   const designed = completeTestDesignWithHonestRed(startSoftwareWorkflow({
     workflowActivationId: 'workflow-scenario-bound',
@@ -230,46 +233,46 @@ test('TDD rejects same-exit receipts that do not execute the declared scenario',
     createActivationId,
   }), createActivationId);
 
-  assert.throws(
-    () => advanceSoftwareWorkflow(designed.workflow, [
-      { kind: 'failing-test-observed', refs: ['receipt:wrong-red'] },
-      { kind: 'red-failure-reason-recorded', refs: ['artifact:test:red-reason'] },
-    ], {
-      createActivationId,
-      resolveReceipt: resolveReceiptWithWrongScenario,
-    }),
-    /does not match the declared scenario command/u,
-  );
+  const blockedRed = advanceSoftwareWorkflow(designed.workflow, [
+    { kind: 'failing-test-observed', refs: ['receipt:wrong-red'] },
+    { kind: 'red-failure-reason-recorded', refs: ['artifact:test:red-reason'] },
+  ], {
+    createActivationId,
+    resolveReceipt: resolveReceiptWithWrongScenario,
+  });
+  assert.equal(blockedRed.outcome, 'blocked');
+  assert.equal(blockedRed.blockedReason, 'evidence-invalid');
+  assert.equal(blockedRed.workflow.currentCommand.executionToken, designed.workflow.currentCommand.executionToken);
 
   const green = advanceSoftwareWorkflow(designed.workflow, [
     { kind: 'failing-test-observed', refs: ['receipt:red-workflow'] },
     { kind: 'red-failure-reason-recorded', refs: ['artifact:test:red-reason'] },
   ], workflowOptions(createActivationId)).workflow;
-  assert.throws(
-    () => advanceSoftwareWorkflow(green, [
-      { kind: 'passing-test-observed', refs: ['receipt:wrong-zero'] },
-      { kind: 'implementation-diff-recorded', refs: ['diff:working-tree'] },
-    ], {
-      createActivationId,
-      resolveReceipt: resolveReceiptWithWrongScenario,
-    }),
-    /does not match the declared scenario command/u,
-  );
+  const blockedGreen = advanceSoftwareWorkflow(green, [
+    { kind: 'passing-test-observed', refs: ['receipt:wrong-zero'] },
+    { kind: 'implementation-diff-recorded', refs: ['diff:working-tree'] },
+  ], {
+    createActivationId,
+    resolveReceipt: resolveReceiptWithWrongScenario,
+  });
+  assert.equal(blockedGreen.outcome, 'blocked');
+  assert.equal(blockedGreen.blockedReason, 'evidence-invalid');
+  assert.equal(blockedGreen.workflow.currentCommand.executionToken, green.currentCommand.executionToken);
 
   const refactor = advanceSoftwareWorkflow(green, [
     { kind: 'passing-test-observed', refs: ['receipt:green-workflow'] },
     { kind: 'implementation-diff-recorded', refs: ['diff:working-tree'] },
   ], workflowOptions(createActivationId)).workflow;
-  assert.throws(
-    () => advanceSoftwareWorkflow(refactor, [
-      { kind: 'refactor-check-recorded', refs: ['receipt:wrong-zero'] },
-      { kind: 'test-diff-review-recorded', refs: ['artifact:test-diff-review'] },
-    ], {
-      createActivationId,
-      resolveReceipt: resolveReceiptWithWrongScenario,
-    }),
-    /does not match the declared scenario command/u,
-  );
+  const blockedRefactor = advanceSoftwareWorkflow(refactor, [
+    { kind: 'refactor-check-recorded', refs: ['receipt:wrong-zero'] },
+    { kind: 'test-diff-review-recorded', refs: ['artifact:test-diff-review'] },
+  ], {
+    createActivationId,
+    resolveReceipt: resolveReceiptWithWrongScenario,
+  });
+  assert.equal(blockedRefactor.outcome, 'blocked');
+  assert.equal(blockedRefactor.blockedReason, 'evidence-invalid');
+  assert.equal(blockedRefactor.workflow.currentCommand.executionToken, refactor.currentCommand.executionToken);
 });
 
 test('a legacy unbound testability command cannot resume delivery', () => {

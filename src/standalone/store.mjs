@@ -230,12 +230,15 @@ export function resolveStandaloneExecutionReceipt({
 export function presentStandaloneWorkflow(workflow, {
   stateRoot,
   outcome = 'status',
+  blockedReason = undefined,
   missingEvidence = [],
 } = {}) {
+  const blocked = blockedReason === undefined ? {} : { blockedReason };
   return Object.freeze({
     schemaVersion: 1,
     kind: 'rex.standalone.workflow-result.v1',
     outcome,
+    ...blocked,
     stateRoot,
     workflow,
     command: workflow.currentCommand,
@@ -318,13 +321,17 @@ export function submitStandaloneEvidence({
     testabilityDecision,
     resolveReceipt,
   });
-  const sealedWorkflow = sealCurrentCommand(advanced.workflow);
+  // 显式拒绝的证据保留当前 Command，调用者才能按原身份重试。
+  const sealedWorkflow = advanced.blockedReason === undefined
+    ? sealCurrentCommand(advanced.workflow)
+    : advanced.workflow;
   writeWorkflow(paths, sealedWorkflow);
   appendEvidence(paths, workflow, command, normalizedEvidence, now);
 
   return presentStandaloneWorkflow(sealedWorkflow, {
     stateRoot: paths.stateRoot,
     outcome: advanced.outcome,
+    blockedReason: advanced.blockedReason,
     missingEvidence: advanced.missingEvidence,
   });
 }

@@ -234,7 +234,10 @@ test('Rex retries only the current feature and requires a human gate when its re
       receiptRef: secondFailure.ref,
     }, { resolveReceipt: fixture.resolveReceipt });
 
-    assert.equal(gated.decision.kind, 'human-gate');
+    assert.deepEqual(gated.decision, {
+      kind: 'human-gate',
+      reason: 'verification-failed',
+    });
     assert.equal(Object.hasOwn(gated.decision, 'currentFeatureId'), false);
     assert.equal(gated.ledger.features[1].status, 'pending');
   } finally {
@@ -249,7 +252,10 @@ test('Rex blocks missing, unresolved, cross-feature, and command-mismatched evid
     const missing = rex.advanceLongRunningDelivery(fixture.started.ledger, null, {
       resolveReceipt: fixture.resolveReceipt,
     });
-    assert.equal(missing.decision.kind, 'blocked');
+    assert.deepEqual(missing.decision, {
+      kind: 'blocked',
+      reason: 'evidence-missing',
+    });
     assert.equal(Object.hasOwn(missing.decision, 'currentFeatureId'), false);
 
     const unresolved = rex.advanceLongRunningDelivery(fixture.started.ledger, {
@@ -266,7 +272,10 @@ test('Rex blocks missing, unresolved, cross-feature, and command-mismatched evid
       featureId: 'checkout-receipt',
       receiptRef: receipt.ref,
     }, { resolveReceipt: fixture.resolveReceipt });
-    assert.equal(crossed.decision.kind, 'blocked');
+    assert.deepEqual(crossed.decision, {
+      kind: 'blocked',
+      reason: 'evidence-feature-mismatch',
+    });
     assert.equal(Object.hasOwn(crossed.decision, 'currentFeatureId'), false);
     assert.equal(crossed.ledger.features[1].status, 'pending');
 
@@ -275,7 +284,10 @@ test('Rex blocks missing, unresolved, cross-feature, and command-mismatched evid
       featureId: 'checkout-validation',
       receiptRef: receipt.ref,
     }, { resolveReceipt: fixture.resolveReceipt });
-    assert.equal(mismatched.decision.kind, 'blocked');
+    assert.deepEqual(mismatched.decision, {
+      kind: 'blocked',
+      reason: 'evidence-rejected',
+    });
     assert.equal(Object.hasOwn(mismatched.decision, 'currentFeatureId'), false);
     assert.equal(mismatched.ledger.features[0].status, 'active');
     assert.equal(mismatched.ledger.features[1].status, 'pending');

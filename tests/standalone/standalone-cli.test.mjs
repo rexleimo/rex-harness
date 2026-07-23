@@ -175,6 +175,88 @@ test('standalone CLI returns full diagnostics only when explicitly requested', a
   }
 });
 
+test('standalone compact CLI preserves a Rex blocked reason', async () => {
+  const rootDir = await mkdtemp(path.join(os.tmpdir(), 'rex-standalone-blocked-reason-'));
+  try {
+    const started = runCli(
+      rootDir,
+      'start',
+      '--work-item',
+      'checkout-validation',
+      '--message',
+      'Update checkout validation behavior.',
+    );
+    const designed = runCli(
+      rootDir,
+      'evidence',
+      '--activation',
+      started.command.activationId,
+      '--command-token',
+      started.command.commandToken,
+      '--evidence',
+      'test-scope-contract-recorded=artifact:test-design',
+      '--evidence',
+      'acceptance-test-mapping-recorded=artifact:test-design',
+      '--evidence',
+      'test-seam-recorded=artifact:test-design',
+    );
+    const redReceipt = runReceipt(rootDir, process.execPath, '-e', 'process.exit(1)');
+    const wrongScenarioReceipt = runReceipt(rootDir, process.execPath, '-e', 'process.exit(2)');
+    await writeFile(path.join(rootDir, 'testability.json'), `${JSON.stringify({
+      kind: 'behavior-delta',
+      decisionRef: 'artifact:testability-decision',
+      redCandidate: {
+        publicEntry: 'checkout validation endpoint',
+        setup: 'Submit an invalid checkout request.',
+        command: {
+          executable: process.execPath,
+          args: ['-e', 'process.exit(1)'],
+          cwd: rootDir,
+        },
+        expected: 'The invalid checkout is rejected.',
+        observed: 'The invalid checkout is accepted before implementation.',
+        failureReason: 'The requested validation behavior is absent.',
+        receiptRef: redReceipt.ref,
+      },
+    }, null, 2)}\n`, 'utf8');
+
+    const tdd = runCli(
+      rootDir,
+      'evidence',
+      '--activation',
+      designed.command.activationId,
+      '--command-token',
+      designed.command.commandToken,
+      '--evidence',
+      'testability-decision-recorded=artifact:testability-decision',
+      '--testability-file',
+      'testability.json',
+    );
+    const blocked = runCli(
+      rootDir,
+      'evidence',
+      '--activation',
+      tdd.command.activationId,
+      '--command-token',
+      tdd.command.commandToken,
+      '--evidence',
+      `failing-test-observed=${wrongScenarioReceipt.ref}`,
+      '--evidence',
+      'red-failure-reason-recorded=artifact:red-reason',
+    );
+
+    assert.equal(blocked.outcome, 'blocked');
+    assert.equal(blocked.blockedReason, 'evidence-invalid');
+    assert.equal(blocked.status, 'active');
+    assert.equal(blocked.workflowActivationId, started.workflowActivationId);
+    assert.equal(blocked.workItemKey, 'checkout-validation');
+    assert.equal(blocked.command.commandToken, tdd.command.commandToken);
+    assert.deepEqual(blocked.missingEvidence, []);
+  } finally {
+    await rm(rootDir, { recursive: true, force: true });
+  }
+});
+
 test('standalone evidence rejects a testability receipt from a different declared public scenario', async () => {
   const rootDir = await mkdtemp(path.join(os.tmpdir(), 'rex-standalone-testability-'));
   try {

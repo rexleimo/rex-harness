@@ -305,10 +305,23 @@ export function advanceSoftwareWorkflow(workflow, evidence = [], {
 
   // This is a public state-machine API, so enforce the same receipt boundary
   // used by persisted CLI and AIOS entry points before accepting any evidence.
-  const normalizedEvidence = validateCommandEvidence(workflow.currentCommand, evidence, {
-    resolveReceipt,
-    expectedScenarioCommand: expectedScenarioCommand(workflow),
-  });
+  const scenarioCommand = expectedScenarioCommand(workflow);
+  let normalizedEvidence;
+  try {
+    normalizedEvidence = validateCommandEvidence(workflow.currentCommand, evidence, {
+      resolveReceipt,
+      expectedScenarioCommand: scenarioCommand,
+    });
+  } catch {
+    return Object.freeze({
+      outcome: 'blocked',
+      blockedReason: 'evidence-invalid',
+      workflow,
+      completedActivation: null,
+      missingEvidence: Object.freeze([]),
+      nextCapability: null,
+    });
+  }
 
   const resolvedTestabilityDecision = resolveTestabilityDecision(
     workflow,

@@ -57,12 +57,45 @@ function normalizeDependsOn(value, label) {
   )));
 }
 
+function assertDependencyGraph(features) {
+  const byId = new Map(features.map((feature) => [feature.id, feature]));
+  for (const feature of features) {
+    const dependencies = new Set();
+    for (const dependencyId of feature.dependsOn) {
+      if (!byId.has(dependencyId)) {
+        throw new TypeError(`long-running delivery has unknown dependency: ${dependencyId}`);
+      }
+      if (dependencies.has(dependencyId)) {
+        throw new TypeError(`long-running delivery has duplicate dependency: ${dependencyId}`);
+      }
+      if (dependencyId === feature.id) {
+        throw new TypeError(`long-running delivery feature cannot depend on itself: ${feature.id}`);
+      }
+      dependencies.add(dependencyId);
+    }
+  }
+
+  const visiting = new Set();
+  const visited = new Set();
+  function visit(feature) {
+    if (visiting.has(feature.id)) {
+      throw new TypeError(`long-running delivery has dependency cycle at: ${feature.id}`);
+    }
+    if (visited.has(feature.id)) return;
+    visiting.add(feature.id);
+    for (const dependencyId of feature.dependsOn) visit(byId.get(dependencyId));
+    visiting.delete(feature.id);
+    visited.add(feature.id);
+  }
+  for (const feature of features) visit(feature);
+}
+
 function normalizeFeatures(features) {
   if (!Array.isArray(features) || features.length === 0) {
     throw new TypeError('long-running delivery requires at least one feature');
   }
   const ids = new Set();
-  return Object.freeze(features.map((feature, index) => {
+  const normalized = features.map((feature, index) => {
     if (!feature || typeof feature !== 'object' || Array.isArray(feature)) {
       throw new TypeError(`long-running delivery feature[${index}] must be an object`);
     }
@@ -84,7 +117,9 @@ function normalizeFeatures(features) {
       retryCount: 0,
       evidenceRefs: Object.freeze([]),
     });
-  }));
+  });
+  assertDependencyGraph(normalized);
+  return Object.freeze(normalized);
 }
 
 function verifyBaseline(baseline, resolveReceipt) {
@@ -210,7 +245,7 @@ function withFeatureEvidence(feature, reference, changes = {}) {
   });
 }
 
-function withTerminalDecision(ledger, feature, kind, reference = null, changes = {}) {
+function withTerminalDecision(ledger, feature, kind, reference = null, changes = {}, reason = null) {
   const features = Object.freeze(ledger.features.map((candidate) => {
     if (candidate.id !== feature.id) return candidate;
     if (reference) return withFeatureEvidence(candidate, reference, changes);
@@ -220,7 +255,7 @@ function withTerminalDecision(ledger, feature, kind, reference = null, changes =
   }));
   return Object.freeze({
     ledger: Object.freeze({ ...ledger, status: kind, features }),
-    decision: Object.freeze({ kind }),
+    decision: Object.freeze({ ...(reason ? { reason } : {}), kind }),
   });
 }
 
@@ -234,14 +269,19 @@ export function advanceLongRunningDelivery(ledger, evidence, {
 } = {}) {
   const feature = currentFeature(ledger);
   const observedEvidence = featureEvidence(evidence);
-  if (!observedEvidence || observedEvidence.featureId !== feature.id) {
-    return withTerminalDecision(ledger, feature, 'blocked');
+  if (!observedEvidence) {
+    return withTerminalDecision(ledger, feature, 'blocked', null, {}, 'evidence-missing');
+  }
+  if (observedEvidence.featureId !== feature.id) {
+    return withTerminalDecision(ledger, feature, 'blocked', null, {}, 'evidence-feature-mismatch');
   }
   if (observedEvidence.kind === 'acceptance-unresolved') {
     return withTerminalDecision(ledger, feature, 'human-gate', observedEvidence.reasonRef);
   }
   const receipt = resolveFeatureReceipt(feature, observedEvidence, resolveReceipt);
-  if (!receipt) return withTerminalDecision(ledger, feature, 'blocked');
+  if (!receipt) {
+    return withTerminalDecision(ledger, feature, 'blocked', null, {}, 'evidence-rejected');
+  }
   if (receipt.exitCode !== 0) {
     const retryCount = feature.retryCount + 1;
     if (retryCount <= ledger.retryPolicy.maxRetries) {
@@ -255,11 +295,28 @@ export function advanceLongRunningDelivery(ledger, evidence, {
         decision: Object.freeze({ kind: 'retry', currentFeatureId: feature.id }),
       });
     }
-    return withTerminalDecision(ledger, feature, 'human-gate', observedEvidence.receiptRef, { retryCount });
+    return withTerminalDecision(
+      ledger,
+      feature,
+      'human-gate',
+      observedEvidence.receiptRef,
+      { retryCount },
+      'verification-failed',
+    );
   }
-  const currentIndex = ledger.features.findIndex((candidate) => candidate.id === feature.id);
-  const nextFeature = ledger.features.slice(currentIndex + 1)
-    .find((candidate) => candidate.status === 'pending') || null;
+  const acceptedFeatureIds = new Set([
+    ...ledger.features
+      .filter((candidate) => candidate.status === 'accepted')
+      .map((candidate) => candidate.id),
+    feature.id,
+  ]);
+  const nextFeature = ledger.features.find((candidate) => (
+    candidate.status === 'pending'
+      && candidate.dependsOn.every((dependencyId) => acceptedFeatureIds.has(dependencyId))
+  )) || null;
+  const hasPendingFeatures = ledger.features.some((candidate) => (
+    candidate.id !== feature.id && candidate.status === 'pending'
+  ));
   const features = Object.freeze(ledger.features.map((candidate) => {
     if (candidate.id === feature.id) {
       return withFeatureEvidence(candidate, observedEvidence.receiptRef, { status: 'accepted' });
@@ -270,16 +327,19 @@ export function advanceLongRunningDelivery(ledger, evidence, {
     return candidate;
   }));
   const currentFeatureId = nextFeature?.id || null;
-  const completed = !nextFeature;
+  const unresolvedDependencies = !nextFeature && hasPendingFeatures;
+  const completed = !nextFeature && !unresolvedDependencies;
   const nextLedger = Object.freeze({
     ...ledger,
-    status: completed ? 'completed' : 'active',
+    status: completed ? 'completed' : unresolvedDependencies ? 'blocked' : 'active',
     features,
     currentFeatureId,
   });
   return Object.freeze({
     ledger: nextLedger,
-    decision: completed
+    decision: unresolvedDependencies
+      ? Object.freeze({ kind: 'blocked', reason: 'dependencies-unresolved' })
+      : completed
       ? Object.freeze({ kind: 'completed' })
       : Object.freeze({ kind: 'continue', currentFeatureId }),
   });

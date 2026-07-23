@@ -21,11 +21,15 @@ export function presentCliWorkflow(result, { full = false } = {}) {
   if (full) return result;
   const workflow = result?.workflow;
   if (!workflow) throw new TypeError('CLI workflow output requires a standalone workflow result');
+  const blockedReason = result.blockedReason === undefined
+    ? {}
+    : { blockedReason: result.blockedReason };
 
   return Object.freeze({
     schemaVersion: 1,
     kind: 'rex.cli.workflow-command.v1',
     outcome: result.outcome,
+    ...blockedReason,
     status: workflow.status,
     workflowActivationId: workflow.workflowActivationId,
     workItemKey: workflow.workItemKey,
