@@ -1,5 +1,10 @@
 # rex-harness
 
+[![Parent project](https://img.shields.io/badge/parent-harness--cli-0ea5e9)](https://github.com/rexleimo/harness-cli)
+
+> Standalone software-engineering control plane for coding agents.
+> Derives Facts from Observations, selects one Capability at a time, emits a typed Provider Command, and advances only with matching Evidence.
+
 `rex-harness` 是一个可独立运行的软件工程工作流内核。它读取 Coding Agent 的任务和结构化 Observation，推导 Fact，一次只选择一个 Capability，发出当前 Provider Command，并用类型化 Evidence 决定阻塞、续转或完成。
 
 它可以单独辅助 Codex、Claude、Gemini、OpenCode、Hermes、Grok Build 或其他支持目录型 Skill 的 Agent；接入 `harness-cli / AIOS` 后，再获得模型执行、ContextDB、Team、长任务恢复和安全治理等宿主增强。
