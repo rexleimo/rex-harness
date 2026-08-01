@@ -12,6 +12,12 @@
       "prompt": "高风险并发边界的测试偶尔通过，Agent 想增加长时间 sleep 作为修复。当前 Command 是严格 TDD，请给出证据优先的处理。",
       "expected_output": "拒绝用时间延迟掩盖竞态，要求风险匹配的顺序或同步探针、真实失败原因和不弱化测试的实现差异。",
       "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "严格 TDD 阶段已经完成且没有新的风险或行为差异；另一个请求否定了当前测试范围。请决定是否复用旧 receipt。",
+      "expected_output": "无新风险返回 no-op-recorded；范围否定或探针不可执行返回 blocked/replan-required；不得复用旧 receipt 或静默切换 TDD 强度。",
+      "files": []
     }
   ]
 }

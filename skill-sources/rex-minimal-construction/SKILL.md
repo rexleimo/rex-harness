@@ -19,3 +19,7 @@ description: Use only after rex-harness selects minimal construction evaluation 
 返回 `reuse-ladder-evaluated` 和 `minimal-option-recorded`，每项都必须附带真实的代码、依赖或决定引用。宿主要求 `AIOS_REX_EVIDENCE` 时，只在结尾输出当前 `activationId` 的恰好一个证据信封。
 
 简单不等于偷工减料；不能为了减少文件或代码量破坏清晰边界，也不要调用下一个 Provider。
+
+### S5 completion boundary
+
+最小构造结论必须保留复用阶梯、被拒绝选项、已知沉淀约束和 evidence refs。若需求已由现有结构满足，返回 `no-op-recorded`；若否定条款或安全/正确性证据与最小方案冲突，返回 `blocked`，不得用更短代码掩盖未解决边界。

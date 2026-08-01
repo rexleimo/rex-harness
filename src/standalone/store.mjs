@@ -10,6 +10,7 @@ import {
 } from '../domain/execution-receipts.mjs';
 import {
   advanceSoftwareWorkflow,
+  assertSoftwareWorkflowCommandContract,
   startSoftwareWorkflow,
 } from '../workflows/software-workflow-runtime.mjs';
 
@@ -108,7 +109,13 @@ function writeWorkflow(paths, workflow) {
 function readByWorkflowId(paths, workflowActivationId) {
   const target = activationFile(paths, workflowActivationId);
   if (!fs.existsSync(target)) return null;
-  return readJson(target, 'rex.software-workflow-activation.v1');
+  const workflow = readJson(target, 'rex.software-workflow-activation.v1');
+  try {
+    assertSoftwareWorkflowCommandContract(workflow);
+  } catch (error) {
+    throw new Error(`invalid rex standalone workflow command contract: ${target}: ${error.message}`, { cause: error });
+  }
+  return workflow;
 }
 
 function readByWorkItem(paths, workItemKey) {
@@ -302,6 +309,7 @@ export function submitStandaloneEvidence({
   commandToken,
   evidence = [],
   testabilityDecision,
+  requirementsDecision,
   now = new Date(),
 } = {}) {
   const paths = statePaths(rootDir);
@@ -319,6 +327,7 @@ export function submitStandaloneEvidence({
   const advanced = advanceSoftwareWorkflow(workflow, normalizedEvidence, {
     now,
     testabilityDecision,
+    requirementsDecision,
     resolveReceipt,
   });
   // 显式拒绝的证据保留当前 Command，调用者才能按原身份重试。

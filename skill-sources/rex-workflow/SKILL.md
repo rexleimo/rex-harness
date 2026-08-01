@@ -60,3 +60,7 @@ rex-harness evidence --activation <activationId> --command-token <commandToken> 
 - 不伪造命令执行、测试、差异、审查或文件引用，也不提交 placeholder、TODO 或 TBD。
 - token 失效、状态损坏、Provider 无法解析、Evidence 类型不符或引用不可验证时 fail-closed，拒绝继续并报告具体错误。
 - CLI 返回的 Capability、阶段和 Provider 是唯一执行授权；用户新目标必须建立新的工作项，不能借继续旧任务扩大范围。
+
+### S5 completion boundary
+
+Workflow completion 只能由 compact response contract 判定：`active` 必须有当前 command，`completed` 必须是 `command=null` 且 `missingEvidence=[]`。重复已完成目标返回 `no-op-recorded`；否定条款、目标变化、旧 work-item sediment 或状态组合矛盾时返回 `blocked`/`replan-required`，不得复用旧 token、旧 evidence 或静默扩大工作项。

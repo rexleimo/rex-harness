@@ -25,3 +25,7 @@ description: Use only after rex-harness selects behavior-focused test design and
 返回 `test-scope-contract-recorded`、`acceptance-test-mapping-recorded` 和 `test-seam-recorded`，每项都必须附带真实的文档或决定引用。宿主要求 `AIOS_REX_EVIDENCE` 时，只在结尾输出当前 `activationId` 的恰好一个证据信封；`decide-testability` 的信封同时包含类型化 `testabilityDecision`。
 
 本能力只决定测什么和从哪里观察，不执行实现，也不自行升级为严格 TDD。不要调用下一个 Provider。
+
+### S5 completion boundary
+
+测试设计必须明确已接受的完成判据、否定条款、已有 sediment 和 evidence refs。若目标行为已经被现有矩阵完整覆盖且没有新风险，返回 `no-op-recorded`；若目标变化、验收缺失或现有契约冲突，返回 `blocked`/`replan-required`，不得借旧测试设计直接进入 TDD。

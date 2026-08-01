@@ -5,6 +5,7 @@ import { normalizeChangeRiskAssessment } from './change-risk-assessment.mjs';
 export const OBSERVATION = Object.freeze({
   EXECUTION_FAILED: 'execution.failure-observed',
   REGRESSION_OBSERVED: 'test.regression-observed',
+  BEHAVIOR_CHANGE: 'change.behavior-requested',
   HIGH_RISK_BOUNDARY: 'change.high-risk-boundary',
   NEW_CONSTRUCT_PROPOSED: 'change.new-construct-proposed',
   IMPLEMENTATION_READY: 'implementation.ready',
@@ -18,12 +19,17 @@ export const OBSERVATION = Object.freeze({
   CHANGE_RISK_ASSESSED: 'change.risk-assessed',
 });
 
+const OBSERVATION_KEYS = new Set(['kind', 'evidenceRefs', 'changeRisk']);
+
 export function normalizeObservations(observations = []) {
   if (!Array.isArray(observations)) throw new TypeError('observations must be an array');
 
   return observations.map((observation, index) => {
     if (!observation || typeof observation !== 'object') {
       throw new TypeError(`observation ${index} must be an object`);
+    }
+    if (Object.keys(observation).some((key) => !OBSERVATION_KEYS.has(key))) {
+      throw new TypeError(`observation ${index} contains an unknown field`);
     }
     const kind = String(observation.kind || '').trim();
     if (!kind) throw new TypeError(`observation ${index} requires kind`);
@@ -37,6 +43,9 @@ export function normalizeObservations(observations = []) {
         evidenceRefs: Object.freeze(evidenceRefs),
         changeRisk: normalizeChangeRiskAssessment(observation.changeRisk),
       });
+    }
+    if (observation.changeRisk !== undefined) {
+      throw new TypeError(`observation ${kind} cannot contain changeRisk`);
     }
     return Object.freeze({ kind, evidenceRefs: Object.freeze(evidenceRefs) });
   });

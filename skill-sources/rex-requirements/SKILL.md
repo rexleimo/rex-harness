@@ -49,4 +49,8 @@ description: Use only after rex-harness selects software requirements clarificat
 返回 `acceptance-criteria-recorded`、`non-goals-recorded` 和 `first-slice-identified`，每项附带真实的文档、决定或任务引用。
 宿主要求 `AIOS_REX_EVIDENCE` 时，只在结尾输出当前 `activationId` 的恰好一个证据信封。
 
+### 需求变更边界
+
+Requirements Decision 一旦完成并写入 workflow state，后续路由以该类型化 artifact 和追加 Evidence 为准，不覆盖原 decision。若用户在工作流中途改变需求，应新开一条 workflow，而不是修改既有 decision。
+
 不要替用户选择尚未确认的产品行为，不要创建第二份实施计划，也不要调用下一个 Provider。

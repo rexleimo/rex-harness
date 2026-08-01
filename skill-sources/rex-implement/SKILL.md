@@ -40,3 +40,7 @@ description: Use only after rex-harness selects bounded implementation execution
 
 宿主要求 `AIOS_REX_EVIDENCE` 时，只在结尾输出当前 `activationId` 的恰好一个证据信封。
 不要选择下一个 Capability，不要自行调用 Review，也不要创建第二条工作流。
+
+### S1 batch boundary
+
+本批次的完成状态只能由当前 Command 的验收条目、真实 diff 和 focused receipt 共同决定。没有行为差异时返回 `no-op-recorded` 并停止；发现超出当前 Command 的 sediment、需求变化或不可逆副作用时返回 `blocked`，引用原因，不把它们并入实现。任何 rollback 说明必须引用旧 source/projection digest 和可执行恢复命令，不得用“已备份”代替证据。

@@ -12,6 +12,12 @@
       "prompt": "当前规划 Command 包含两个可独立处理的客户端投影和一个必须最后执行的兼容性检查，请记录并行边界和汇合门禁。",
       "expected_output": "区分独立工作与共享状态，给出汇合所需证据，但不在规划阶段自行启动 Team 或实施。",
       "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "返回一个 rex.delivery-ticket.v1：必须引用独立 Decision Ticket，包含纵向 work items、真实依赖、frontier、parallelGroups、convergenceGate；只有提供 Runtime Artifact Contract 才能声明 hard completion。",
+      "expected_output": "一份可由 normalizePlanningArtifact 校验的 Delivery Ticket，而不是文件列表或第二份需求决策。",
+      "files": []
     }
   ]
 }

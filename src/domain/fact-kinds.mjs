@@ -2,6 +2,9 @@
 // AIOS 必须先附上证据引用，rex-harness 才会评估这些 Fact。
 export const FACT = Object.freeze({
   ACCEPTANCE_CRITERIA_MISSING: 'acceptance-criteria-missing',
+  EXPLICIT_INTENT: 'explicit-intent',
+  EXPLICIT_INTENT_UNKNOWN: 'explicit-intent-unknown',
+  REQUIREMENTS_DECISION_RECORDED: 'requirements-decision-recorded',
   DOMAIN_VOCABULARY_AMBIGUOUS: 'domain-vocabulary-ambiguous',
   DESIGN_DECISION_BLOCKED: 'design-decision-blocked',
   DEPENDENT_WORK_ITEMS: 'dependent-work-items',

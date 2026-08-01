@@ -28,6 +28,10 @@ export function findFact(facts, ...kinds) {
   return facts.find((fact) => kinds.includes(fact.kind)) || null;
 }
 
+export function findFactValue(facts, kind, ...values) {
+  return facts.find((fact) => fact.kind === kind && values.includes(fact.value)) || null;
+}
+
 /**
  * 将复合触发条件收敛成一个可审计的触发结果。
  * reason 决定路由原因码，prerequisites 与 reason 的证据都会进入 Activation。

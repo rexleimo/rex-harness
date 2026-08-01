@@ -2,6 +2,32 @@
 
 本文件记录 `rex-harness` 独立产品的公开变化。版本遵循 Semantic Versioning。
 
+## [0.5.0] - 2026-08-01
+
+### Added
+
+- 新增 `normalizeEvidenceRefs()`：集中校验所有 Artifact 的 evidence ref，必须带协议前缀（`artifact:`、`receipt:` 等），拒绝 TODO/TBD/placeholder 占位符，覆盖 Wayfinder、Planning 和 Requirements 全部 Artifact。
+- 新增 `src/domain/wayfinder-artifact.mjs`：Navigation Map、Decision Graph、Decision Ticket、Next Slice 的完整 schema 校验；partial 状态不得声明 Decision Ticket 或 Next Slice。
+- 新增 `src/domain/planning-artifact.mjs`：vertical Delivery Ticket、Frontier（ready/blocked 互斥）、Parallel Group（不允许跨组重复引用同一工作项）、Convergence Gate、Runtime Artifact Contract 校验。
+- 新增 `src/domain/review-verdict.mjs`：Standards/Spec Review 判决 schema。
+- 新增 `src/clients/projection-manifest.mjs`：集中管理 Skill projection source 目录和 target 路径，替代原有散布在 `install.mjs` 的文件路径。
+- 新增 `tests/domain/wayfinder-artifact.test.mjs`、`tests/domain/planning-artifact.test.mjs`、`tests/domain/review-verdict.test.mjs`：全覆盖各 Artifact schema 正反向用例。
+- 新增 Wayfinder Skill（S3）eval 和 Planning Skill（S3）eval；S4/S5 批次（rex-code-review、rex-design、rex-strict-tdd、rex-refactor-hardening、rex-minimal-construction、rex-test-design、rex-workflow）完成 eval 更新和 projection history 追加。
+
+### Fixed
+
+- `recoverInterruptedArtifacts` 恢复中断备份前，现在重新验证 marker digest 是否在受管 `projection-history.json` 记录中，防止伪造 junction 被提升为正式 Skill 目录；拒绝时返回 `interrupted-backup-untrusted` 冲突原因。
+- Activation store 改为写前事务（`.aios/workflow-activations/transactions/<id>.json.pending`）：写入前先落 pending 文件，写完后删除；重启时 roll-forward 残留事务；读取时校验 projection 与 workflow 文件一致性，不一致 fail-closed（`stale-activation-projection`）。
+- 同一 Command token 现在通过 store 文件锁串行化；并发写入返回 `AIOS_REX_STORE_BUSY`，不再静默接受重复推进。
+- `syncEvidenceToMatchingPlan`（plan evidence mirror）失败时不再 throw，而是返回 `planEvidence.status = 'failed'`，保留已提交的 Rex 状态可见性。
+- Wayfinder `evidenceRefs` 和 Planning `evidenceRefs`/`decisionTicketRef`/`runtimeArtifactContract.artifactRef` 现在统一经过 `normalizeEvidenceRefs()`；旧版只校验字段存在，现在同时校验协议格式。
+- Planning Frontier `ready`/`blocked` 不得重叠、不得列出同一工作项两次；Parallel Group 不得在不同组中重复引用同一工作项。
+
+### Changed
+
+- `recoverInterruptedArtifacts` 签名由 `(targetRoot, skillId)` 改为 `(targetRoot, plan)`，`plan` 包含 `skillId`、`sourceDigest`、`historicalDigests`，使调用方可在不重新读取 history 文件的情况下完成全量校验。
+- 13 个 canonical Skill source（S1–S5 全批次）通过独立 SkillOpt eval 更新；所有变更 Skill 的当前 digest 已追加到 `projection-history.json`，旧 digest 保留用于 rollback。
+
 ## [0.4.2] - 2026-07-17
 
 ### Added

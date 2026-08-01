@@ -22,3 +22,7 @@ description: Use only after rex-harness selects high-risk strict TDD and supplie
 按当前阶段返回真实引用：使用 `rex-harness receipt --root <project-root> -- <focused-test-command>` 记录实际执行。`failing-test-observed` 只能引用真实非零退出的 `receipt:<id>`；`passing-test-observed`、`refactor-check-recorded` 和 `test-strength-check-recorded` 只能引用真实零退出的 `receipt:<id>`。自然语言、`command:`、旧日志或未执行命令不能替代回执；强度探针的临时失败说明写入审查产物，恢复实现后的通过回执才可用于推进。其余 Evidence 为 `red-failure-reason-recorded`、`implementation-diff-recorded` 和 `test-diff-review-recorded`。宿主要求 `AIOS_REX_EVIDENCE` 时，只在结尾输出当前 `activationId` 的恰好一个证据信封。
 
 一次只完成当前 Command 的阶段，不伪造测试强度证据，也不要调用下一个 Provider。
+
+### S5 completion boundary
+
+严格 TDD 完成判据必须同时保留范围契约、真实 RED/GREEN/REFACTOR receipts 和强度探针结果。若输入只是重申已完成阶段且没有新风险，返回 `no-op-recorded`；若观察包含否定目标、范围变化或探针无法执行，返回 `blocked`/`replan-required`，不得静默升级、降级或复用旧 receipt。

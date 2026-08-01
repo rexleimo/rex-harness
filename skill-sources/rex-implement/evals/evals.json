@@ -12,6 +12,12 @@
       "prompt": "The implementation capability has already been activated for a cache invalidation fix with an agreed public test seam. Apply the smallest correct slice and return control after focused tests pass.",
       "expected_output": "A minimal vertical fix with no new workflow decisions and a typed evidence handoff backed by real diff and test references.",
       "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "The implementation Command is active but the requested change is already present. Return a no-op result, or block if the request would add scope, and include the old source/projection digest needed for rollback.",
+      "expected_output": "No implementation is claimed without a real diff; no-op, blocked, and rollback evidence are explicit and verifiable.",
+      "files": []
     }
   ]
 }

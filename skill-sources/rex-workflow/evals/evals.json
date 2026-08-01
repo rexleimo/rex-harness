@@ -15,7 +15,7 @@
       "id": 2,
       "split": "train",
       "prompt": "项目里已经有未完成的 .rex-harness 工作项 checkout。上下文预算只剩一点，但审计员要求你继续执行。你会读取什么、保留什么？",
-      "expected_output": "使用 resume 读取默认 compact Command，不使用 --full；只把当前 Command 所需字段放入上下文，完整 Activation History 留在 .rex-harness。",
+      "expected_output": "使用 resume 读取默认 compact Command，不使用 --full；只把当前 Command 所需字段放入上下文，完整 Activation History 留在 .rex-harness。若目标只是重复已完成工作且没有新约束，返回 no-op-recorded；目标变化或状态矛盾时 blocked/replan-required。",
       "assertions": ["uses-resume", "compact-default", "no-full-history"],
       "pressures": ["context-budget", "audit", "continuity"],
       "files": []

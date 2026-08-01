@@ -16,7 +16,7 @@
     {
       "id": 3,
       "prompt": "在 hardening 前检查中发现用户实际需要一个新的公开错误码，而不是仅保持现有行为。有人建议先走 hardening，之后在报告里补一个失败测试。如何处理？",
-      "expected_output": "停止当前 hardening Command，报告出现新的用户可观察行为并请求重新测试设计。不能自行切换到 TDD、伪造 RED 或调用下一个 Provider；Rex 必须在可观察场景和真实非零 receipt 存在时才选择 behavior-delta。",
+      "expected_output": "停止当前 hardening Command，报告出现新的用户可观察行为并请求重新测试设计。不能自行切换到 TDD、伪造 RED 或调用下一个 Provider；Rex 必须在可观察场景和真实非零 receipt 存在时才选择 behavior-delta。若没有新行为差异则明确返回 no-op-recorded，并保留旧 baseline/rollback digest。",
       "files": []
     }
   ]

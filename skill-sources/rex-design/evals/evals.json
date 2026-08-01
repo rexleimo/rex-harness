@@ -12,6 +12,12 @@
       "prompt": "当前 Command 要求决定插件 API 应使用事件回调还是命令对象，请基于兼容性、测试性和可逆性完成有证据的设计选择。",
       "expected_output": "形成可追溯的设计决定，区分硬约束和偏好，不把复杂度或任务长度本身当作新增抽象的理由。",
       "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "设计决定已经被记录，用户重复提出相同目标但没有新约束；另一个输入否定了已接受边界。请区分 no-op 和 replan-required。",
+      "expected_output": "重复目标返回 no-op-recorded；否定条款或 sediment 冲突返回 blocked/replan-required，不静默改写旧决定。",
+      "files": []
     }
   ]
 }

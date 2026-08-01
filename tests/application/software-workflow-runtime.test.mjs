@@ -5,8 +5,10 @@ import {
   CAPABILITY,
   OBSERVATION,
   advanceSoftwareWorkflow,
+  assertSoftwareWorkflowCommandContract,
   startSoftwareWorkflow,
 } from '../../src/index.mjs';
+import { REQUIREMENTS_DECISION_FIXTURE } from '../fixtures/requirements-decision.mjs';
 
 function sequentialIds(prefix) {
   let index = 0;
@@ -95,6 +97,76 @@ function completeTestDesignWithHonestRed(workflow, createActivationId) {
     testabilityDecision: honestRedDecision(),
   });
 }
+
+test('explicit intent is normalized in workflow state and blocked review is resumable', () => {
+  const blocked = startSoftwareWorkflow({
+    workflowActivationId: 'explicit-intent-blocked',
+    workItemKey: 'intent-review',
+    request: { message: 'Review this change.', explicitIntent: { intent: 'REVIEW' } },
+  });
+
+  assert.equal(blocked.request.explicitIntent, 'review');
+  assert.equal(blocked.status, 'blocked');
+  assert.equal(blocked.blockedReason, 'review-requires-diff');
+  assert.equal(blocked.currentActivation, null);
+  assert.equal(blocked.currentCommand, null);
+  assert.deepEqual(advanceSoftwareWorkflow(blocked), {
+    outcome: 'blocked',
+    blockedReason: 'review-requires-diff',
+    workflow: blocked,
+    completedActivation: null,
+    missingEvidence: [],
+    nextCapability: null,
+  });
+});
+
+test('requirements decision survives partial evidence completion', () => {
+  const createActivationId = sequentialIds('requirements-partial');
+  const started = startSoftwareWorkflow({
+    workflowActivationId: 'workflow-requirements-partial',
+    workItemKey: 'requirements-partial',
+    request: { message: '把用户登录改一下' },
+    createActivationId,
+  });
+  const partial = advanceSoftwareWorkflow(started, [
+    { kind: 'acceptance-criteria-recorded', refs: ['artifact:requirements'] },
+    { kind: 'requirements-decision-recorded', refs: [REQUIREMENTS_DECISION_FIXTURE.decisionRef] },
+  ], {
+    ...workflowOptions(createActivationId),
+    requirementsDecision: REQUIREMENTS_DECISION_FIXTURE,
+  });
+  assert.equal(partial.outcome, 'blocked');
+  assert.equal(partial.workflow.requirementsDecision.decisionRef, REQUIREMENTS_DECISION_FIXTURE.decisionRef);
+
+  const completed = advanceSoftwareWorkflow(partial.workflow, [
+    { kind: 'non-goals-recorded', refs: ['artifact:requirements'] },
+    { kind: 'first-slice-identified', refs: ['artifact:requirements'] },
+  ], workflowOptions(createActivationId));
+  assert.equal(completed.outcome, 'completed');
+  assert.equal(completed.workflow.requirementsDecision.decisionRef, REQUIREMENTS_DECISION_FIXTURE.decisionRef);
+  assert.equal(completed.workflow.currentCapabilityId, CAPABILITY.TESTING_DESIGN);
+});
+
+test('workflow command contract rejects forged identity and evidence gates', () => {
+  const workflow = startSoftwareWorkflow({
+    workflowActivationId: 'workflow-command-contract',
+    workItemKey: 'command-contract',
+    request: { message: 'Update checkout validation behavior.' },
+    createActivationId: sequentialIds('command-contract'),
+  });
+  assert.throws(() => assertSoftwareWorkflowCommandContract({
+    ...workflow,
+    currentCommand: { ...workflow.currentCommand, expectedEvidence: ['forged-evidence'] },
+  }), /expectedEvidence/u);
+
+  const blocked = advanceSoftwareWorkflow({
+    ...workflow,
+    currentCommand: { ...workflow.currentCommand, capabilityId: CAPABILITY.TESTING_TDD },
+  });
+  assert.equal(blocked.outcome, 'blocked');
+  assert.equal(blocked.blockedReason, 'command-invalid');
+  assert.equal(blocked.workflow.currentCommand.executionToken, workflow.currentCommand.executionToken);
+});
 
 test('software workflow owns capability selection, transition history, and execution analytics', () => {
   const createActivationId = sequentialIds('capability');

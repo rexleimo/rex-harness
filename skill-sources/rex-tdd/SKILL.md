@@ -43,3 +43,7 @@ description: Use only after rex-harness selects scope-bound baseline TDD and sup
 凡当前 Command 或 Evidence Contract 要求执行命令，都必须实际运行该命令。若无法执行，明确报告当前阶段 `blocked` 或 `incomplete`，并分别记录已尝试的精确命令、具体错误和可执行的解阻条件；不得用静态推断、手工截图、未执行引用、其他测试结果或前序阶段日志替代本阶段要求的执行结果。可以保留已经取得的部分证据，但必须标注为 partial，且不得据此推进 Command。
 
 宿主要求 `AIOS_REX_EVIDENCE` 时，只在结尾输出当前 `activationId` 的恰好一个证据信封。证据不足时停在当前 Command，不伪造引用，也不要调用下一个 Provider。
+
+### S2 feedback loop boundary
+
+每个 RED/GREEN/REFACTOR 阶段都必须保留前一阶段的行为观察、精确 receipt、当前判定和下一步条件；只有新的真实 receipt 才能推进。若目标行为已经通过且没有新增差异，返回 `no-op-recorded`；若 RED 不可复现、receipt 场景不匹配或测试范围发生变化，返回 `blocked`，不得以旧日志或静态推断替代当前阶段证据。

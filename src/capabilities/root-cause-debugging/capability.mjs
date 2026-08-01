@@ -1,6 +1,6 @@
 import { CAPABILITY } from '../../domain/capability-ids.mjs';
 import { FACT } from '../../domain/fact-kinds.mjs';
-import { findFact } from '../../domain/facts.mjs';
+import { findFact, findFactValue } from '../../domain/facts.mjs';
 
 // 已观察到的失败拥有最高优先级，
 // 防止在真实原因尚未确定时继续进行猜测式修改。
@@ -19,6 +19,7 @@ export const rootCauseDebuggingCapability = Object.freeze({
     })]),
   }),
   activate(facts) {
-    return findFact(facts, FACT.EXECUTION_FAILED);
+    return findFact(facts, FACT.EXECUTION_FAILED)
+      || findFactValue(facts, FACT.EXPLICIT_INTENT, 'debug');
   },
 });

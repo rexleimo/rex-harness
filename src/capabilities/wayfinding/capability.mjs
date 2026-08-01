@@ -1,6 +1,6 @@
 import { CAPABILITY } from '../../domain/capability-ids.mjs';
 import { FACT } from '../../domain/fact-kinds.mjs';
-import { findFact } from '../../domain/facts.mjs';
+import { findFact, findFactValue } from '../../domain/facts.mjs';
 
 // Wayfinding 用于梳理未知执行路径，
 // 但会在生成第二份计划或开始改代码之前主动停止。
@@ -20,6 +20,7 @@ export const wayfindingCapability = Object.freeze({
     })]),
   }),
   activate(facts) {
-    return findFact(facts, FACT.PATH_UNKNOWN);
+    return findFact(facts, FACT.PATH_UNKNOWN)
+      || findFactValue(facts, FACT.EXPLICIT_INTENT, 'wayfinder');
   },
 });

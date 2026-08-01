@@ -14,4 +14,16 @@ description: Use only after rex-harness selects decision wayfinding and supplies
 
 返回 `destination-recorded`、`decision-map-recorded` 和 `next-slice-identified`，每项都必须附带真实的文档、代码或决定引用。宿主要求 `AIOS_REX_EVIDENCE` 时，只在结尾输出当前 `activationId` 的恰好一个证据信封。
 
+### Artifact contract
+
+完成态必须返回一个 `rex.wayfinding-artifact.v1`，只允许以下边界：
+
+- `destination`：目的地、成功信号、范围和 evidence refs；
+- `decisionGraph`：有稳定 id 的节点和边，边不得引用未知节点；
+- `unknowns`：仍未知的问题、影响和 evidence refs；
+- `decisionTicket`：稳定的 `decision-*` id、事实、决定、后果和 evidence refs；
+- `nextSlice`：恰好一个可执行切片，包含 outcome、verification 和 evidence refs。
+
+如果没有真实决定，必须返回 `status: partial` 或 `status: blocked`，且不得同时声称 `decisionTicket` 或 `nextSlice` 已完成。不要输出 TODO、TBD、placeholder、第二份实施计划或 tracker/assignee/child issue。
+
 普通已知计划不使用本能力，也不要在本能力内继续实施或调用下一个 Provider。

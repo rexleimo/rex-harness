@@ -12,6 +12,12 @@
       "prompt": "测试在 CI 失败但本地通过，日志显示超时。当前 Command 只要求证明根因，请说明如何收集证据而不是直接扩大超时。",
       "expected_output": "区分环境、竞态和资源假设，记录可验证实验与根因证据，并拒绝把扩大超时当作原因证明。",
       "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "根因调试 Command 已激活，但同一日志已被复核且没有新的行为差异。请决定是继续猜测、返回 no-op，还是在失败不可复现时阻塞。",
+      "expected_output": "没有新的 observation/receipt 时返回 no-op-recorded；失败不可复现时返回 blocked；不得用旧日志伪造 root-cause-evidenced。",
+      "files": []
     }
   ]
 }

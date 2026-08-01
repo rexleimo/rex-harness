@@ -8,10 +8,13 @@ import {
   normalizeTestabilityDecision,
   testabilityEvidenceRefs,
 } from '../domain/testability-decision.mjs';
+import { normalizeRequirementsDecision } from '../domain/requirements-decision.mjs';
+import { normalizeExplicitIntent } from '../domain/explicit-intent.mjs';
 
 const OBSERVATION_TO_FACT = new Map([
   [OBSERVATION.EXECUTION_FAILED, FACT.EXECUTION_FAILED],
   [OBSERVATION.REGRESSION_OBSERVED, FACT.REGRESSION_OBSERVED],
+  [OBSERVATION.BEHAVIOR_CHANGE, FACT.BEHAVIOR_CHANGE],
   [OBSERVATION.HIGH_RISK_BOUNDARY, FACT.HIGH_RISK_BOUNDARY],
   [OBSERVATION.NEW_CONSTRUCT_PROPOSED, FACT.NEW_CONSTRUCT_PROPOSED],
   [OBSERVATION.IMPLEMENTATION_READY, FACT.IMPLEMENTATION_READY],
@@ -24,8 +27,10 @@ const OBSERVATION_TO_FACT = new Map([
   [OBSERVATION.PATH_UNKNOWN, FACT.PATH_UNKNOWN],
 ]);
 
-const REQUIREMENTS_PATTERN = /\b(?:acceptance criteria|domain vocabulary|ubiquitous language|ambiguous requirements?|unclear requirements?)\b|验收(?:标准|条件)|领域(?:词汇|语言|模型)|需求(?:不清|歧义)|澄清需求/iu;
-const BEHAVIOR_CHANGE_PATTERN = /\b(?:implement(?:ation|ing)?|add|update|change|fix|refactor|build|create|modify)\b|实现|新增|添加|更新|修改|修复|重构|构建|创建/iu;
+const MISSING_REQUIREMENTS_PATTERN = /\b(?:unclear|ambiguous|underspecified)\s+(?:requirements?|acceptance criteria|domain vocabulary)\b|\b(?:acceptance criteria|domain vocabulary|ubiquitous language|requirements?)\b.{0,24}\b(?:missing|unclear|ambiguous|undefined|not\s+(?:defined|clear|recorded|settled)|need(?:s)?\s+(?:clarification|to\s+be\s+clarified)|require(?:s)?\s+clarification)\b|\b(?:clarif(?:y|ication)|clarify)\s+(?:the\s+)?(?:requirements?|acceptance criteria|domain vocabulary|ubiquitous language)\b|(?:验收(?:标准|条件)|领域(?:词汇|语言|模型)|需求)(?:.{0,8})(?:缺失|不清|不明确|有歧义|未(?:定义|明确|确定)|没有|缺少|需要(?:补充|澄清|明确))|(?:补充|澄清|明确).{0,10}(?:验收|需求|领域)/iu;
+const SATISFIED_REQUIREMENTS_PATTERN = /\b(?:acceptance criteria|acceptance conditions|domain vocabulary|ubiquitous language|requirements?)\b\s*(?:are|is|:|-)?\s*(?:already\s+)?(?:recorded|defined|clear|confirmed|settled|specified|agreed|complete)\b|\b(?:acceptance criteria|acceptance conditions)\s*[:=-]|(?:验收(?:标准|条件)|领域(?:词汇|语言|模型)|需求)\s*(?:已经|已|为|是|明确|清楚|确定|记录|定义)/iu;
+const VAGUE_BEHAVIOR_PATTERN = /(?:把|将)(?:(?![。！？.!?;；]).){0,24}?(?:改一改|改一下|调整一下|优化一下|弄一下|处理一下|完善一下|改进|改善|优化|调整|修一下)(?![了过完好])(?=[。！？.!?;；，,]|$)|(?:改一改|改一下|调整一下|优化一下|弄一下|处理一下|完善一下|改进|改善|优化|调整|修一下)(?![了过完好])(?:[\p{Script=Han}a-z0-9_-]{0,20})(?:流程|逻辑|行为|功能|体验|处理|系统|模块|权限|会话|支付|登录)(?=[。！？.!?;；，,]|$)|\b(?:tweak|change|adjust|improve|optimi[sz]e|refine|enhance|polish|streamline|tune|fix)\s+(?:it|this|that|something|the\s+(?:login|auth(?:entication)?|checkout|business|core)\s+logic|(?:the\s+)?(?:[a-z][a-z0-9_-]*\s+){0,3}(?:flow|process|logic|behavior|handling|experience|function|feature|system))\b/iu;
+const BEHAVIOR_CHANGE_PATTERN = /\b(?:implement(?:ation|ing)?|add|update|change|fix|refactor|build|create|modify|improve|optimi[sz]e|refine|enhance|polish|streamline|tune|adjust)\b|实现|新增|添加|更新|修改|改|修复|重构|构建|创建|改进|改善|优化|调整|完善|打磨|调优|修好/iu;
 const NEW_CONSTRUCT_PATTERN = /\b(?:add|create|introduce|new (?:module|helper|dependency|service|class|abstraction))\b|新增|添加|创建|新建|引入(?:依赖|模块|抽象)|(?:一个|一项)?新的?[\p{Script=Han}a-z0-9_-]{0,16}(?:模块|抽象|依赖|服务|类|组件|工具)/iu;
 const FAILURE_PATTERN = /\b(?:(?:execution|command|build|test) fail(?:ed|ure)?|crash)\b|执行失败|命令失败|构建失败|测试失败|报错|崩溃/iu;
 const DEPENDENT_PATTERN = /\b(?:first.+then|then.+finally|multi[-\s]?step|across (?:files|modules)|migration|workflow refactor)\b|先.+再|最后|多步骤|跨(?:文件|模块)|迁移|工作流重构/iu;
@@ -58,12 +63,6 @@ const RISK_DOMAIN_PATTERNS = Object.freeze([
   }),
 ]);
 
-function explicitIntentValue(explicitIntent) {
-  if (typeof explicitIntent === 'string') return explicitIntent.trim().toLowerCase();
-  if (!explicitIntent || typeof explicitIntent !== 'object') return '';
-  return String(explicitIntent.intent || explicitIntent.kind || explicitIntent.route || '').trim().toLowerCase();
-}
-
 function removeNegatedActions(value) {
   let hadNegatedAction = false;
   let actionableValue = value;
@@ -76,9 +75,13 @@ function removeNegatedActions(value) {
   return { actionableValue, hadNegatedAction };
 }
 
+function hasMissingRequirementsSignal(value) {
+  if (MISSING_REQUIREMENTS_PATTERN.test(value)) return true;
+  return VAGUE_BEHAVIOR_PATTERN.test(value) && !SATISFIED_REQUIREMENTS_PATTERN.test(value);
+}
+
 /**
  * 把请求文本视为带明确来源的 Observation，而不是把模型直觉伪装成证据。
- * 结构化 Observation 会与文本推导合并；同类 Fact 的引用会去重。
  */
 export function deriveSoftwareFacts({
   message = '',
@@ -86,8 +89,12 @@ export function deriveSoftwareFacts({
   observations = [],
   completedCapabilities = [],
   testabilityDecision = null,
+  requirementsDecision = null,
 } = {}) {
   const facts = new Map();
+  const normalizedRequirementsDecision = requirementsDecision
+    ? normalizeRequirementsDecision(requirementsDecision)
+    : null;
   const addFact = (kind, evidenceRefs, value) => {
     const current = facts.get(kind);
     if (current?.value !== undefined && value !== undefined && current.value !== value) {
@@ -97,7 +104,10 @@ export function deriveSoftwareFacts({
     facts.set(kind, { evidenceRefs: refs, value: current?.value ?? value });
   };
 
-  for (const observation of normalizeObservations(observations)) {
+  const structuredObservations = normalizedRequirementsDecision
+    ? [...observations, ...normalizedRequirementsDecision.observations]
+    : observations;
+  for (const observation of normalizeObservations(structuredObservations)) {
     const factKind = OBSERVATION_TO_FACT.get(observation.kind);
     if (factKind) addFact(factKind, observation.evidenceRefs);
     if (observation.kind === OBSERVATION.CHANGE_RISK_ASSESSED) {
@@ -109,17 +119,38 @@ export function deriveSoftwareFacts({
 
   const value = String(message || '').trim();
   const requestRef = ['request:current'];
-  const intent = explicitIntentValue(explicitIntent);
+  if (normalizedRequirementsDecision) {
+    addFact(FACT.REQUIREMENTS_DECISION_RECORDED, [normalizedRequirementsDecision.decisionRef]);
+  }
+  const intentResult = normalizeExplicitIntent(explicitIntent);
+  const intent = intentResult.value;
+  if (intentResult.status === 'known') {
+    addFact(FACT.EXPLICIT_INTENT, [`intent:${intent}`], intent);
+  }
+  if (intentResult.status === 'unknown') {
+    addFact(FACT.EXPLICIT_INTENT_UNKNOWN, [`intent:${intentResult.raw}`], intentResult.raw);
+  }
   const { actionableValue, hadNegatedAction } = removeNegatedActions(value);
-  const explicitReadOnly = ['direct', 'read-only', 'readonly', 'explain'].includes(intent);
+  const explicitReadOnly = ['direct', 'read-only', 'explain'].includes(intent);
   // 先移除否定动作，再判断是否仍有真实变更目标，避免整条消息级布尔值吞掉后续修复子句。
   const readOnly = explicitReadOnly || (
     (hadNegatedAction || READ_ONLY_INTENT_PATTERN.test(value))
     && !BEHAVIOR_CHANGE_PATTERN.test(actionableValue)
   );
   const classificationValue = readOnly ? '' : actionableValue;
-  if (value && !readOnly) {
-    if (REQUIREMENTS_PATTERN.test(classificationValue)) addFact(FACT.ACCEPTANCE_CRITERIA_MISSING, requestRef);
+  if (value && !readOnly && !normalizedRequirementsDecision) {
+    const suppressWeakRequirements = [
+      'tickets',
+      'review',
+      'debug',
+      'wayfinder',
+      'plan',
+      'team',
+      'harness',
+    ].includes(intent);
+    if (!suppressWeakRequirements && hasMissingRequirementsSignal(classificationValue)) {
+      addFact(FACT.ACCEPTANCE_CRITERIA_MISSING, requestRef);
+    }
     if (BEHAVIOR_CHANGE_PATTERN.test(classificationValue)) addFact(FACT.BEHAVIOR_CHANGE, requestRef);
     if (NEW_CONSTRUCT_PATTERN.test(classificationValue)) addFact(FACT.NEW_CONSTRUCT_PROPOSED, requestRef);
     if (FAILURE_PATTERN.test(classificationValue)) addFact(FACT.EXECUTION_FAILED, requestRef);

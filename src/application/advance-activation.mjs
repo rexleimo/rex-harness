@@ -24,7 +24,8 @@ export function advanceActivation(activation, evidence = [], options = {}) {
   }
 
   const mergedEvidence = mergeEvidence(activation.evidence, evidence);
-  const gate = evaluateEvidence(stage.requiredEvidence, mergedEvidence);
+  const requiredEvidence = options.requiredEvidence || stage.requiredEvidence;
+  const gate = evaluateEvidence(requiredEvidence, mergedEvidence);
   const withEvidence = updateActivation(activation, { evidence: mergedEvidence });
   if (!gate.ok) {
     return Object.freeze({

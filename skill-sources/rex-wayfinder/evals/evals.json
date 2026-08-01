@@ -12,6 +12,12 @@
       "prompt": "The wayfinding capability has already been activated for an unfamiliar checkpoint recovery flow. Identify ownership boundaries, callers, persistence adapters, and the most relevant tests.",
       "expected_output": "An evidence-based ownership and dependency map that highlights the next files to inspect while avoiding broad repository dumps.",
       "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "The destination is known but the next implementation slice is not. Return a rex.wayfinding-artifact.v1 with one stable Decision Ticket, explicit unknowns, a bounded decision graph, and exactly one next slice.",
+      "expected_output": "A validated artifact boundary; partial or blocked work must not claim a completed Decision Ticket or next slice.",
+      "files": []
     }
   ]
 }

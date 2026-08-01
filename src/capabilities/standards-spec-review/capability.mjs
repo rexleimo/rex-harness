@@ -1,6 +1,6 @@
 import { CAPABILITY } from '../../domain/capability-ids.mjs';
 import { FACT } from '../../domain/fact-kinds.mjs';
-import { findFact } from '../../domain/facts.mjs';
+import { findFact, findFactValue } from '../../domain/facts.mjs';
 
 // 有边界的 diff 即可进入普通 Review。这里有意使用较低优先级，
 // 让必需的专项审查和测试控制先完成。
@@ -19,6 +19,7 @@ export const standardsSpecReviewCapability = Object.freeze({
     })]),
   }),
   activate(facts) {
-    return findFact(facts, FACT.DIFF_READY);
+    return findFact(facts, FACT.DIFF_READY)
+      || findFactValue(facts, FACT.EXPLICIT_INTENT, 'review');
   },
 });

@@ -5,6 +5,11 @@ description: Use only after rex-harness selects standards-and-spec review and su
 
 # Rex Code Review
 
+Required sequence:
+1. Resolve the current Command fixed-point and require a non-empty diff before review.
+2. Review Standards and Spec axes independently, recording each finding and its evidence.
+3. Return one bounded verdict artifact and stop without calling another Provider.
+
 仅在 rex-harness 已经激活标准与规格审查 Capability，并提供当前 Command 后执行本流程。
 
 ## 步骤
@@ -71,4 +76,9 @@ fixed-point 从当前 Command 的 `targetRefs` 或用户参数中取；若均无
 - 无发现时明确写出检查过的范围，不能空报通过
 
 返回 `standards-review-recorded` 和 `spec-review-recorded`，每项附带真实的差异、审查或报告引用。
+
+### S4 review verdict boundary
+
+完成态必须能归一化为一个 `rex.standards-spec-review.v1`：包含 fixed-point、非空 diff ref、Spec 来源或明确缺失、Standards/Spec 两轴 findings、每项 finding 的位置/证据/严重度/修复建议、最终 verdict 和 evidence refs。空 diff、坏 fixed-point 或未区分两轴时只能返回 `blocked`/`incomplete`，不得报通过。
+
 宿主要求 `AIOS_REX_EVIDENCE` 时，只在结尾输出当前 `activationId` 的恰好一个证据信封。不要调用下一个 Provider。

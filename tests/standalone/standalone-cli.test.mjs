@@ -5,12 +5,14 @@ import {
   readFile,
   readdir,
   rm,
+  symlink,
   writeFile,
 } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
+import { REQUIREMENTS_DECISION_FIXTURE } from '../fixtures/requirements-decision.mjs';
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const cliPath = path.resolve(testDirectory, '../../bin/rex-harness.mjs');
@@ -34,9 +36,18 @@ function runReceipt(rootDir, ...command) {
   return JSON.parse(output);
 }
 
+async function writeRequirementsDecision(rootDir) {
+  await writeFile(
+    path.join(rootDir, 'requirements-decision.json'),
+    `${JSON.stringify(REQUIREMENTS_DECISION_FIXTURE, null, 2)}\n`,
+    'utf8',
+  );
+}
+
 test('standalone CLI starts, persists, advances, and resumes a workflow without AIOS', async () => {
   const rootDir = await mkdtemp(path.join(os.tmpdir(), 'rex-standalone-'));
   try {
+    await writeRequirementsDecision(rootDir);
     const started = runCli(
       rootDir,
       'start',
@@ -89,6 +100,7 @@ test('standalone CLI starts, persists, advances, and resumes a workflow without 
     assert.deepEqual(partiallyAdvanced.missingEvidence, [
       'non-goals-recorded',
       'first-slice-identified',
+      'requirements-decision-recorded',
     ]);
     assert.notEqual(partiallyAdvanced.command.commandToken, started.command.commandToken);
 
@@ -103,6 +115,10 @@ test('standalone CLI starts, persists, advances, and resumes a workflow without 
       'non-goals-recorded=artifact:requirements',
       '--evidence',
       'first-slice-identified=artifact:requirements',
+      '--evidence',
+      'requirements-decision-recorded=artifact:requirements-decision-test',
+      '--requirements-file',
+      'requirements-decision.json',
     );
     assert.equal(advanced.outcome, 'completed');
     assert.equal(advanced.command.providerId, 'rex-test-design');
@@ -139,6 +155,7 @@ test('standalone CLI starts, persists, advances, and resumes a workflow without 
 test('standalone CLI returns full diagnostics only when explicitly requested', async () => {
   const rootDir = await mkdtemp(path.join(os.tmpdir(), 'rex-standalone-full-'));
   try {
+    await writeRequirementsDecision(rootDir);
     const started = runCli(
       rootDir,
       'start',
@@ -165,13 +182,57 @@ test('standalone CLI returns full diagnostics only when explicitly requested', a
     );
     assert.equal(blocked.kind, 'rex.standalone.workflow-result.v1');
     assert.equal(blocked.outcome, 'blocked');
-    assert.deepEqual(blocked.missingEvidence, ['non-goals-recorded', 'first-slice-identified']);
+    assert.deepEqual(blocked.missingEvidence, [
+      'non-goals-recorded',
+      'first-slice-identified',
+      'requirements-decision-recorded',
+    ]);
 
     const resumed = runCli(rootDir, 'resume', '--work-item', 'full-check', '--full');
     assert.equal(resumed.kind, 'rex.standalone.workflow-result.v1');
     assert.equal(resumed.workflow.workflowActivationId, started.workflow.workflowActivationId);
   } finally {
     await rm(rootDir, { recursive: true, force: true });
+  }
+});
+
+test('standalone requirements file rejects an external symlink', async () => {
+  const rootDir = await mkdtemp(path.join(os.tmpdir(), 'rex-standalone-requirements-root-'));
+  const outsideDir = await mkdtemp(path.join(os.tmpdir(), 'rex-standalone-requirements-outside-'));
+  try {
+    await writeRequirementsDecision(outsideDir);
+    await symlink(
+      path.join(outsideDir, 'requirements-decision.json'),
+      path.join(rootDir, 'requirements-link.json'),
+      'file',
+    );
+    const started = runCli(
+      rootDir,
+      'start',
+      '--work-item',
+      'requirements-link',
+      '--message',
+      'Clarify acceptance criteria before implementing checkout.',
+    );
+    const rejected = spawnSync(process.execPath, [
+      cliPath,
+      'evidence',
+      '--activation',
+      started.command.activationId,
+      '--command-token',
+      started.command.commandToken,
+      '--evidence',
+      'requirements-decision-recorded=artifact:requirements-decision-test',
+      '--requirements-file',
+      'requirements-link.json',
+      '--root',
+      rootDir,
+    ], { encoding: 'utf8' });
+    assert.equal(rejected.status, 1);
+    assert.match(rejected.stderr, /requirements-file.*inside the selected workspace/u);
+  } finally {
+    await rm(rootDir, { recursive: true, force: true });
+    await rm(outsideDir, { recursive: true, force: true });
   }
 });
 

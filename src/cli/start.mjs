@@ -12,7 +12,10 @@ export function runStart(args, { cwd = process.cwd() } = {}) {
   const result = startStandaloneWorkflow({
     rootDir: rootOption(options, cwd),
     workItemKey: option(options, 'work-item', { required: true }),
-    request: { message: option(options, 'message', { required: true }) },
+    request: {
+      message: option(options, 'message', { required: true }),
+      explicitIntent: option(options, 'intent') || null,
+    },
     profile: option(options, 'profile', { fallback: 'default' }),
   });
   return presentCliWorkflow(result, { full: booleanOption(options, 'full') });

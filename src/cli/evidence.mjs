@@ -11,14 +11,44 @@ import {
 } from './options.mjs';
 import { presentCliWorkflow } from './workflow-output.mjs';
 
-function readTestabilityDecision(options, rootDir) {
-  const source = option(options, 'testability-file');
-  if (!source) return undefined;
-  const target = path.resolve(rootDir, source);
+function isContained(rootDir, target) {
+  const relative = path.relative(path.resolve(rootDir), target);
+  return relative === '' || (!relative.startsWith(`..${path.sep}`) && relative !== '..' && !path.isAbsolute(relative));
+}
+
+function resolveDecisionFile(rootDir, source, optionName) {
+  const rootPath = path.resolve(rootDir);
+  const target = path.resolve(rootPath, source);
+  if (!isContained(rootPath, target)) {
+    throw new Error(`invalid --${optionName}: file must resolve inside the selected workspace`);
+  }
   try {
-    return JSON.parse(fs.readFileSync(target, 'utf8'));
+    const realRoot = fs.realpathSync(rootPath);
+    const realTarget = fs.realpathSync(target);
+    if (!isContained(realRoot, realTarget)) {
+      throw new Error(`invalid --${optionName}: file must resolve inside the selected workspace`);
+    }
+    return realTarget;
   } catch (error) {
-    throw new Error(`invalid --testability-file: ${target}: ${error.message}`, { cause: error });
+    if (error.message.startsWith(`invalid --${optionName}:`)) throw error;
+    if (error.code === 'ENOENT') return target;
+    throw new Error(`invalid --${optionName}: ${error.message}`, { cause: error });
+  }
+}
+
+function readDecisionFile(options, rootDir, optionName) {
+  const source = option(options, optionName);
+  if (!source) return undefined;
+  const target = resolveDecisionFile(rootDir, source, optionName);
+  try {
+    const content = fs.readFileSync(target, 'utf8');
+    const verifiedTarget = resolveDecisionFile(rootDir, source, optionName);
+    if (verifiedTarget !== target) {
+      throw new Error(`invalid --${optionName}: file changed during validation`);
+    }
+    return JSON.parse(content);
+  } catch (error) {
+    throw new Error(`invalid --${optionName}: ${target}: ${error.message}`, { cause: error });
   }
 }
 
@@ -30,7 +60,8 @@ export function runEvidence(args, { cwd = process.cwd() } = {}) {
     activationId: option(options, 'activation', { required: true }),
     commandToken: option(options, 'command-token', { required: true }),
     evidence: evidenceOptions(options),
-    testabilityDecision: readTestabilityDecision(options, rootDir),
+    testabilityDecision: readDecisionFile(options, rootDir, 'testability-file'),
+    requirementsDecision: readDecisionFile(options, rootDir, 'requirements-file'),
   });
   return presentCliWorkflow(result, { full: booleanOption(options, 'full') });
 }

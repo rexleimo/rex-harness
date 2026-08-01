@@ -55,6 +55,67 @@ test('structured observations take priority over request wording', () => {
   assert.equal(result.decision.capabilityId, CAPABILITY.DEBUG_ROOT_CAUSE);
 });
 
+test('explicit intent normalizes string/object inputs and keeps implement behind test design', () => {
+  const result = evaluateSoftwareRequest({
+    message: 'Update authentication behavior.',
+    explicitIntent: { intent: 'IMPLEMENT' },
+  });
+
+  assert.deepEqual(
+    result.facts.find((fact) => fact.kind === FACT.EXPLICIT_INTENT),
+    {
+      kind: FACT.EXPLICIT_INTENT,
+      value: 'implement',
+      evidenceRefs: ['intent:implement'],
+    },
+  );
+  assert.equal(result.decision.capabilityId, CAPABILITY.TESTING_DESIGN);
+});
+
+test('grill and spec intents enter Requirements without relying on weak prose', () => {
+  for (const intent of ['grill', 'SPEC']) {
+    const result = evaluateSoftwareRequest({ message: 'Please proceed.', explicitIntent: intent });
+    assert.equal(result.decision.capabilityId, CAPABILITY.REQUIREMENTS_CLARIFY);
+    assert.equal(result.decision.reasonCode, `explicit-intent-${intent.toLowerCase()}`);
+  }
+});
+
+test('tickets intent selects Planning and suppresses weak Requirements rerouting', () => {
+  const result = evaluateSoftwareRequest({
+    message: '把登录逻辑改一下。',
+    explicitIntent: 'tickets',
+  });
+
+  assert.equal(result.facts.some((fact) => fact.kind === FACT.ACCEPTANCE_CRITERIA_MISSING), false);
+  assert.equal(result.decision.capabilityId, CAPABILITY.PLANNING_SEQUENCE);
+  assert.equal(result.decision.reasonCode, 'explicit-intent-tickets');
+});
+
+test('unknown explicit intent fails closed', () => {
+  const result = evaluateSoftwareRequest({
+    message: 'Explain the current implementation.',
+    explicitIntent: 'teleport',
+  });
+
+  assert.ok(result.facts.some((fact) => fact.kind === FACT.EXPLICIT_INTENT_UNKNOWN));
+  assert.equal(result.decision.blocked, true);
+  assert.equal(result.decision.blockedReason, 'explicit-intent-unknown');
+});
+
+test('review and debug intents require their safety prerequisite', () => {
+  const review = evaluateSoftwareRequest({ message: 'Review this change.', explicitIntent: 'review' });
+  assert.equal(review.decision.blockedReason, 'review-requires-diff');
+
+  const debug = evaluateSoftwareRequest({ message: 'Debug this.', explicitIntent: 'debug' });
+  assert.equal(debug.decision.blockedReason, 'debug-requires-reproducible-failure');
+
+  const reviewed = evaluateSoftwareRequest({
+    message: 'Review this change.',
+    explicitIntent: 'review',
+    observations: [{ kind: OBSERVATION.DIFF_READY, evidenceRefs: ['diff:current'] }],
+  });
+  assert.equal(reviewed.decision.capabilityId, CAPABILITY.REVIEW_STANDARDS_SPEC);
+});
 test('completed test design unlocks TDD without replaying the completed capability', () => {
   const result = evaluateSoftwareRequest({
     message: 'Update the public input validation behavior.',

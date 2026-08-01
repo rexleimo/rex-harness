@@ -1,6 +1,6 @@
 import { CAPABILITY } from '../../domain/capability-ids.mjs';
 import { FACT } from '../../domain/fact-kinds.mjs';
-import { findFact } from '../../domain/facts.mjs';
+import { findFact, findFactValue } from '../../domain/facts.mjs';
 
 // 规划能力只处理存在依赖关系的工作项。
 // 提示词很长本身不能证明需要建立执行图。
@@ -19,6 +19,7 @@ export const planningCapability = Object.freeze({
     })]),
   }),
   activate(facts) {
-    return findFact(facts, FACT.DEPENDENT_WORK_ITEMS);
+    return findFact(facts, FACT.DEPENDENT_WORK_ITEMS)
+      || findFactValue(facts, FACT.EXPLICIT_INTENT, 'tickets', 'plan');
   },
 });

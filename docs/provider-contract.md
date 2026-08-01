@@ -74,3 +74,18 @@ evidenceRefs, filesReviewed, recommendedNextSteps
 AIOS 额外验证 Agent 身份、角色、晋级和执行证据，保存 Handoff artifact，再适配为 rex typed Evidence。这个协议与 Team/Subagent 的通用交接协议不同，不能混用。
 
 AIOS 只能执行当前 Rex Command 中绑定的内置 Provider；它不会加载外部 playbook 或把第三方仓库 vendoring 到 `rex-harness`。
+
+## Client Projection Ownership
+
+`installClientProjection()` 在每个 Rex-managed Skill 目录写入 `.rex-projection.json`。marker 记录 canonical payload 的 SHA-256；marker 自身不参与 payload digest。marker 是一致性元数据，不是可单独伪造的 ownership 证明。
+
+更新规则 fail-closed：
+
+- 所有 canonical source、当前 digest、history 和目标快照先完成 preflight，缺 source 不会留下前序部分安装；
+- 目标不存在时 staged install；提交前若目标被创建则返回 conflict；
+- payload 与 canonical 完全相同且没有 marker 时，可以安全 adopt；marker/link 非普通文件时拒绝写入；
+- 破坏性 update 只有在 target payload 命中 `src/clients/projection-history.json` 的审核 canonical digest 时才允许，合法 marker 本身不足以授权覆盖；
+- staging 期间目标发生变化、目标为 symlink/junction、marker 无效或未知用户内容一律保留并报告 conflict；
+- 替换前的旧目录不会自动删除，而会保留在 discovery root 外的 `.rex-projection-recovery/`，用于崩溃/回滚恢复。
+
+结果返回互斥的 `installed`、`updated`、`migrated`、`adopted`、`skipped`，以及 `conflicts`、`errors`、`recoveries` 和带 digest/reason 的 `conflictDetails`。AIOS lifecycle 必须把 update/migrate/adopt 视为实际变更，不能误报 `unchanged`。

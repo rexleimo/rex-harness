@@ -15,3 +15,7 @@ description: Use only after rex-harness selects consequential design resolution 
 返回 `decision-recorded`、`tradeoffs-recorded` 和 `rejected-options-recorded`，每项都必须附带真实的设计、代码或决定引用。宿主要求 `AIOS_REX_EVIDENCE` 时，只在结尾输出当前 `activationId` 的恰好一个证据信封。
 
 不要仅因任务复杂就创造新抽象，不要越过用户尚未确认的产品边界，也不要调用下一个 Provider。
+
+### S5 sediment boundary
+
+设计完成判据必须同时写出 accepted decision、rejected options、未决问题和 evidence refs。若用户请求只是重复已接受决定且没有新约束，返回 `no-op-recorded`；若出现否定条款、目标变更或沉淀的旧约束冲突，返回 `blocked`/`replan-required`，不得把旧决定静默改写成新设计。

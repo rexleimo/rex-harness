@@ -12,6 +12,12 @@
       "prompt": "The standards-and-spec review capability has already been activated after a documentation generator change. Check correctness, compatibility, and missing verification evidence without redesigning the component.",
       "expected_output": "A scoped review separating confirmed defects from verification gaps and noting when the diff satisfies the declared contract.",
       "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "The review Command has a bad fixed-point or an empty diff. Return blocked/incomplete rather than inventing a verdict; when the spec is absent, mark the Spec axis missing instead of silently passing it.",
+      "expected_output": "A rex.standards-spec-review.v1 boundary with independent Standards/Spec axes, explicit evidence, severity and actionable recommendations.",
+      "files": []
     }
   ]
 }

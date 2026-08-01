@@ -28,3 +28,7 @@ description: Use only after rex-harness selects behavior-preserving hardening an
 3. 返回当前阶段真实、可核验的 Evidence 引用；命令型 Evidence 必须引用宿主或 Rex 记录的执行回执。自然语言、`command:`、旧日志或未执行命令都不是回执。
 
 宿主要求 `AIOS_REX_EVIDENCE` 时，只在结尾输出当前 `activationId` 的恰好一个证据信封，并为每项提交真实引用。当证据不足、场景无法真实执行，或发现任务实际包含新用户可观察行为时，停止并报告当前 Command `blocked`；不要自行切换到 TDD，也不要伪造 RED 或调用下一个 Provider。
+
+### S5 sediment boundary
+
+Hardening 只能沉淀已确认的行为不变量：把 no-op、否定条款、旧 baseline 和 rollback digest 分开记录。发现新的用户可观察目标时返回 `replan-required`；没有新的差异或真实场景时返回 `no-op-recorded`/`blocked`，不得用旧 CI 日志推进。

@@ -2,11 +2,15 @@ import assert from 'node:assert/strict';
 import { access, readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import test from 'node:test';
+import { fileURLToPath } from 'node:url';
 
 import { rexNativeProviderBindings } from '../../src/providers/catalog.mjs';
 
+const REX_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
+const SKILL_SOURCES_ROOT = path.join(REX_ROOT, 'skill-sources');
+
 test('canonical skills are discoverable and keep activation logic out of prompts', async () => {
-  const root = path.join(process.cwd(), 'skill-sources');
+  const root = SKILL_SOURCES_ROOT;
   const entries = await readdir(root, { withFileTypes: true });
   const skillDirectories = entries.filter((entry) => entry.isDirectory());
   const expectedSkills = rexNativeProviderBindings
@@ -27,7 +31,11 @@ test('canonical skills are discoverable and keep activation logic out of prompts
     assert.match(content, /AIOS_REX_EVIDENCE/u);
     assert.match(content, /恰好一个.*信封/u);
     assert.match(content, /真实.*引用/u);
-    assert.match(content, /不要.*下一个 Provider/u);
+    assert.match(content, /不要.*下一个 (?:Provider|Capability)|停止.*等待.*下一条.*Command/u);
+    if (entry.name === 'rex-implement') {
+      assert.match(content, /Self-check gate/u);
+      assert.match(content, /不要.*第二条工作流/u);
+    }
     assert.doesNotMatch(content, /keyword route|balanced route|deep route|Fast\s*\|\s*Balanced\s*\|\s*Deep/iu);
 
     const evalFile = path.join(root, entry.name, 'evals', 'evals.json');
@@ -55,7 +63,7 @@ test('canonical skills are discoverable and keep activation logic out of prompts
 });
 
 test('rex-workflow is a CLI-first orchestration skill with bounded context', async () => {
-  const root = path.join(process.cwd(), 'skill-sources', 'rex-workflow');
+  const root = path.join(SKILL_SOURCES_ROOT, 'rex-workflow');
   const content = (await readFile(path.join(root, 'SKILL.md'), 'utf8')).replace(/\r\n/g, '\n');
 
   assert.match(content, /^---\nname: rex-workflow\ndescription: .+\n---\n/u);
@@ -91,13 +99,13 @@ test('rex-workflow is a CLI-first orchestration skill with bounded context', asy
 
 test('every bundled Provider points to a packaged instruction source', async () => {
   for (const binding of rexNativeProviderBindings) {
-    const target = path.join(process.cwd(), binding.provider.instructionsRef);
+    const target = path.join(REX_ROOT, binding.provider.instructionsRef);
     await access(target);
   }
 
   const specialist = rexNativeProviderBindings.find((binding) => binding.provider.kind === 'agent');
   const reviewers = JSON.parse(await readFile(
-    path.join(process.cwd(), specialist.provider.instructionsRef),
+    path.join(REX_ROOT, specialist.provider.instructionsRef),
     'utf8',
   ));
   assert.equal(reviewers.kind, 'rex.specialist-reviewers.v1');
@@ -108,7 +116,7 @@ test('every bundled Provider points to a packaged instruction source', async () 
 test('TDD skills enforce the confirmed test scope instead of rewarding test weakening', async () => {
   for (const skillName of ['rex-tdd', 'rex-strict-tdd']) {
     const content = await readFile(
-      path.join(process.cwd(), 'skill-sources', skillName, 'SKILL.md'),
+      path.join(SKILL_SOURCES_ROOT, skillName, 'SKILL.md'),
       'utf8',
     );
     assert.match(content, /测试范围契约/u);
@@ -118,13 +126,13 @@ test('TDD skills enforce the confirmed test scope instead of rewarding test weak
   }
 
   const strict = await readFile(
-    path.join(process.cwd(), 'skill-sources', 'rex-strict-tdd', 'SKILL.md'),
+    path.join(SKILL_SOURCES_ROOT, 'rex-strict-tdd', 'SKILL.md'),
     'utf8',
   );
   assert.match(strict, /test-strength-check-recorded/u);
 
   const baseline = await readFile(
-    path.join(process.cwd(), 'skill-sources', 'rex-tdd', 'SKILL.md'),
+    path.join(SKILL_SOURCES_ROOT, 'rex-tdd', 'SKILL.md'),
     'utf8',
   );
   assert.match(baseline, /不得.*(?:缩小|扩大).*测试范围|测试范围.*不得.*(?:缩小|扩大)/u);
@@ -136,7 +144,7 @@ test('TDD skills enforce the confirmed test scope instead of rewarding test weak
   assert.match(baseline, /非零.*receipt/u);
 
   const hardening = await readFile(
-    path.join(process.cwd(), 'skill-sources', 'rex-refactor-hardening', 'SKILL.md'),
+    path.join(SKILL_SOURCES_ROOT, 'rex-refactor-hardening', 'SKILL.md'),
     'utf8',
   );
   assert.match(hardening, /rex-harness receipt/u);

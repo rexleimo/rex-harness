@@ -12,6 +12,12 @@
       "prompt": "The test-design capability has already been activated for a CLI that resumes interrupted jobs. Define tests for clean resume, stale checkpoint, corrupt state, and an idempotent second resume.",
       "expected_output": "A focused suite of executable scenarios covering normal, failure, recovery, and idempotency behavior without prescribing production code.",
       "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "The test matrix already covers the accepted behavior and no new risk exists; a later request negates the current acceptance boundary. Decide whether to no-op or replan before TDD.",
+      "expected_output": "Return no-op-recorded for the unchanged target, or blocked/replan-required for changed or conflicting acceptance; do not reuse stale testability decisions.",
+      "files": []
     }
   ]
 }

@@ -13,13 +13,38 @@ export { advanceActivation } from './application/advance-activation.mjs';
 export { nextCommand, startActivation } from './application/start-activation.mjs';
 export { CAPABILITY } from './domain/capability-ids.mjs';
 export { FACT } from './domain/fact-kinds.mjs';
+export {
+  EXPLICIT_INTENT,
+  EXPLICIT_INTENT_MATRIX,
+  explicitIntentMatrixEntry,
+  explicitIntentValue,
+  normalizeExplicitIntent,
+} from './domain/explicit-intent.mjs';
 export { OBSERVATION } from './domain/observation-kinds.mjs';
+export {
+  REVIEW_VERDICT_KIND,
+  normalizeReviewVerdict,
+} from './domain/review-verdict.mjs';
+export {
+  WAYFINDER_ARTIFACT_KIND,
+  normalizeWayfinderArtifact,
+} from './domain/wayfinder-artifact.mjs';
+export {
+  PLANNING_ARTIFACT_KIND,
+  RUNTIME_ARTIFACT_CONTRACT_KIND,
+  normalizePlanningArtifact,
+} from './domain/planning-artifact.mjs';
 export {
   TESTABILITY_DECISION,
   normalizeTestabilityDecision,
   testabilityEvidenceRefs,
   validateTestabilityDecisionReceipt,
 } from './domain/testability-decision.mjs';
+export {
+  REQUIREMENTS_DECISION_KIND,
+  normalizeRequirementsDecision,
+  requirementsDecisionEvidenceRef,
+} from './domain/requirements-decision.mjs';
 export {
   assertExecutionReceiptMatchesCommand,
   executionCommandsMatch,
@@ -37,6 +62,8 @@ export { analyzeExecutionProfile } from './workflows/execution-profile.mjs';
 export {
   SOFTWARE_WORKFLOW_ID,
   advanceSoftwareWorkflow,
+  assertSoftwareWorkflowCommandContract,
+  expectedScenarioCommandForWorkflow,
   startSoftwareWorkflow,
 } from './workflows/software-workflow-runtime.mjs';
 export {

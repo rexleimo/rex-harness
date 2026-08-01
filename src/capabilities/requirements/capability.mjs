@@ -1,6 +1,6 @@
 import { CAPABILITY } from '../../domain/capability-ids.mjs';
 import { FACT } from '../../domain/fact-kinds.mjs';
-import { findFact } from '../../domain/facts.mjs';
+import { findFact, findFactValue } from '../../domain/facts.mjs';
 
 // 需求澄清优先于设计和规划，避免下游工作把尚未解决的
 // 验收条件或领域词汇歧义固化进实现。
@@ -13,6 +13,7 @@ export const requirementsCapability = Object.freeze({
     'acceptance-criteria-recorded',
     'non-goals-recorded',
     'first-slice-identified',
+    'requirements-decision-recorded',
   ]),
   recipe: Object.freeze({
     id: 'software.requirements.clarify.recipe',
@@ -23,10 +24,12 @@ export const requirementsCapability = Object.freeze({
         'acceptance-criteria-recorded',
         'non-goals-recorded',
         'first-slice-identified',
+        'requirements-decision-recorded',
       ]),
     })]),
   }),
   activate(facts) {
-    return findFact(facts, FACT.ACCEPTANCE_CRITERIA_MISSING, FACT.DOMAIN_VOCABULARY_AMBIGUOUS);
+    return findFact(facts, FACT.ACCEPTANCE_CRITERIA_MISSING, FACT.DOMAIN_VOCABULARY_AMBIGUOUS)
+      || findFactValue(facts, FACT.EXPLICIT_INTENT, 'grill', 'spec');
   },
 });
