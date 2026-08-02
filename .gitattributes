@@ -1,0 +1,3 @@
+# Keep canonical skill sources LF-only so training-certification hashes are
+# byte-identical across Windows checkouts and CI (Linux) checkouts.
+skill-sources/**/SKILL.md text eol=lf
