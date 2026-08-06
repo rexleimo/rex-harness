@@ -31,6 +31,13 @@ rex-harness resume --work-item <key> --root <project-root>
 
 ## 单步执行循环
 
+0. 项目已安装 codemap（存在 `.code-review-graph/` 或 CRG MCP 工具可用）时，在加载/执行当前 Provider 之前先调用 CRG 决策检查点（详见项目 AGENTS.md codemap 段落）：
+   - 动手前：`get_minimal_context(task="<objective>")` 获取项目上下文和建议下一步；
+   - 改文件前：`get_impact_radius(detail_level="minimal")` 检查爆炸半径，`query_graph(pattern="tests_for", target="<目标>")` 确认测试存在；
+   - 查找代码/关系：`semantic_search_nodes` / `query_graph` 优先于 grep/读文件；
+   - 阶段结束后：`detect_changes(detail_level="minimal")` 验证影响。
+   加速入口：CRG 预置工作流可用 `list_prompts` 查看、`get_prompt(name="...")` 加载（review_changes、debug_issue、pre_merge_check 等），不必自行编排。
+   CRG 不可用时记录该事实，降级为 `rg` + 读文件，不阻塞流程、不伪造图证据。
 1. 校验返回对象是 `rex.cli.workflow-command.v1`，并先检查 compact 响应组合：
 
    | `status` | `command` | `missingEvidence` | 动作 |
