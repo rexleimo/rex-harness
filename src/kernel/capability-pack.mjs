@@ -64,8 +64,11 @@ export function validateCapabilityPack(pack) {
       errors.push(`missing-capability-recipe:${capability.id}`);
       continue;
     }
-    const recipeEvidence = new Set(capability.recipe.stages.flatMap((stage) => stage.requiredEvidence || []));
-    for (const evidenceKind of capability.requiredEvidence) {
+    // anyOf 收敛组（如验收标准或假设记录二选一）按组内种类展开参与映射校验。
+    const evidenceKinds = (list) => list.flatMap((item) =>
+      (item && typeof item === 'object' && Array.isArray(item.anyOf)) ? item.anyOf : [item]);
+    const recipeEvidence = new Set(evidenceKinds(capability.recipe.stages.flatMap((stage) => stage.requiredEvidence || [])));
+    for (const evidenceKind of evidenceKinds(capability.requiredEvidence)) {
       if (!recipeEvidence.has(evidenceKind)) errors.push(`unmapped-capability-evidence:${capability.id}:${evidenceKind}`);
     }
   }

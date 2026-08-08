@@ -12,6 +12,12 @@
       "prompt": "The requirements capability has already been activated because two teams use the term workspace differently. Resolve the vocabulary and acceptance boundary before planning the migration.",
       "expected_output": "A terminology decision with explicit in-scope and out-of-scope meanings, remaining unknowns, and testable acceptance conditions.",
       "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "The requirements capability has been activated for a vague request. After three rounds of answers the acceptance criteria are still partially unresolved. Clarify how to converge without asking more questions.",
+      "expected_output": "Record the unresolved items as assumptions (assumptions-recorded), keep the confirmed acceptance criteria and first slice, and unlock implementation without inventing user decisions or starting a second plan.",
+      "files": []
     }
   ]
 }

@@ -29,13 +29,16 @@ Binding 不能包含触发规则。Provider 可用性属于执行宿主；不可
     "instructionsRef": "skill-sources/rex-requirements/SKILL.md"
   },
   "expectedEvidence": [
-    "acceptance-criteria-recorded",
-    "non-goals-recorded",
-    "first-slice-identified"
+    { "anyOf": ["acceptance-criteria-recorded", "assumptions-recorded"] },
+    { "anyOf": ["non-goals-recorded", "assumptions-recorded"] },
+    "first-slice-identified",
+    "requirements-decision-recorded"
   ],
   "executionToken": "host-or-standalone-token"
 }
 ```
+
+`expectedEvidence` 支持 `anyOf` 收敛组：组内任一 kind 满足即算该契约项达成（如验收标准或假设记录二选一），用于为澄清会话提供时间盒出口，防止无限询问；未决项可记录为假设（`assumptions-recorded`）后收敛解锁。
 
 Provider 必须返回真实 Evidence 引用后停止。它不能调用下一 Provider、修改 Activation、重选 Capability 或决定 Team/Harness promotion。
 
@@ -43,7 +46,7 @@ Provider 必须返回真实 Evidence 引用后停止。它不能调用下一 Pro
 
 基础规则由 `validateCommandEvidence()` 统一执行：
 
-- 只能提交当前 `expectedEvidence` 中的 kind；
+- 只能提交当前 `expectedEvidence` 中的 kind（`anyOf` 组按组内 kind 展开匹配）；
 - 每个 Evidence 必须至少有一个带协议前缀的 ref，例如 `artifact:`、`command:`、`diff:`；
 - placeholder、TODO、TBD 和无协议路径被拒绝；
 - standalone CLI 和 AIOS 手工入口都必须携带当前 Command token；

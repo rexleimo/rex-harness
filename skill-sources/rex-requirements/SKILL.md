@@ -13,6 +13,32 @@ description: Use only after rex-harness selects software requirements clarificat
 
 能从环境中查到的事实（文件、代码、配置）主动查，不问用户。只把**决策**交给用户——那些改变实现方式或验收方式的选择。
 
+## 思考优先级：先思考，后提问
+
+遇到不清晰时，按顺序尝试，**提问是最后手段**：
+
+1. **查**：从环境查证（文件、代码、历史证据、已有 requirements decision）；
+2. **推**：从上下文推断（用户已做决定、仓库约束、领域惯例）；
+3. **猜**：采用合理默认值，明确标注"这是假设"；
+4. **问**：只有前三步都失败、且该问题会改变实现或验收方式时才问用户。
+
+## 带假设提问（Ask-with-hypothesis）
+
+提问必须携带你的理解与默认答案，让用户低成本确认：
+
+> "我理解你的目标是提升页面转化率，对吗？如果不是，是 A 还是 B？（若不回答，我将按 A 继续）"
+
+用户不回答时自动采用默认假设，**永远不因缺答案卡住**。
+
+## 澄清预算（时间盒收敛）
+
+澄清必须收敛，防止无限询问：
+
+- 每次只问一个**决策性**问题（改变实现或验收方式）；
+- 每个问题回答后状态必须前进；
+- **累计 3 轮仍未收敛** → 停止询问，把未决项记录为**假设**（`assumptions-recorded`），立即解锁执行；
+- 假设清单随交付物一起交付，用户验收时可见。
+
 ## 步骤
 
 ### 1. 读取已有上下文
@@ -41,12 +67,12 @@ description: Use only after rex-harness selects software requirements clarificat
 找出最小的、可以独立验证的纵向切片。
 当实施不再需要猜测时立即停止，不继续扩写完整计划。
 
-**完成判据：**
-- 至少一条验收标准已用用户可观察行为表述，并有明确的非目标
+**完成判据（满足其一即可收敛）：**
+- 至少一条验收标准已用用户可观察行为表述，并有明确的非目标；或
+- 澄清预算耗尽，未决项已记录为假设（`assumptions-recorded`），假设清单随交付物交付
 - 第一个可独立验证的切片已识别
-- 没有未解决的、会影响实现方式的歧义
 
-返回 `acceptance-criteria-recorded`、`non-goals-recorded` 和 `first-slice-identified`，每项附带真实的文档、决定或任务引用。
+返回 `acceptance-criteria-recorded`（或 `assumptions-recorded`）、`non-goals-recorded`（或 `assumptions-recorded`）、`first-slice-identified` 与 `requirements-decision-recorded`，每项附带真实的文档、决定或任务引用。
 宿主要求 `AIOS_REX_EVIDENCE` 时，只在结尾输出当前 `activationId` 的恰好一个证据信封。
 
 ### 需求变更边界

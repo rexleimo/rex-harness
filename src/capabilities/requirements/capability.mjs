@@ -10,8 +10,9 @@ export const requirementsCapability = Object.freeze({
   priority: 80,
   exclusiveGroup: 'software-process',
   requiredEvidence: Object.freeze([
-    'acceptance-criteria-recorded',
-    'non-goals-recorded',
+    // 收敛组：验收标准或假设记录二选一，为澄清会话提供时间盒出口，防止无限询问。
+    Object.freeze({ anyOf: Object.freeze(['acceptance-criteria-recorded', 'assumptions-recorded']) }),
+    Object.freeze({ anyOf: Object.freeze(['non-goals-recorded', 'assumptions-recorded']) }),
     'first-slice-identified',
     'requirements-decision-recorded',
   ]),
@@ -19,10 +20,10 @@ export const requirementsCapability = Object.freeze({
     id: 'software.requirements.clarify.recipe',
     stages: Object.freeze([Object.freeze({
       id: 'clarify',
-      objective: '澄清可观察行为、非目标与第一个可交付切片。',
+      objective: '澄清可观察行为、非目标与第一个可交付切片；未决项可记录为假设收敛。',
       requiredEvidence: Object.freeze([
-        'acceptance-criteria-recorded',
-        'non-goals-recorded',
+        Object.freeze({ anyOf: Object.freeze(['acceptance-criteria-recorded', 'assumptions-recorded']) }),
+        Object.freeze({ anyOf: Object.freeze(['non-goals-recorded', 'assumptions-recorded']) }),
         'first-slice-identified',
         'requirements-decision-recorded',
       ]),

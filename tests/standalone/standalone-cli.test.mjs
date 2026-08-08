@@ -98,7 +98,7 @@ test('standalone CLI starts, persists, advances, and resumes a workflow without 
     );
     assert.equal(partiallyAdvanced.outcome, 'blocked');
     assert.deepEqual(partiallyAdvanced.missingEvidence, [
-      'non-goals-recorded',
+      { anyOf: ['non-goals-recorded', 'assumptions-recorded'] },
       'first-slice-identified',
       'requirements-decision-recorded',
     ]);
@@ -183,7 +183,7 @@ test('standalone CLI returns full diagnostics only when explicitly requested', a
     assert.equal(blocked.kind, 'rex.standalone.workflow-result.v1');
     assert.equal(blocked.outcome, 'blocked');
     assert.deepEqual(blocked.missingEvidence, [
-      'non-goals-recorded',
+      { anyOf: ['non-goals-recorded', 'assumptions-recorded'] },
       'first-slice-identified',
       'requirements-decision-recorded',
     ]);

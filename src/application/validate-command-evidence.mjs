@@ -68,7 +68,16 @@ export function validateCommandEvidence(command, evidence = [], {
   if (evidence.length > 64) throw new TypeError('rex evidence exceeds 64 evidence items');
 
   const normalized = normalizeEvidence(evidence);
-  const expected = new Set(command?.expectedEvidence || []);
+  // expectedEvidence 支持 anyOf 收敛组（如验收标准或假设记录二选一），
+  // 展开为可匹配的证据种类集合，同时保持字符串项行为不变。
+  const expected = new Set();
+  for (const item of (command?.expectedEvidence || [])) {
+    if (item && typeof item === 'object' && Array.isArray(item.anyOf)) {
+      for (const kind of item.anyOf) expected.add(kind);
+    } else {
+      expected.add(item);
+    }
+  }
   for (const item of normalized) {
     if (!expected.has(item.kind)) {
       throw new Error(`unexpected rex evidence kind for current Command: ${item.kind}`);

@@ -30,6 +30,12 @@ const OBSERVATION_TO_FACT = new Map([
 const MISSING_REQUIREMENTS_PATTERN = /\b(?:unclear|ambiguous|underspecified)\s+(?:requirements?|acceptance criteria|domain vocabulary)\b|\b(?:acceptance criteria|domain vocabulary|ubiquitous language|requirements?)\b.{0,24}\b(?:missing|unclear|ambiguous|undefined|not\s+(?:defined|clear|recorded|settled)|need(?:s)?\s+(?:clarification|to\s+be\s+clarified)|require(?:s)?\s+clarification)\b|\b(?:clarif(?:y|ication)|clarify)\s+(?:the\s+)?(?:requirements?|acceptance criteria|domain vocabulary|ubiquitous language)\b|(?:验收(?:标准|条件)|领域(?:词汇|语言|模型)|需求)(?:.{0,8})(?:缺失|不清|不明确|有歧义|未(?:定义|明确|确定)|没有|缺少|需要(?:补充|澄清|明确))|(?:补充|澄清|明确).{0,10}(?:验收|需求|领域)/iu;
 const SATISFIED_REQUIREMENTS_PATTERN = /\b(?:acceptance criteria|acceptance conditions|domain vocabulary|ubiquitous language|requirements?)\b\s*(?:are|is|:|-)?\s*(?:already\s+)?(?:recorded|defined|clear|confirmed|settled|specified|agreed|complete)\b|\b(?:acceptance criteria|acceptance conditions)\s*[:=-]|(?:验收(?:标准|条件)|领域(?:词汇|语言|模型)|需求)\s*(?:已经|已|为|是|明确|清楚|确定|记录|定义)/iu;
 const VAGUE_BEHAVIOR_PATTERN = /(?:把|将)(?:(?![。！？.!?;；]).){0,24}?(?:改一改|改一下|调整一下|优化一下|弄一下|处理一下|完善一下|改进|改善|优化|调整|修一下)(?![了过完好])(?=[。！？.!?;；，,]|$)|(?:改一改|改一下|调整一下|优化一下|弄一下|处理一下|完善一下|改进|改善|优化|调整|修一下)(?![了过完好])(?:[\p{Script=Han}a-z0-9_-]{0,20})(?:流程|逻辑|行为|功能|体验|处理|系统|模块|权限|会话|支付|登录)(?=[。！？.!?;；，,]|$)|\b(?:tweak|change|adjust|improve|optimi[sz]e|refine|enhance|polish|streamline|tune|fix)\s+(?:it|this|that|something|the\s+(?:login|auth(?:entication)?|checkout|business|core)\s+logic|(?:the\s+)?(?:[a-z][a-z0-9_-]*\s+){0,3}(?:flow|process|logic|behavior|handling|experience|function|feature|system))\b/iu;
+// 泛化目标补充：覆盖 VAGUE_BEHAVIOR_PATTERN 未命中的"优化一下前端页面"类请求。
+// 结构上属于需求未明确：泛化动作 + 无验收描述 + 无特指功能实体。
+// 排除完成时态（了/过/好/完）与名词化用法（"优化方案提交了"是完成陈述，不是变更请求）。
+const VAGUE_GOAL_PATTERN = /\b(?:improve|optimize|enhance|polish|tweak|refine|streamline|make (?:it|the) better|touch up)\b|(?:优化|改进|提升|增强|完善|打磨|润色|调整|弄|搞)(?:一下|个)?(?![了过完好])(?:[\p{Script=Han}a-z0-9_-]{0,12})?(?:页面|体验|性能|流程|功能|系统|界面|整体|这个|这些)(?=[。！？.!?;；，,]|$)|帮我(?:看看|优化|弄|搞)(?:一下)?(?=[。！？.!?;；，,]|$)/iu;
+const ACCEPTANCE_PATTERN = /\b(?:acceptance|criteri|expect|outcome|measur|success|so that|should|must)\b|验收|期望|预期|可观察|衡量|指标|达到|满足|要求|降低到|提升到|不超过|以内|以上/iu;
+const SPECIFIC_TARGET_PATTERN = /\b(?:login|register|signup|payment|checkout|auth(?:entication)?|validation|permission|cache|import|export|dashboard|report|search|filter|pagination|upload|download|sync|backup|deploy|migration|monitoring|alert|audit|analytics|billing|invoice|cart|order|refund|inventory|wallet|balance|notification|comment|like|follow|editor|calendar|scheduler|api|endpoint|webhook|oauth|sso|mfa|email|sms|dark mode|theme|i18n|localization|seo|accessibility)\b|登录|注册|支付|结算|校验|鉴权|缓存|导入|导出|报表|仪表盘|购物车|订单|退款|发货|库存|积分|优惠券|会员|消息|通知|搜索|筛选|排序|分页|上传|下载|同步|备份|恢复|部署|构建|发布|权限|角色|用户管理|权限管理|数据库|接口|组件|图表|地图|视频|音频|编辑器|日历|日程|任务|工单|评论|点赞|关注|粉丝|私信|钱包|余额|账单|发票|物流|快递|地址|多语言|国际化|主题|暗色|夜间模式|无障碍|埋点|统计|监控|告警|日志|审计|回滚|迁移|降级|限流|熔断/iu;
 const BEHAVIOR_CHANGE_PATTERN = /\b(?:implement(?:ation|ing)?|add|update|change|fix|refactor|build|create|modify|improve|optimi[sz]e|refine|enhance|polish|streamline|tune|adjust)\b|实现|新增|添加|更新|修改|改|修复|重构|构建|创建|改进|改善|优化|调整|完善|打磨|调优|修好/iu;
 const NEW_CONSTRUCT_PATTERN = /\b(?:add|create|introduce|new (?:module|helper|dependency|service|class|abstraction))\b|新增|添加|创建|新建|引入(?:依赖|模块|抽象)|(?:一个|一项)?新的?[\p{Script=Han}a-z0-9_-]{0,16}(?:模块|抽象|依赖|服务|类|组件|工具)/iu;
 const FAILURE_PATTERN = /\b(?:(?:execution|command|build|test) fail(?:ed|ure)?|crash)\b|执行失败|命令失败|构建失败|测试失败|报错|崩溃/iu;
@@ -77,7 +83,12 @@ function removeNegatedActions(value) {
 
 function hasMissingRequirementsSignal(value) {
   if (MISSING_REQUIREMENTS_PATTERN.test(value)) return true;
-  return VAGUE_BEHAVIOR_PATTERN.test(value) && !SATISFIED_REQUIREMENTS_PATTERN.test(value);
+  if (VAGUE_BEHAVIOR_PATTERN.test(value) && !SATISFIED_REQUIREMENTS_PATTERN.test(value)) return true;
+  // 补充：泛化目标 + 无验收描述 + 无特指实体 = 需求未明确，
+  // 覆盖 VAGUE_BEHAVIOR_PATTERN 未命中的"优化一下前端页面"类请求。
+  return VAGUE_GOAL_PATTERN.test(value)
+    && !ACCEPTANCE_PATTERN.test(value)
+    && !SPECIFIC_TARGET_PATTERN.test(value);
 }
 
 /**

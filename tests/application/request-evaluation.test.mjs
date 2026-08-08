@@ -8,6 +8,8 @@ import {
   evaluateSoftwareRequest,
 } from '../../src/index.mjs';
 
+import { REQUIREMENTS_DECISION_FIXTURE } from '../fixtures/requirements-decision.mjs';
+
 function honestRedDecision() {
   return {
     kind: 'behavior-delta',
@@ -173,6 +175,51 @@ test('常见中文未知路径表述会在依赖规划前触发 Wayfinding', () 
 
   assert.ok(result.facts.some((fact) => fact.kind === FACT.PATH_UNKNOWN));
   assert.equal(result.decision.capabilityId, CAPABILITY.NAVIGATION_WAYFIND);
+});
+
+test('模糊变更请求会自动触发需求澄清（结构性推导，不依赖关键词）', () => {
+  const result = evaluateSoftwareRequest({
+    message: '优化一下前端页面。',
+  });
+
+  assert.ok(result.facts.some((fact) => fact.kind === FACT.ACCEPTANCE_CRITERIA_MISSING));
+  assert.equal(result.decision.capabilityId, CAPABILITY.REQUIREMENTS_CLARIFY);
+});
+
+test('英文模糊变更请求同样触发需求澄清', () => {
+  const result = evaluateSoftwareRequest({
+    message: 'Improve the landing page.',
+  });
+
+  assert.ok(result.facts.some((fact) => fact.kind === FACT.ACCEPTANCE_CRITERIA_MISSING));
+  assert.equal(result.decision.capabilityId, CAPABILITY.REQUIREMENTS_CLARIFY);
+});
+
+test('带可观察验收描述的变更请求不触发需求澄清', () => {
+  const result = evaluateSoftwareRequest({
+    message: '优化前端页面，要求首屏加载时间降低到 2 秒以内。',
+  });
+
+  assert.ok(!result.facts.some((fact) => fact.kind === FACT.ACCEPTANCE_CRITERIA_MISSING));
+});
+
+test('特指功能目标的变更请求不触发需求澄清', () => {
+  const result = evaluateSoftwareRequest({
+    message: '实现一个新的支付模块。',
+  });
+
+  assert.ok(!result.facts.some((fact) => fact.kind === FACT.ACCEPTANCE_CRITERIA_MISSING));
+  assert.equal(result.decision.capabilityId, CAPABILITY.IMPLEMENTATION_MINIMIZE);
+});
+
+test('已完成需求澄清的任务不再重复触发澄清', () => {
+  const result = evaluateSoftwareRequest({
+    message: '优化一下前端页面。',
+    requirementsDecision: REQUIREMENTS_DECISION_FIXTURE,
+  });
+
+  assert.ok(!result.facts.some((fact) => fact.kind === FACT.ACCEPTANCE_CRITERIA_MISSING));
+  assert.notEqual(result.decision?.capabilityId, CAPABILITY.REQUIREMENTS_CLARIFY);
 });
 
 for (const scenario of [

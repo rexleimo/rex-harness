@@ -2,6 +2,23 @@
 
 本文件记录 `rex-harness` 独立产品的公开变化。版本遵循 Semantic Versioning。
 
+## [0.5.1] - 2026-08-08
+
+### Added
+
+- **需求澄清收敛契约（防死循环）**：`software.requirements.clarify` 的 requiredEvidence 新增 `anyOf` 收敛组（`acceptance-criteria-recorded` 或 `assumptions-recorded` 二选一），澄清会话有明确时间盒出口；累计多轮未收敛时记录假设（`assumptions-recorded`）即可解锁开发，未决项随交付物交付，杜绝"无限询问、永不执行"。
+- 新增 `ASSUMPTIONS_RECORDED` 事实（`assumptions-recorded`），承载澄清超预算后的假设记录证据。
+
+### Changed
+
+- `derive-facts` 结构性需求缺失推导：在 `hasMissingRequirementsSignal()` 中补充泛化目标分支——泛化优化动作 + 无验收描述 + 无特指功能实体（如"优化一下前端页面"）自动产生 `acceptance-criteria-missing`，覆盖 `VAGUE_BEHAVIOR_PATTERN` 未命中的目标词；排除完成时态与名词化陈述（"优化方案提交了"）误报。
+- `evaluateEvidence()`、`validateCommandEvidence()`、`capability-pack` 契约校验、`software-workflow-runtime` 的 `commandContract` 支持 `anyOf` 收敛组；字符串契约项行为保持向后兼容。
+- `rex-requirements` Skill 增加"查 → 推 → 猜 → 问"思考优先级链、带假设提问（Ask-with-hypothesis）与澄清预算（3 轮收敛）行为准则；新增第 3 条 eval（假设收敛场景）并追加 projection history digest。
+
+### Fixed
+
+- `commandContract` 不再把 `anyOf` 收敛组误判为非法 expectedEvidence（此前会导致 requirements 阶段 advance 返回 `command-invalid` blocked）。
+
 ## [0.5.0] - 2026-08-01
 
 ### Added

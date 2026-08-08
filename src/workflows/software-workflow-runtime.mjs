@@ -232,17 +232,30 @@ function commandContract(workflow) {
   if (command.type !== 'provider.invoke') {
     throw new Error('current Command has an invalid type');
   }
+  // 契约项支持 anyOf 收敛组：字符串直接匹配，对象按组内种类展开校验。
+  const expectedKinds = new Set();
+  for (const item of stage.requiredEvidence) {
+    if (item && typeof item === 'object' && Array.isArray(item.anyOf)) {
+      for (const kind of item.anyOf) expectedKinds.add(kind);
+    } else {
+      expectedKinds.add(item);
+    }
+  }
+  const isContractItem = (item) => (
+    typeof item === 'string'
+      ? expectedKinds.has(item)
+      : Boolean(item && typeof item === 'object' && Array.isArray(item.anyOf)
+        && item.anyOf.every((kind) => expectedKinds.has(kind)))
+  );
   const persistedEvidence = command.expectedEvidence;
   if (persistedEvidence !== undefined) {
-    if (!Array.isArray(persistedEvidence) || persistedEvidence.some((kind) => (
-      typeof kind !== 'string' || !stage.requiredEvidence.includes(kind)
-    ))) {
+    if (!Array.isArray(persistedEvidence) || persistedEvidence.some((kind) => !isContractItem(kind))) {
       throw new Error('current Command expectedEvidence does not match its recipe stage');
     }
   }
   return Object.freeze({
     expectedEvidence: Object.freeze(
-      persistedEvidence?.length ? [...new Set(persistedEvidence)] : [...stage.requiredEvidence],
+      persistedEvidence?.length ? [...persistedEvidence] : [...stage.requiredEvidence],
     ),
   });
 }

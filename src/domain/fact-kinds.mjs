@@ -6,6 +6,7 @@ export const FACT = Object.freeze({
   EXPLICIT_INTENT_UNKNOWN: 'explicit-intent-unknown',
   REQUIREMENTS_DECISION_RECORDED: 'requirements-decision-recorded',
   DOMAIN_VOCABULARY_AMBIGUOUS: 'domain-vocabulary-ambiguous',
+  ASSUMPTIONS_RECORDED: 'assumptions-recorded',
   DESIGN_DECISION_BLOCKED: 'design-decision-blocked',
   DEPENDENT_WORK_ITEMS: 'dependent-work-items',
   BEHAVIOR_CHANGE: 'behavior-change',
