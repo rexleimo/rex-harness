@@ -161,7 +161,9 @@ test('client projection honors an explicit client discovery root', async () => {
     });
 
     assert.equal(result.status, 'installed');
-    assert.equal(result.skillRoot, targetRoot);
+    // macOS /var -> /private/var 符号链接会让 realpath 结果带上 /private 前缀；
+    // 用 canonical 路径比较，避免平台路径基线差异。
+    assert.equal(result.skillRoot, fs.realpathSync(targetRoot));
     assert.deepEqual((await readdir(targetRoot)).sort(), expectedSkills);
     await assert.rejects(
       () => readdir(path.join(rootDir, '.grok', 'skills')),
