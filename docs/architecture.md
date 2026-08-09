@@ -54,7 +54,7 @@ workflow runtime <- standalone store <- public JS API <- external host adapter
                   compact CLI <- rex-workflow Skill
 ```
 
-父项目只能通过 `src/index.mjs` 公共入口消费 rex。`rex-harness` 不导入 `harness-cli/scripts/lib/**`，因此可以独立发布、测试和嵌入其他 Agent 工具。
+父项目只能通过 `src/index.mjs` 公共入口消费 rex。`rex-harness` 不导入 `aios/scripts/lib/**`，因此可以独立发布、测试和嵌入其他 Agent 工具。
 
 核心包不提供 MCP Server。可选协议适配必须位于独立包，并调用公共 JS API 或 CLI，不能进入上述依赖链或复制状态机。
 

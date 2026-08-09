@@ -17,7 +17,7 @@
 - `rex-workflow` 是独立 Agent 的编排入口；一次只加载当前 Provider，完整历史保留在 `.rex-harness/`。
 - 核心包不实现 MCP Server；协议适配只能作为调用公共 CLI/JS API 的可选外部包。
 - Capability ID 必须与 Provider 无关。`src/providers/` 只提供可移植默认提示；集成宿主拥有最终可执行绑定。
-- 不得导入 `harness-cli/scripts/lib/**` 私有模块。
+- 不得导入 `aios/scripts/lib/**` 私有模块。
 - 不得新增 `utils`、`common`、`helpers`、`misc`、`services` 或 `shared` 兜底目录。
 - 复杂控制流和边界注释使用中文；显而易见的代码不添加逐行注释。
 

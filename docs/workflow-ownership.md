@@ -2,7 +2,7 @@
 
 ## 一句话边界
 
-`rex-harness` 决定软件工程下一步做什么，提供默认执行 Provider，并独立保存/推进语义工作流；`harness-cli / AIOS` 默认复用该 Command，再增加模型执行和宿主治理。
+`rex-harness` 决定软件工程下一步做什么，提供默认执行 Provider，并独立保存/推进语义工作流；`AIOS` 默认复用该 Command，再增加模型执行和宿主治理。
 
 ## rex-harness 拥有
 
@@ -16,7 +16,7 @@
 
 `listSoftwareWorkflowRecipes()` 只投影一个 `adaptive-software-delivery` 描述。其中所有阶段都是 `conditional` 候选，真正的选择和顺序由 `software-workflow-runtime.mjs` 决定。
 
-## harness-cli / AIOS 额外拥有
+## AIOS 额外拥有
 
 - `direct | guarded | planned` 宿主处置；
 - 可选 Provider 覆盖和具体 Agent 晋级检查；
@@ -27,7 +27,7 @@
 
 AIOS 必须调用 rex 的 `startSoftwareWorkflow()` / `advanceSoftwareWorkflow()`，不能根据完成记录再次自行推导下一 Capability。`executionHost = single | team | harness` 只选择运行形态，不能覆盖当前 Command 的 Provider。
 
-## 为什么 harness-cli 仍有 Recipe
+## 为什么 aios 仍有 Recipe
 
 父项目注册表组合两种不同对象：
 

@@ -4,10 +4,10 @@
 
 ## 问题
 
-当前实现已经有 Provider-neutral Capability，但还缺少把一次软件工程请求推进到完成的应用层。与此同时，`harness-cli` 的 Router 和 Recipe 又直接描述了 Matt、Superpowers、ECC、Ponytail 的选择顺序，形成了两套工作流所有权：
+当前实现已经有 Provider-neutral Capability，但还缺少把一次软件工程请求推进到完成的应用层。与此同时，`aios` 的 Router 和 Recipe 又直接描述了 Matt、Superpowers、ECC、Ponytail 的选择顺序，形成了两套工作流所有权：
 
 - `rex-harness` 只能说明“有哪些能力”，不能说明“当前执行哪个阶段、证据是否足够、下一步是什么”；
-- `harness-cli` 通过 `balanced`、`wayfinder` 和固定 Agent Recipe 决定软件工程步骤，替代了本应由 `rex-harness` 持有的语义；
+- `aios` 通过 `balanced`、`wayfinder` 和固定 Agent Recipe 决定软件工程步骤，替代了本应由 `rex-harness` 持有的语义；
 - 首次路由一次注入整条 Skill 链，后续步骤不依赖真实证据，无法形成可恢复的状态机。
 
 ## 所有权决定
@@ -22,7 +22,7 @@
 6. 软件工程 Workflow Recipe 的步骤组合；
 7. Fast / Balanced / Deep 的事后分析标签，不把标签用作输入路由。
 
-### harness-cli / AIOS 拥有
+### AIOS 拥有
 
 1. `direct | guarded | planned` 宿主策略和计划持久化；
 2. Skill、Playbook、Agent、模型和进程的实际执行；
@@ -143,4 +143,4 @@ Evidence 必须包含 `kind` 和非空 `refs`。缺少阶段所需 Evidence 时�
 - 不让 Skill 自行根据关键词激活；
 - 不把 Fast / Balanced / Deep 作为固定输入模式；
 - 不引入第二个计划系统或新的运行时依赖；
-- 不把 `harness-cli/scripts/lib/**` 私有模块导入 rex-harness。
+- 不把 `aios/scripts/lib/**` 私有模块导入 rex-harness。

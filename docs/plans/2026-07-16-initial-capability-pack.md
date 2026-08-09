@@ -18,4 +18,4 @@ Create a provider-neutral software-engineering capability pack that AIOS can exe
 
 - Implementing AIOS execution, ContextDB, compression, Team, or Harness.
 - Installing external providers.
-- Replacing the current harness-cli workflow policy in this change.
+- Replacing the current aios workflow policy in this change.

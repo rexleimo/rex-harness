@@ -1,13 +1,13 @@
 # rex-harness
 
-[![Parent project](https://img.shields.io/badge/parent-harness--cli-0ea5e9)](https://github.com/rexleimo/harness-cli)
+[![Parent project](https://img.shields.io/badge/parent-harness--cli-0ea5e9)](https://github.com/rexleimo/aios)
 
 > Standalone software-engineering control plane for coding agents.
 > Derives Facts from Observations, selects one Capability at a time, emits a typed Provider Command, and advances only with matching Evidence.
 
 `rex-harness` 是一个可独立运行的软件工程工作流内核。它读取 Coding Agent 的任务和结构化 Observation，推导 Fact，一次只选择一个 Capability，发出当前 Provider Command，并用类型化 Evidence 决定阻塞、续转或完成。
 
-它可以单独辅助 Codex、Claude、Gemini、OpenCode、Hermes、Grok Build 或其他支持目录型 Skill 的 Agent；接入 `harness-cli / AIOS` 后，再获得模型执行、ContextDB、Team、长任务恢复和安全治理等宿主增强。
+它可以单独辅助 Codex、Claude、Gemini、OpenCode、Hermes、Grok Build 或其他支持目录型 Skill 的 Agent；接入 `AIOS` 后，再获得模型执行、ContextDB、Team、长任务恢复和安全治理等宿主增强。
 
 独立安装只使用 rex 自己实现的需求、设计、规划、测试设计、基础/严格 TDD、根因调试、最小构造、实施、代码审查、专项审查和 Wayfinding Provider。外部 playbook 不属于支持路径，也不是运行依赖。
 
@@ -87,9 +87,9 @@ Request / Observation
 - `analyzeExecutionProfile()`：根据已发生 Activation 计算执行画像。
 - `startStandaloneWorkflow()` / `readStandaloneWorkflow()` / `submitStandaloneEvidence()`：供宿主使用的完整 standalone JS API。
 
-## 与 harness-cli / AIOS 的关系
+## 与 AIOS 的关系
 
-| 能力 | rex-harness 独立模式 | harness-cli / AIOS 增强模式 |
+| 能力 | rex-harness 独立模式 | AIOS 增强模式 |
 | --- | --- | --- |
 | Fact、Capability、阶段顺序、Evidence Contract | rex 拥有 | 复用 rex |
 | Workflow Activation、start/status/evidence/resume | `.rex-harness/` | AIOS 持久化为宿主投影 |
