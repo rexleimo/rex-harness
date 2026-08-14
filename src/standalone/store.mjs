@@ -264,19 +264,25 @@ export function startStandaloneWorkflow({
   rootDir = process.cwd(),
   workItemKey,
   request,
+  decision = null,
+  evaluation = null,
+  createActivationId,
   profile = 'default',
   workflowActivationId = randomUUID(),
   now = new Date(),
 } = {}) {
   const paths = statePaths(rootDir);
   const existing = readByWorkItem(paths, workItemKey);
-  if (existing) {
+  if (existing && !['completed', 'blocked'].includes(existing.status)) {
     throw new Error(`rex standalone work item already exists: ${workItemKey}; use resume`);
   }
   const workflow = sealCurrentCommand(startSoftwareWorkflow({
     workflowActivationId,
     workItemKey,
     request,
+    decision,
+    evaluation,
+    createActivationId,
     profile,
     now,
   }));
@@ -285,6 +291,40 @@ export function startStandaloneWorkflow({
     stateRoot: paths.stateRoot,
     outcome: 'started',
   });
+}
+
+export function persistStandaloneWorkflow({ rootDir = process.cwd(), workflow } = {}) {
+  if (workflow?.kind !== 'rex.software-workflow-activation.v1') {
+    throw new TypeError('persistStandaloneWorkflow requires a rex software workflow');
+  }
+  writeWorkflow(statePaths(rootDir), workflow);
+  return workflow;
+}
+
+export function findStandaloneWorkflow({
+  rootDir = process.cwd(),
+  workItemKey = '',
+  workflowActivationId = '',
+  activationId = '',
+} = {}) {
+  const paths = statePaths(rootDir);
+  if (text(workItemKey) || text(workflowActivationId)) {
+    try {
+      return readStandaloneWorkflow({ rootDir, workItemKey, workflowActivationId });
+    } catch (error) {
+      if (!text(activationId)) throw error;
+    }
+  }
+  const wanted = text(activationId);
+  if (!wanted) {
+    throw new Error('rex standalone lookup requires workItemKey, workflowActivationId, or activationId');
+  }
+  const workflow = listWorkflows(paths).find((candidate) => (
+    candidate.currentActivation?.activationId === wanted
+    || candidate.activationHistory?.some((activation) => activation.activationId === wanted)
+  ));
+  if (!workflow) throw new Error(`rex standalone activation not found: ${wanted}`);
+  return presentStandaloneWorkflow(workflow, { stateRoot: paths.stateRoot });
 }
 
 export function readStandaloneWorkflow({

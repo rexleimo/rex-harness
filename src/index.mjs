@@ -69,6 +69,8 @@ export {
 export {
   presentStandaloneWorkflow,
   readStandaloneWorkflow,
+  findStandaloneWorkflow,
+  persistStandaloneWorkflow,
   captureStandaloneExecutionReceipt,
   resolveStandaloneExecutionReceipt,
   startStandaloneWorkflow,
