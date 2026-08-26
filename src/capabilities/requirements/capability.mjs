@@ -2,8 +2,9 @@ import { CAPABILITY } from '../../domain/capability-ids.mjs';
 import { FACT } from '../../domain/fact-kinds.mjs';
 import { findFact, findFactValue } from '../../domain/facts.mjs';
 
-// 需求澄清优先于设计和规划，避免下游工作把尚未解决的
-// 验收条件或领域词汇歧义固化进实现。
+// 需求澄清由 LLM 语义判断触发（grill/spec intent）或执行中领域词汇歧义
+// observation 触发，不再用正则从请求措辞推断验收标准缺失。
+// 澄清可发生在任意阶段边界：执行中遇到决策点即可插入，澄清完成后继续原 Capability。
 export const requirementsCapability = Object.freeze({
   id: CAPABILITY.REQUIREMENTS_CLARIFY,
   description: 'Clarify observable behavior without creating a second implementation plan.',
@@ -30,7 +31,7 @@ export const requirementsCapability = Object.freeze({
     })]),
   }),
   activate(facts) {
-    return findFact(facts, FACT.ACCEPTANCE_CRITERIA_MISSING, FACT.DOMAIN_VOCABULARY_AMBIGUOUS)
+    return findFact(facts, FACT.DOMAIN_VOCABULARY_AMBIGUOUS)
       || findFactValue(facts, FACT.EXPLICIT_INTENT, 'grill', 'spec');
   },
 });

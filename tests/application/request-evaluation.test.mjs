@@ -30,13 +30,13 @@ function honestRedDecision() {
   };
 }
 
-test('request observation derives traceable facts and selects only requirements clarification', () => {
+test('grill intent derives traceable facts and selects only requirements clarification', () => {
   const result = evaluateSoftwareRequest({
     message: 'Clarify the domain vocabulary and acceptance criteria before implementing checkout.',
+    explicitIntent: 'grill',
   });
 
-  assert.ok(result.facts.some((fact) => fact.kind === FACT.ACCEPTANCE_CRITERIA_MISSING));
-  assert.ok(result.facts.every((fact) => fact.evidenceRefs.includes('request:current')));
+  assert.ok(result.facts.some((fact) => fact.kind === FACT.EXPLICIT_INTENT));
   assert.equal(result.decision.capabilityId, CAPABILITY.REQUIREMENTS_CLARIFY);
   assert.equal(result.decision.recipeId, 'software.requirements.clarify.recipe');
   assert.equal(result.decision.stageId, 'clarify');
@@ -177,22 +177,22 @@ test('常见中文未知路径表述会在依赖规划前触发 Wayfinding', () 
   assert.equal(result.decision.capabilityId, CAPABILITY.NAVIGATION_WAYFIND);
 });
 
-test('模糊变更请求会自动触发需求澄清（结构性推导，不依赖关键词）', () => {
+test('模糊变更请求不再自动触发需求澄清（LLM 未归类 grill 时）', () => {
   const result = evaluateSoftwareRequest({
     message: '优化一下前端页面。',
   });
 
-  assert.ok(result.facts.some((fact) => fact.kind === FACT.ACCEPTANCE_CRITERIA_MISSING));
-  assert.equal(result.decision.capabilityId, CAPABILITY.REQUIREMENTS_CLARIFY);
+  assert.ok(!result.facts.some((fact) => fact.kind === FACT.ACCEPTANCE_CRITERIA_MISSING));
+  assert.notEqual(result.decision?.capabilityId, CAPABILITY.REQUIREMENTS_CLARIFY);
 });
 
-test('英文模糊变更请求同样触发需求澄清', () => {
+test('英文模糊变更请求同样不自动触发需求澄清', () => {
   const result = evaluateSoftwareRequest({
     message: 'Improve the landing page.',
   });
 
-  assert.ok(result.facts.some((fact) => fact.kind === FACT.ACCEPTANCE_CRITERIA_MISSING));
-  assert.equal(result.decision.capabilityId, CAPABILITY.REQUIREMENTS_CLARIFY);
+  assert.ok(!result.facts.some((fact) => fact.kind === FACT.ACCEPTANCE_CRITERIA_MISSING));
+  assert.notEqual(result.decision?.capabilityId, CAPABILITY.REQUIREMENTS_CLARIFY);
 });
 
 test('带可观察验收描述的变更请求不触发需求澄清', () => {

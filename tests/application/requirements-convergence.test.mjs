@@ -14,7 +14,7 @@ import { REQUIREMENTS_DECISION_FIXTURE } from '../fixtures/requirements-decision
 
 function requirementsDecision() {
   return decideNextCapability([
-    { kind: FACT.ACCEPTANCE_CRITERIA_MISSING, evidenceRefs: ['request:current'] },
+    { kind: FACT.EXPLICIT_INTENT, value: 'grill', evidenceRefs: ['intent:grill'] },
   ]);
 }
 

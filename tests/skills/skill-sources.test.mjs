@@ -26,7 +26,15 @@ test('canonical skills are discoverable and keep activation logic out of prompts
     const file = path.join(root, entry.name, 'SKILL.md');
     const content = (await readFile(file, 'utf8')).replace(/\r\n/g, '\n');
     assert.match(content, /^---\nname: [a-z0-9-]+\ndescription: .+\n---\n/u);
-    assert.match(content, /^description: Use only after rex-harness selects .+ and supplies the current Command\.$/mu);
+    // description 支持两种入口：LLM 语义自助触发（vague/underspecified 等），
+    // 或 rex-harness 激活后执行。rex-requirements 使用双触发格式。
+    const descriptionLine = content.split('\n').find((line) => line.startsWith('description:'));
+    if (entry.name === 'rex-requirements') {
+      assert.match(descriptionLine, /Use when a request is vague, underspecified/u);
+      assert.match(descriptionLine, /Also use after rex-harness selects software requirements clarification/u);
+    } else {
+      assert.match(descriptionLine, /^description: Use only after rex-harness selects .+ and supplies the current Command\.$/u);
+    }
     assert.match(content, /已经.*激活|激活.*Capability/u);
     assert.match(content, /AIOS_REX_EVIDENCE/u);
     assert.match(content, /恰好一个.*信封/u);

@@ -77,6 +77,21 @@ fixed-point 从当前 Command 的 `targetRefs` 或用户参数中取；若均无
 
 返回 `standards-review-recorded` 和 `spec-review-recorded`，每项附带真实的差异、审查或报告引用。
 
+### 场景化子代理验收模式（Acceptance）
+
+用户要求"子代理验收/场景验收/对目标跑正常/边界/异常场景/无上下文污染验收"时，进入本模式。它与双轴审查不互相替代：双轴是静态读 diff，验收是行为验证——在隔离子代理里实际执行目标，按场景矩阵确认行为符合声明。
+
+1. **冻结**：复用 working-tree 冻结（HEAD + `git status --short --branch` + 每文件 `git hash-object --no-filters -- <path>`），验收期间禁止继续编辑目标。
+2. **分片派发**：按功能面分片，每个子代理 prompt 自带仓库身份预检（`cd <abs-repo>` + toplevel + status，不符返回 REPO_MISMATCH）、冻结清单与哈希、三场景矩阵、明确只读；不得引用 sibling prompt 或父上下文。
+3. **三场景矩阵**：
+   - A 正常：happy path 行为断言（命令执行返回、tools/list、并发请求 id 对应）；
+   - B 边界：参数钳制、幂等、非法输入、并发时序、用户配置不被覆盖；
+   - C 异常：取消时序、上游崩溃、资源清理、僵尸进程、通知在完成之后到达。
+4. **回收**：子代理自报不是证据，父代理读回每个 FAIL 引用的源码行/命令；REPO_MISMATCH 或未返回 → 该片 `acceptance-incomplete`，不并入汇总。哈希校验命令必须与父侧冻结逐字节一致（Windows 用 `--no-filters`），子代理误用默认 hash-object 得到不同哈希属命令差异误报，先复核父侧再决定，不直接丢弃。
+5. **结论措辞**：验收通过 ≠ 产品完成，只写"所验收场景全部通过（A/B/C 各 N 项）"；未覆盖场景、未回收片、静态审查遗留 finding 并列说明。
+
+模板与 2026-08-26 实测样例见 `references/acceptance-scenario-matrix.md`。
+
 ### S4 review verdict boundary
 
 完成态必须能归一化为一个 `rex.standards-spec-review.v1`：包含 fixed-point、非空 diff ref、Spec 来源或明确缺失、Standards/Spec 两轴 findings、每项 finding 的位置/证据/严重度/修复建议、最终 verdict 和 evidence refs。空 diff、坏 fixed-point 或未区分两轴时只能返回 `blocked`/`incomplete`，不得报通过。

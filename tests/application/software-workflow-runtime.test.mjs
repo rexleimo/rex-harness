@@ -125,7 +125,7 @@ test('requirements decision survives partial evidence completion', () => {
   const started = startSoftwareWorkflow({
     workflowActivationId: 'workflow-requirements-partial',
     workItemKey: 'requirements-partial',
-    request: { message: '把用户登录改一下' },
+    request: { message: 'Clarify the checkout behavior before implementing.', explicitIntent: 'grill' },
     createActivationId,
   });
   const partial = advanceSoftwareWorkflow(started, [

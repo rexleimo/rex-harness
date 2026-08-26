@@ -71,11 +71,15 @@ for (const scenario of [
   {
     label: '需求澄清优先于实现',
     message: '实现结账功能前先澄清需求歧义和验收条件。',
+    explicitIntent: 'grill',
     capabilityId: CAPABILITY.REQUIREMENTS_CLARIFY,
   },
 ]) {
   test(`${scenario.label}稳定映射到预期 Capability`, () => {
-    const result = evaluateSoftwareRequest({ message: scenario.message });
+    const result = evaluateSoftwareRequest({
+      message: scenario.message,
+      explicitIntent: scenario.explicitIntent || null,
+    });
     assert.equal(result.decision?.capabilityId || null, scenario.capabilityId);
   });
 }

@@ -9,7 +9,9 @@ test('ambiguity corpus contains the planned bilingual coverage', () => {
   assert.equal(new Set(AMBIGUITY_CORPUS.map((item) => item.id)).size, 39);
   assert.ok(AMBIGUITY_CORPUS.filter((item) => item.locale === 'zh-CN').length >= 10);
   assert.ok(AMBIGUITY_CORPUS.filter((item) => item.locale === 'en').length >= 10);
-  assert.ok(AMBIGUITY_CORPUS.filter((item) => item.expectedCapability === 'software.requirements.clarify').length >= 15);
+  // 新语义：模糊措辞本身不再自动触发 requirements（LLM 未归类 grill 时）。
+  // 明确要求澄清并归类 grill 的场景才触发；其余场景按行为分类路由。
+  assert.ok(AMBIGUITY_CORPUS.filter((item) => item.expectedCapability === 'software.requirements.clarify').length >= 5);
   assert.ok(AMBIGUITY_CORPUS.filter((item) => item.expectedCapability !== 'software.requirements.clarify').length >= 15);
 });
 

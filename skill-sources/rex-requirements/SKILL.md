@@ -1,13 +1,24 @@
 ---
 name: rex-requirements
-description: Use only after rex-harness selects software requirements clarification and supplies the current Command.
+description: Use when a request is vague, underspecified, or could be interpreted multiple ways — even when it names a specific feature but acceptance criteria, scope, or success are not yet defined. Also use after rex-harness selects software requirements clarification and supplies the current Command.
 ---
 
 # Rex Requirements
 
-仅在 rex-harness 已经激活当前 Capability，并提供当前 Command 后执行本流程。
+需求澄清（Grilling）可以在两种入口下执行：
 
-## Grilling 模式
+1. **自助触发（无 Command）**：用户在对话中提出需求，你判断其存在模糊信号——验收标准缺失、范围不清、成功标准未定义、领域词汇有歧义、或同一请求存在多种合理解读——即使请求点名了具体功能。此时**先自行推进**：查文档、读代码、找事实，能自己解决的不要问；只在真正需要用户决策的点停下来，一次问一个问题。
+2. **rex-harness 激活（有 Command）**：仅在 rex-harness 已经激活当前 Capability，并提供当前 Command 后执行本流程。此时以 Command 的期望证据为准。
+
+## Grilling 模式：执行期内嵌，不是开头审问会
+
+Grilling 是**制作过程中内嵌的交互机制**，不是流水线开头的一道闸。正确顺序：
+
+```
+用户发需求 → 你自行规划/分析/找事实（查文档、读代码、查配置）
+          → 遇到自己无法决定的方向/边界/验收选择 → 停下来问（一次一题，带推荐答案）
+          → 继续做 → 下一个决策点 → 再问 → ...直到完成
+```
 
 **一次只问一个问题，等用户回答后再问下一个。** 同时抛出多个问题会让用户迷失——这是此流程最重要的约束。
 
@@ -46,16 +57,16 @@ description: Use only after rex-harness selects software requirements clarificat
 先读取仓库中已有的领域术语（`CONTEXT.md` 若存在）、用户决定和仓库约束。
 已经有答案的问题不重复询问。
 
-### 2. 逐一解决歧义
+### 2. 执行中识别决策点
 
-每次只选一个会改变实现或验收方式的歧义，问用户：
+在规划/分析/制作过程中，遇到会改变实现或验收方式的歧义才停下来问：
 - 参与者是谁
 - 触发条件是什么
 - 可观察的结果是什么
 - 边界条件（最大/最小/空/并发）
 - 失败行为（错误后系统状态如何）
 
-等用户回答后，根据答案决定是否还有下一个歧义需要解决。
+等用户回答后，继续推进；遇到下一个决策点再问。
 
 ### 3. 记录验收标准
 

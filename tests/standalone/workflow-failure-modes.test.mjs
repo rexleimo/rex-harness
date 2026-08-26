@@ -24,7 +24,7 @@ function startRequirements(rootDir, workItemKey = 'checkout') {
     rootDir,
     workItemKey,
     workflowActivationId: `workflow-${workItemKey}`,
-    request: { message: 'Clarify acceptance criteria before implementing checkout.' },
+    request: { message: 'Clarify acceptance criteria before implementing checkout.', explicitIntent: 'grill' },
   });
 }
 

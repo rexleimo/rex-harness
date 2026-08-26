@@ -3,13 +3,13 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "The requirements capability has already been activated because acceptance criteria are missing. Clarify the expected behavior for adding automatic retry to a payment callback without designing the implementation yet.",
-      "expected_output": "A compact requirements record that identifies the unresolved behavior, asks only decision-changing questions, and defines observable acceptance criteria.",
+      "prompt": "A user asks to 'add retries to the payment callback' without specifying retry counts, backoff, failure thresholds, or what happens to the order state on final failure. The request names a concrete feature but lacks acceptance criteria. You judge the request vague and classify it as a grill intent. Clarify the expected behavior without designing the implementation yet.",
+      "expected_output": "A compact requirements record that identifies the unresolved behavior, asks only decision-changing questions (one at a time, with a recommended answer), and defines observable acceptance criteria.",
       "files": []
     },
     {
       "id": 2,
-      "prompt": "The requirements capability has already been activated because two teams use the term workspace differently. Resolve the vocabulary and acceptance boundary before planning the migration.",
+      "prompt": "Two teams use the term workspace differently in the same codebase. The requirements capability has been activated via a grill intent to resolve the vocabulary and acceptance boundary before the migration proceeds.",
       "expected_output": "A terminology decision with explicit in-scope and out-of-scope meanings, remaining unknowns, and testable acceptance conditions.",
       "files": []
     },

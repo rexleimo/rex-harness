@@ -53,6 +53,8 @@ test('standalone CLI starts, persists, advances, and resumes a workflow without 
       'start',
       '--work-item',
       'checkout',
+      '--intent',
+      'grill',
       '--message',
       'Clarify acceptance criteria before implementing checkout.',
     );
@@ -161,6 +163,8 @@ test('standalone CLI returns full diagnostics only when explicitly requested', a
       'start',
       '--work-item',
       'full-check',
+      '--intent',
+      'grill',
       '--message',
       'Clarify acceptance criteria before implementing checkout.',
       '--full',

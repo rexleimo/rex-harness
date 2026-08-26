@@ -12,13 +12,13 @@ test('no software-engineering fact means no process capability', () => {
   assert.equal(decideNextCapability([]), null);
 });
 
-test('missing acceptance criteria activates requirements clarification only', () => {
+test('grill intent activates requirements clarification only', () => {
   const decision = decideNextCapability([
-    { kind: FACT.ACCEPTANCE_CRITERIA_MISSING, evidenceRefs: ['request:current'] },
+    { kind: FACT.EXPLICIT_INTENT, value: 'grill', evidenceRefs: ['intent:grill'] },
   ]);
 
   assert.equal(decision.capabilityId, CAPABILITY.REQUIREMENTS_CLARIFY);
-  assert.equal(decision.reasonCode, FACT.ACCEPTANCE_CRITERIA_MISSING);
+  assert.equal(decision.reasonCode, 'explicit-intent-grill');
 });
 
 test('an observed failure preempts implementation-oriented capabilities', () => {
