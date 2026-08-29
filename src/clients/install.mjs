@@ -20,6 +20,7 @@ const CLIENT_SKILL_ROOTS = Object.freeze({
   opencode: path.join('.opencode', 'skills'),
   hermes: path.join('.hermes', 'skills'),
   grok: path.join('.grok', 'skills'),
+  workbuddy: path.join('.workbuddy', 'skills'),
 });
 export const rexWorkflowSkill = Object.freeze({
   id: 'rex-workflow',
