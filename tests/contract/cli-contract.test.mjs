@@ -37,6 +37,7 @@ test('doctor reports a standalone-ready kernel with bundled Providers', () => {
     'opencode',
     'hermes',
     'grok',
+    'workbuddy',
   ]);
   assert.deepEqual(report.errors, []);
 });

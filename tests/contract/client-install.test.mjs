@@ -38,6 +38,7 @@ const CLIENT_ROOTS = {
   opencode: '.opencode/skills',
   hermes: '.hermes/skills',
   grok: '.grok/skills',
+  workbuddy: '.workbuddy/skills',
 };
 
 async function copyPackageFixture(packageRoot) {
