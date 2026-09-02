@@ -217,8 +217,9 @@ test('standalone requirements file rejects an external symlink', async () => {
       'requirements-link',
       '--message',
       'Clarify acceptance criteria before implementing checkout.',
-    );
-    const rejected = spawnSync(process.execPath, [
+      '--intent',
+      'grill',
+    );    const rejected = spawnSync(process.execPath, [
       cliPath,
       'evidence',
       '--activation',
@@ -250,6 +251,8 @@ test('standalone compact CLI preserves a Rex blocked reason', async () => {
       'checkout-validation',
       '--message',
       'Update checkout validation behavior.',
+      '--intent',
+      'implement',
     );
     const designed = runCli(
       rootDir,
@@ -332,6 +335,8 @@ test('standalone evidence rejects a testability receipt from a different declare
       'checkout-validation',
       '--message',
       'Update checkout validation behavior.',
+      '--intent',
+      'implement',
     );
     assert.equal(started.command.providerId, 'rex-test-design');
 

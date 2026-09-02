@@ -121,6 +121,7 @@ test('review and debug intents require their safety prerequisite', () => {
 test('completed test design unlocks TDD without replaying the completed capability', () => {
   const result = evaluateSoftwareRequest({
     message: 'Update the public input validation behavior.',
+    explicitIntent: 'implement',
     completedCapabilities: [CAPABILITY.TESTING_DESIGN],
     testabilityDecision: honestRedDecision(),
   });
@@ -132,6 +133,7 @@ test('completed test design unlocks TDD without replaying the completed capabili
 test('high-risk behavior still confirms the test scope before TDD', () => {
   const result = evaluateSoftwareRequest({
     message: 'Update authentication behavior.',
+    explicitIntent: 'implement',
     observations: [
       {
         kind: OBSERVATION.HIGH_RISK_BOUNDARY,
@@ -146,6 +148,7 @@ test('high-risk behavior still confirms the test scope before TDD', () => {
 test('confirmed high-risk test scope upgrades baseline TDD to strict TDD', () => {
   const result = evaluateSoftwareRequest({
     message: 'Update authentication behavior.',
+    explicitIntent: 'implement',
     observations: [
       {
         kind: OBSERVATION.HIGH_RISK_BOUNDARY,
@@ -159,18 +162,22 @@ test('confirmed high-risk test scope upgrades baseline TDD to strict TDD', () =>
   assert.equal(result.decision.capabilityId, CAPABILITY.TESTING_STRICT_TDD);
 });
 
-test('常见中文新模块表述会触发 rex 最小构造门', () => {
+test('新构造声明触发 rex 最小构造门', () => {
   const result = evaluateSoftwareRequest({
     message: '实现一个新的支付模块。',
+    observations: [
+      { kind: OBSERVATION.NEW_CONSTRUCT_PROPOSED, evidenceRefs: ['observation:req-eval-new-construct'] },
+    ],
   });
 
   assert.ok(result.facts.some((fact) => fact.kind === FACT.NEW_CONSTRUCT_PROPOSED));
   assert.equal(result.decision.capabilityId, CAPABILITY.IMPLEMENTATION_MINIMIZE);
 });
 
-test('常见中文未知路径表述会在依赖规划前触发 Wayfinding', () => {
+test('wayfinder 声明触发 Wayfinding', () => {
   const result = evaluateSoftwareRequest({
     message: '梳理这个未知迁移路径，再决定后续步骤。',
+    explicitIntent: 'wayfinder',
   });
 
   assert.ok(result.facts.some((fact) => fact.kind === FACT.PATH_UNKNOWN));
@@ -180,6 +187,7 @@ test('常见中文未知路径表述会在依赖规划前触发 Wayfinding', () 
 test('模糊变更请求不再自动触发需求澄清（LLM 未归类 grill 时）', () => {
   const result = evaluateSoftwareRequest({
     message: '优化一下前端页面。',
+    explicitIntent: 'implement',
   });
 
   assert.ok(!result.facts.some((fact) => fact.kind === FACT.ACCEPTANCE_CRITERIA_MISSING));
@@ -189,6 +197,7 @@ test('模糊变更请求不再自动触发需求澄清（LLM 未归类 grill 时
 test('英文模糊变更请求同样不自动触发需求澄清', () => {
   const result = evaluateSoftwareRequest({
     message: 'Improve the landing page.',
+    explicitIntent: 'implement',
   });
 
   assert.ok(!result.facts.some((fact) => fact.kind === FACT.ACCEPTANCE_CRITERIA_MISSING));
@@ -198,6 +207,7 @@ test('英文模糊变更请求同样不自动触发需求澄清', () => {
 test('带可观察验收描述的变更请求不触发需求澄清', () => {
   const result = evaluateSoftwareRequest({
     message: '优化前端页面，要求首屏加载时间降低到 2 秒以内。',
+    explicitIntent: 'implement',
   });
 
   assert.ok(!result.facts.some((fact) => fact.kind === FACT.ACCEPTANCE_CRITERIA_MISSING));
@@ -206,6 +216,9 @@ test('带可观察验收描述的变更请求不触发需求澄清', () => {
 test('特指功能目标的变更请求不触发需求澄清', () => {
   const result = evaluateSoftwareRequest({
     message: '实现一个新的支付模块。',
+    observations: [
+      { kind: OBSERVATION.NEW_CONSTRUCT_PROPOSED, evidenceRefs: ['observation:req-eval-new-construct'] },
+    ],
   });
 
   assert.ok(!result.facts.some((fact) => fact.kind === FACT.ACCEPTANCE_CRITERIA_MISSING));
@@ -215,6 +228,7 @@ test('特指功能目标的变更请求不触发需求澄清', () => {
 test('已完成需求澄清的任务不再重复触发澄清', () => {
   const result = evaluateSoftwareRequest({
     message: '优化一下前端页面。',
+    explicitIntent: 'implement',
     requirementsDecision: REQUIREMENTS_DECISION_FIXTURE,
   });
 
@@ -242,6 +256,13 @@ for (const scenario of [
   test(`${scenario.label}会在实现完成后触发专项审查`, () => {
     const result = evaluateSoftwareRequest({
       message: scenario.message,
+      explicitIntent: 'implement',
+      observations: [
+        {
+          kind: OBSERVATION.SPECIALIST_REVIEW_REQUIRED,
+          evidenceRefs: [scenario.riskRef],
+        },
+      ],
       completedCapabilities: [
         CAPABILITY.TESTING_DESIGN,
         CAPABILITY.TESTING_STRICT_TDD,

@@ -39,6 +39,9 @@ test('P3 structured observations reach the proportional strict-TDD gate', () => 
   const result = evaluateSoftwareRequest({
     message: 'Update checkout validation behavior.',
     observations: [{
+      kind: OBSERVATION.BEHAVIOR_CHANGE,
+      evidenceRefs: ['observation:checkout-behavior'],
+    }, {
       kind: OBSERVATION.CHANGE_RISK_ASSESSED,
       evidenceRefs: ['assessment:checkout'],
       changeRisk: {

@@ -151,7 +151,7 @@ test('workflow command contract rejects forged identity and evidence gates', () 
   const workflow = startSoftwareWorkflow({
     workflowActivationId: 'workflow-command-contract',
     workItemKey: 'command-contract',
-    request: { message: 'Update checkout validation behavior.' },
+    request: { message: 'Update checkout validation behavior.', explicitIntent: 'implement' },
     createActivationId: sequentialIds('command-contract'),
   });
   assert.throws(() => assertSoftwareWorkflowCommandContract({
@@ -173,7 +173,7 @@ test('software workflow owns capability selection, transition history, and execu
   const started = startSoftwareWorkflow({
     workflowActivationId: 'workflow-checkout',
     workItemKey: 'checkout',
-    request: { message: 'Update checkout validation behavior.' },
+    request: { message: 'Update checkout validation behavior.', explicitIntent: 'implement' },
     createActivationId,
   });
 
@@ -226,7 +226,7 @@ test('test design requires an explicit testability decision before selecting del
   let workflow = startSoftwareWorkflow({
     workflowActivationId: 'workflow-testability',
     workItemKey: 'testability',
-    request: { message: 'Update a private workflow validation boundary without changing public behavior.' },
+    request: { message: 'Update a private workflow validation boundary without changing public behavior.', explicitIntent: 'implement' },
     createActivationId,
   });
 
@@ -279,7 +279,7 @@ test('public workflow advancement blocks a claimed RED without a receipt without
   const workflow = startSoftwareWorkflow({
     workflowActivationId: 'workflow-forged-red',
     workItemKey: 'forged-red',
-    request: { message: 'Update checkout validation behavior.' },
+    request: { message: 'Update checkout validation behavior.', explicitIntent: 'implement' },
     createActivationId,
   });
   const designed = completeTestDesignWithHonestRed(workflow, createActivationId);
@@ -301,7 +301,7 @@ test('TDD blocks same-exit receipts that do not execute the declared scenario', 
   const designed = completeTestDesignWithHonestRed(startSoftwareWorkflow({
     workflowActivationId: 'workflow-scenario-bound',
     workItemKey: 'scenario-bound',
-    request: { message: 'Update checkout validation behavior.' },
+    request: { message: 'Update checkout validation behavior.', explicitIntent: 'implement' },
     createActivationId,
   }), createActivationId);
 
@@ -352,7 +352,7 @@ test('a legacy unbound testability command cannot resume delivery', () => {
   const designed = completeTestDesignWithHonestRed(startSoftwareWorkflow({
     workflowActivationId: 'workflow-legacy-scenario',
     workItemKey: 'legacy-scenario',
-    request: { message: 'Update checkout validation behavior.' },
+    request: { message: 'Update checkout validation behavior.', explicitIntent: 'implement' },
     createActivationId,
   }), createActivationId);
   const legacyWorkflow = {
@@ -382,6 +382,7 @@ test('implementation-ready cannot bypass the test scope contract or duplicate TD
     workItemKey: 'ready',
     request: {
       message: 'Update checkout behavior.',
+      explicitIntent: 'implement',
       observations: [{
         kind: OBSERVATION.IMPLEMENTATION_READY,
         evidenceRefs: ['artifact:approved-slice'],
@@ -418,10 +419,15 @@ test('high-risk behavior confirms scope, completes TDD, and keeps risk-backed re
     workItemKey: 'auth',
     request: {
       message: 'Update authentication behavior.',
+      explicitIntent: 'implement',
       observations: [
         {
           kind: OBSERVATION.HIGH_RISK_BOUNDARY,
           evidenceRefs: ['risk:auth'],
+        },
+        {
+          kind: OBSERVATION.SPECIALIST_REVIEW_REQUIRED,
+          evidenceRefs: ['risk-domain:security'],
         },
       ],
     },

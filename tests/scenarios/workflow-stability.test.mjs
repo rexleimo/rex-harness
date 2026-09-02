@@ -3,6 +3,7 @@ import test from 'node:test';
 
 import {
   CAPABILITY,
+  OBSERVATION,
   evaluateSoftwareRequest,
   startSoftwareWorkflow,
 } from '../../src/index.mjs';
@@ -61,11 +62,15 @@ for (const scenario of [
   {
     label: '普通行为变更',
     message: '修复结账金额的舍入行为。',
+    explicitIntent: 'implement',
     capabilityId: CAPABILITY.TESTING_DESIGN,
   },
   {
     label: '失败优先于新增构造',
     message: '新增支付模块时测试失败了，请修复报错。',
+    observations: [
+      { kind: OBSERVATION.EXECUTION_FAILED, evidenceRefs: ['receipt:stability-failure'] },
+    ],
     capabilityId: CAPABILITY.DEBUG_ROOT_CAUSE,
   },
   {
@@ -79,6 +84,7 @@ for (const scenario of [
     const result = evaluateSoftwareRequest({
       message: scenario.message,
       explicitIntent: scenario.explicitIntent || null,
+      observations: scenario.observations || [],
     });
     assert.equal(result.decision?.capabilityId || null, scenario.capabilityId);
   });
@@ -87,6 +93,7 @@ for (const scenario of [
 test('a scoped do-not-touch clause does not erase an explicit fix objective', () => {
   const result = evaluateSoftwareRequest({
     message: '修复结账金额的舍入行为，但不要修改 docs 目录。',
+    explicitIntent: 'implement',
   });
 
   assert.equal(result.decision.capabilityId, CAPABILITY.TESTING_DESIGN);
@@ -97,7 +104,8 @@ for (const message of [
   'Explain the flow and do not modify docs. Then fix checkout rounding.',
 ]) {
   test(`read-only clause does not erase a later mutation objective: ${message}`, () => {
-    const result = evaluateSoftwareRequest({ message });
+    // 程序不猜"解释=只读"；模型显式声明 implement 后，read-only 子句只是文本内容
+    const result = evaluateSoftwareRequest({ message, explicitIntent: 'implement' });
 
     assert.equal(result.decision.capabilityId, CAPABILITY.TESTING_DESIGN);
   });
@@ -119,11 +127,11 @@ test('read-only requests complete without a fabricated current Command', () => {
 test('prompt length does not choose Fast Balanced or Deep', () => {
   const short = startSoftwareWorkflow({
     workflowActivationId: 'workflow-short',
-    request: { message: '修复结账行为。' },
+    request: { message: '修复结账行为。', explicitIntent: 'implement' },
   });
   const long = startSoftwareWorkflow({
     workflowActivationId: 'workflow-long',
-    request: { message: `${'背景说明。'.repeat(300)}修复结账行为。` },
+    request: { message: `${'背景说明。'.repeat(300)}修复结账行为。`, explicitIntent: 'implement' },
   });
 
   assert.equal(short.currentCapabilityId, CAPABILITY.TESTING_DESIGN);
@@ -136,6 +144,9 @@ test('team and harness intent changes promotion only, not the selected Provider 
     const result = evaluateSoftwareRequest({
       message: '修改结账校验行为。',
       explicitIntent,
+      observations: [
+        { kind: OBSERVATION.BEHAVIOR_CHANGE, evidenceRefs: ['observation:stability-behavior'] },
+      ],
     });
 
     assert.equal(result.decision.capabilityId, CAPABILITY.TESTING_DESIGN);
