@@ -1,3 +1,6 @@
 # Keep canonical skill sources LF-only so training-certification hashes are
 # byte-identical across Windows checkouts and CI (Linux) checkouts.
 skill-sources/**/SKILL.md text eol=lf
+# Projection history is machine-read (JSON.parse) and line-ending agnostic;
+# pin LF so future digest appends never produce whole-file churn.
+src/clients/projection-history.json text eol=lf
