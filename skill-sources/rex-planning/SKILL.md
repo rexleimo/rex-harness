@@ -14,6 +14,32 @@ description: Use only after rex-harness selects dependency-aware implementation 
 
 返回 `dependency-graph-recorded` 和 `step-verification-recorded`，每项都必须附带真实的计划或任务引用。宿主要求 `AIOS_REX_EVIDENCE` 时，只在结尾输出当前 `activationId` 的恰好一个证据信封。
 
+### Progress ledger（每轮结构化重排）
+
+`frontier`/`parallelGroups` 不是一次性文本，而是每轮重排的 ledger。你每轮输出：
+
+- `is_complete: true|false` — 是否全部 work items 已达完成条件。
+- `in_progress[]` — 正在执行的 work id 列表。
+- `facts[]` — 本轮新确认的事实（证据引用随行），下游调度只读这些，不读自由文本。
+- `assignment` — 下一轮任务分配：work id → 执行者/角色。
+
+示例：
+
+```
+ledger: { is_complete: false, in_progress: [work-2],
+  facts: [work-1 done, evidence rex.cmd.exec.v1#abc],
+  assignment: { work-3: implementer } }
+```
+
+Runtime 只读字段调度，不猜语义。无新事实的轮次必须如实输出空 `facts[]`，
+不得编造进展。
+
+### Partial 结果与续跑
+
+超限或失败的节点返回已完成 partial 结果 + 续跑句柄（已完成 work id、剩余
+frontier、下一步输入），不整图重启。`parallelGroups` 不得重叠、不得伪造依
+赖：独立性存疑即标 blocked 并给原因，不得为并行而并行。
+
 ### Artifact contract
 
 完成态必须返回一个 `rex.delivery-ticket.v1`，并且 `decisionTicketRef` 必须引用独立的 Decision Ticket。每个 work item 必须有稳定 `work-*` id、observable outcome、completion criteria、verification、evidence refs 和真实 `dependsOn`；依赖图不得有未知节点或环。
