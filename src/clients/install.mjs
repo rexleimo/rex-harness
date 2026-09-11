@@ -21,6 +21,7 @@ const CLIENT_SKILL_ROOTS = Object.freeze({
   hermes: path.join('.hermes', 'skills'),
   grok: path.join('.grok', 'skills'),
   workbuddy: path.join('.workbuddy', 'skills'),
+  pi: path.join('.pi', 'skills'),
 });
 export const rexWorkflowSkill = Object.freeze({
   id: 'rex-workflow',
