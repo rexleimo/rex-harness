@@ -97,7 +97,7 @@ test('explain keeps ordinary behavior in test design until a typed honest RED de
 test('CLI usage exposes the CLI-first protocol without a core MCP command', () => {
   const help = runCli('help');
 
-  assert.match(help.usage, /doctor\|init\|explain\|start\|status\|evidence\|receipt\|resume/u);
+  assert.match(help.usage, /doctor\|init\|explain\|start\|status\|evidence\|receipt\|(?:verify\|settle\|)?resume/u);
   assert.doesNotMatch(help.usage, /mcp/iu);
 });
 

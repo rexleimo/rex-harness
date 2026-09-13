@@ -9,6 +9,12 @@ import {
   normalizeExecutionReceipt,
 } from '../domain/execution-receipts.mjs';
 import {
+  TURN_SETTLEMENT_KIND,
+  deriveEffectRef,
+  isMaterialTurnResult,
+  normalizeTurnResult,
+} from '../domain/turn-contract.mjs';
+import {
   advanceSoftwareWorkflow,
   assertSoftwareWorkflowCommandContract,
   startSoftwareWorkflow,
@@ -30,6 +36,7 @@ function statePaths(rootDir) {
     activations: path.join(stateRoot, 'activations'),
     evidence: path.join(stateRoot, 'evidence'),
     receipts: path.join(stateRoot, 'receipts'),
+    settlements: path.join(stateRoot, 'settlements'),
   });
 }
 
@@ -56,6 +63,10 @@ function evidenceFile(paths, workflowActivationId) {
 
 function receiptFile(paths, receiptId) {
   return path.join(paths.receipts, `${safeId(receiptId, 'receiptId')}.json`);
+}
+
+function settlementFile(paths, workflowActivationId) {
+  return path.join(paths.settlements, `${safeId(workflowActivationId, 'workflowActivationId')}.ndjson`);
 }
 
 function receiptIdFromRef(ref) {
@@ -93,8 +104,21 @@ function sealCurrentCommand(workflow) {
   });
 }
 
-function writeWorkflow(paths, workflow) {
-  atomicWriteJson(activationFile(paths, workflow.workflowActivationId), workflow);
+/**
+ * CAS 语义：调用方可声明写入时期望的当前 status；磁盘状态已漂移时拒绝写入，
+ * 防止并发写回互相覆盖（last-writer-wins 是结算门不允许的失败模式）。
+ */
+function writeWorkflow(paths, workflow, { expectedStatus } = {}) {
+  const target = activationFile(paths, workflow.workflowActivationId);
+  if (expectedStatus !== undefined && fs.existsSync(target)) {
+    const current = readJson(target, 'rex.software-workflow-activation.v1');
+    if (current.status !== expectedStatus) {
+      throw new Error(
+        `rex standalone CAS precondition failed: expected status ${expectedStatus}, found ${current.status}`,
+      );
+    }
+  }
+  atomicWriteJson(target, workflow);
   atomicWriteJson(workItemFile(paths, workflow.workItemKey), {
     schemaVersion: 1,
     kind: 'rex.standalone-work-item.v1',
@@ -383,4 +407,186 @@ export function submitStandaloneEvidence({
     blockedReason: advanced.blockedReason,
     missingEvidence: advanced.missingEvidence,
   });
+}
+
+// ---------------------------------------------------------------------------
+// Turn settlement gate（结算门）
+//
+// 借鉴 LoopX settlement：VALIDATION → DURABLE_WRITEBACK → 幂等记账，顺序固定。
+// 只有 material 结果产生副作用；effectRef 重复即拒绝（防重复计数）；bypass turn
+// 的 material 声明在此被代码级封印，而不是依赖 prompt 自觉。
+// ---------------------------------------------------------------------------
+
+function readSettlementRows(paths, workflowActivationId) {
+  const target = settlementFile(paths, workflowActivationId);
+  if (!fs.existsSync(target)) return [];
+  return fs.readFileSync(target, 'utf8')
+    .split('\n')
+    .filter((line) => line.trim())
+    .map((line) => JSON.parse(line));
+}
+
+function appendSettlementRow(paths, row) {
+  fs.mkdirSync(paths.settlements, { recursive: true });
+  fs.appendFileSync(settlementFile(paths, row.turnKey.workflowActivationId), `${JSON.stringify(row)}\n`, 'utf8');
+}
+
+function settlementRejection(paths, envelope, reason, now) {
+  const row = {
+    schemaVersion: 1,
+    kind: TURN_SETTLEMENT_KIND,
+    turnKey: envelope.turnKey,
+    effectRef: envelope.effectRef,
+    outcome: envelope.outcome,
+    decision: 'rejected',
+    reason,
+    bypass: envelope.bypass,
+    commandTokenFingerprint: sha256(envelope.commandToken),
+    settledAt: now.toISOString(),
+  };
+  appendSettlementRow(paths, row);
+  return row;
+}
+
+/**
+ * 结算一个 turn：envelope 校验 → token/effectRef 绑定校验 → 幂等检查 →
+ * bypass 封印 → 证据校验 → CAS 写回 → 记账。任何一步失败都不产生工作流副作用。
+ */
+export function settleStandaloneTurn({
+  rootDir = process.cwd(),
+  turnResult,
+  now = new Date(),
+} = {}) {
+  const envelope = normalizeTurnResult(turnResult);
+  const paths = statePaths(rootDir);
+  const workflow = readByWorkflowId(paths, envelope.turnKey.workflowActivationId);
+
+  // 校验顺序即语义：先自洽性（envelope 与自己声明的 token 绑定），再幂等，
+  // 再当前 token 授权——篡改与重放互不遮蔽。
+  const selfConsistent = deriveEffectRef({ executionToken: envelope.commandToken, turnResult: envelope });
+  if (selfConsistent !== envelope.effectRef) {
+    const row = settlementRejection(paths, envelope, 'effect_ref_mismatch', now);
+    return settlementResult(workflow, paths, row, {});
+  }
+
+  const accepted = readSettlementRows(paths, envelope.turnKey.workflowActivationId)
+    .find((candidate) => candidate.kind === TURN_SETTLEMENT_KIND
+      && candidate.decision === 'accepted'
+      && candidate.effectRef === envelope.effectRef);
+  if (accepted) {
+    // 幂等重放：不重复写回、不重复记账，原样返回首次结算事实。
+    return settlementResult(workflow, paths, accepted, { duplicate: true });
+  }
+
+  const command = workflow.currentCommand;
+  if (!command || text(command.executionToken) !== text(envelope.commandToken)) {
+    const row = settlementRejection(paths, envelope, 'stale_command_token', now);
+    return settlementResult(workflow, paths, row, {});
+  }
+
+  // 状态回滚检测：当前 token 若已被一笔 material 结算消耗过（token 在结算后
+  // 才轮换），说明工作流状态被回滚到结算前——fail-closed，拒绝继续结算。
+  const currentFingerprint = sha256(command.executionToken);
+  const rolledBack = readSettlementRows(paths, envelope.turnKey.workflowActivationId)
+    .find((row) => row.kind === TURN_SETTLEMENT_KIND
+      && row.decision === 'accepted'
+      && isMaterialTurnResult(row)
+      && row.commandTokenFingerprint === currentFingerprint);
+  if (rolledBack) {
+    const row = settlementRejection(paths, envelope, 'state_rollback_detected', now);
+    return settlementResult(workflow, paths, row, {});
+  }
+
+  if (envelope.bypass && isMaterialTurnResult(envelope)) {
+    const row = settlementRejection(paths, envelope, 'bypass_turn_material_outcome_forbidden', now);
+    return settlementResult(workflow, paths, row, {});
+  }
+
+  // 非 material 结果（blocked/replan_required）是合法的"无进展报告"：
+  // 记账但不推进工作流、不轮换 token、不计费——结算副作用只属于 material 结果。
+  if (!isMaterialTurnResult(envelope)) {
+    const row = {
+      schemaVersion: 1,
+      kind: TURN_SETTLEMENT_KIND,
+      turnKey: envelope.turnKey,
+      effectRef: envelope.effectRef,
+      outcome: envelope.outcome,
+      decision: 'accepted',
+      bypass: envelope.bypass,
+      commandTokenFingerprint: sha256(envelope.commandToken),
+      settledAt: now.toISOString(),
+    };
+    appendSettlementRow(paths, row);
+    return settlementResult(workflow, paths, row, {});
+  }
+
+  const resolveReceipt = (ref) => resolveStandaloneExecutionReceipt({ rootDir: paths.root, ref });
+  let normalizedEvidence;
+  try {
+    normalizedEvidence = validateCommandEvidence(command, envelope.evidence, { resolveReceipt });
+  } catch (error) {
+    const row = settlementRejection(paths, envelope, `evidence_invalid: ${error.message}`, now);
+    return settlementResult(workflow, paths, row, {});
+  }
+
+  const advanced = advanceSoftwareWorkflow(workflow, normalizedEvidence, { now, resolveReceipt });
+  if (advanced.blockedReason !== undefined) {
+    const row = settlementRejection(paths, envelope, `advance_blocked: ${advanced.blockedReason}`, now);
+    return settlementResult(workflow, paths, row, {
+      blockedReason: advanced.blockedReason,
+      missingEvidence: advanced.missingEvidence,
+    });
+  }
+
+  // 被拒绝的证据保留当前 Command（调用者按原身份重试）；接受才轮换 token。
+  const sealedWorkflow = sealCurrentCommand(advanced.workflow);
+  writeWorkflow(paths, sealedWorkflow, { expectedStatus: workflow.status });
+
+  const row = {
+    schemaVersion: 1,
+    kind: TURN_SETTLEMENT_KIND,
+    turnKey: envelope.turnKey,
+    effectRef: envelope.effectRef,
+    outcome: envelope.outcome,
+    decision: 'accepted',
+    bypass: envelope.bypass,
+    commandTokenFingerprint: sha256(envelope.commandToken),
+    settledAt: now.toISOString(),
+  };
+  appendSettlementRow(paths, row);
+  return settlementResult(sealedWorkflow, paths, row, {
+    advancedOutcome: advanced.outcome,
+    missingEvidence: advanced.missingEvidence,
+  });
+}
+
+function settlementResult(workflow, paths, row, extras) {
+  return {
+    schemaVersion: 1,
+    kind: 'rex.standalone.turn-settlement-result.v1',
+    settlement: Object.freeze({
+      decision: row.decision,
+      effectRef: row.effectRef,
+      outcome: row.outcome,
+      turnKey: row.turnKey,
+      reason: row.reason,
+      duplicate: Boolean(extras.duplicate),
+      settledAt: row.settledAt,
+    }),
+    ...presentStandaloneWorkflow(workflow, {
+      stateRoot: paths.stateRoot,
+      outcome: row.decision === 'accepted' ? (extras.advancedOutcome ?? 'settled') : row.decision,
+      blockedReason: extras.blockedReason,
+      missingEvidence: extras.missingEvidence,
+    }),
+  };
+}
+
+/** 只读投影：一个工作流的全部 settlement 记录（verify / dashboard 共用）。 */
+export function readStandaloneSettlements({
+  rootDir = process.cwd(),
+  workflowActivationId,
+} = {}) {
+  const paths = statePaths(rootDir);
+  return readSettlementRows(paths, workflowActivationId);
 }

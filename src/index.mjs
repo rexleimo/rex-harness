@@ -67,6 +67,16 @@ export {
   startSoftwareWorkflow,
 } from './workflows/software-workflow-runtime.mjs';
 export {
+  TURN_OUTCOMES,
+  MATERIAL_TURN_OUTCOMES,
+  FAILURE_KINDS,
+  TURN_RESULT_KIND,
+  TURN_SETTLEMENT_KIND,
+  deriveEffectRef,
+  isMaterialTurnResult,
+  normalizeTurnResult,
+} from './domain/turn-contract.mjs';
+export {
   presentStandaloneWorkflow,
   readStandaloneWorkflow,
   findStandaloneWorkflow,
@@ -75,4 +85,6 @@ export {
   resolveStandaloneExecutionReceipt,
   startStandaloneWorkflow,
   submitStandaloneEvidence,
+  settleStandaloneTurn,
+  readStandaloneSettlements,
 } from './standalone/store.mjs';

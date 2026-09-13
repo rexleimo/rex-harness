@@ -7,6 +7,8 @@ import { runInit } from '../src/cli/init.mjs';
 import { runReceipt } from '../src/cli/receipt.mjs';
 import { runStart } from '../src/cli/start.mjs';
 import { runResume, runStatus } from '../src/cli/status.mjs';
+import { runSettle } from '../src/cli/settle.mjs';
+import { runVerify } from '../src/cli/verify.mjs';
 
 // 可执行文件只负责解析和输出命令；选择策略保留在 composition root，
 // 确保 CLI 与未来的 AIOS Adapter 共用完全相同的逻辑。
@@ -32,9 +34,17 @@ try {
     result = runEvidence(args);
   } else if (command === 'receipt') {
     result = runReceipt(args);
+  } else if (command === 'verify') {
+    // 独立 validator：exit 0 才允许结算；拒绝也是 typed JSON（stderr 不用）。
+    result = runVerify(args);
+    process.exitCode = result.status === 'accepted' ? 0 : 1;
+  } else if (command === 'settle') {
+    // 结算写路径：控制面专用；executor 只允许先过 verify。
+    result = runSettle(args);
+    process.exitCode = result.settlement?.decision === 'accepted' ? 0 : 1;
   } else {
     result = {
-      usage: 'rex-harness <doctor|init|explain|start|status|evidence|receipt|resume>',
+      usage: 'rex-harness <doctor|init|explain|start|status|evidence|receipt|verify|settle|resume>',
     };
   }
   console.log(JSON.stringify(result, null, 2));
