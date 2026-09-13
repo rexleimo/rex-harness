@@ -2,6 +2,14 @@
 
 本文件记录 `rex-harness` 独立产品的公开变化。版本遵循 Semantic Versioning。
 
+## [0.6.0] - 2026-09-13
+
+### Added
+
+- **Turn 契约结算门（借鉴 LoopX settlement）**：新增 `rex.turn-result.v1` 类型化 envelope（`deriveEffectRef` 以 executionToken+payload sha256 为幂等键；material 结果必须携带结构化证据）与 `settleStandaloneTurn` 结算流程——自洽性 → 幂等重放 → token 授权 → 状态回滚不变量（`state_rollback_detected`）→ bypass 封印 → 证据校验 → CAS 写回（`writeWorkflow` 支持 expected-status 前置条件）→ append-only settlement journal。
+- 独立 validator 进程：`rex-harness verify`（stdin 读 envelope、exit 0 放行、只读）与 `rex-harness settle`（唯一结算写路径）；executor 不得自验完成声明由进程边界保证。
+- SDK 新增导出：`settleStandaloneTurn`、`readStandaloneSettlements`、turn-contract 常量与工具；非 material 结果（blocked/replan）记账但不推进、不轮换 token。
+
 ## [0.5.1] - 2026-08-08
 
 ### Added
