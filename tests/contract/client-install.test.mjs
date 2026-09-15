@@ -39,7 +39,7 @@ const CLIENT_ROOTS = {
   hermes: '.hermes/skills',
   grok: '.grok/skills',
   workbuddy: '.workbuddy/skills',
-  pi: '.pi/skills',
+  pi: '.agents/skills',
 };
 
 async function copyPackageFixture(packageRoot) {

@@ -21,7 +21,9 @@ const CLIENT_SKILL_ROOTS = Object.freeze({
   hermes: path.join('.hermes', 'skills'),
   grok: path.join('.grok', 'skills'),
   workbuddy: path.join('.workbuddy', 'skills'),
-  pi: path.join('.pi', 'skills'),
+  // Pi scans the shared Agent Skills root natively; installing into .pi/skills
+  // too makes Pi skip the shared copy as an already-loaded duplicate.
+  pi: path.join('.agents', 'skills'),
 });
 export const rexWorkflowSkill = Object.freeze({
   id: 'rex-workflow',
