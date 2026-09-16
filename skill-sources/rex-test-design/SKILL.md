@@ -18,7 +18,7 @@ description: Use only after rex-harness selects behavior-focused test design and
 
 1. `behavior-delta`：只有新的用户可观察行为能通过稳定公共入口真实复现为失败时才能选择。`redCandidate` 必须包含公共入口、场景 setup、精确命令、预期、实际观察、失败原因和失败执行的 `receiptRef`。
 2. `behavior-preserving-hardening`：没有新用户可观察行为时，先在独立可清理的真实场景运行通过基线。`baseline` 必须包含同样的场景字段及零退出的 `receiptRef`，随后才允许 Rex 选择 hardening。
-3. `blocked`：验收条件无法在真实场景观察时，记录原因和缺失验收条件。此结论��令工作流 replan；停止并请求可观察的验收条件，不得重复提交旧 Command 或伪造 RED。
+3. `blocked`：验收条件无法在真实场景观察时，记录原因和缺失验收条件。此结论必须令工作流 replan；停止并请求可观察的验收条件，不得重复提交旧 Command 或伪造 RED。
 
 用 Rex 记录命令观察，例如：`rex-harness receipt --root <project-root> -- node --test <focused-test>`。该命令即使测试失败也会返回 JSON；仅使用其中真实的 `receipt:<id>` 作为 `receiptRef`，不能以自然语言、`command:`、旧日志或静态推断替代。
 
