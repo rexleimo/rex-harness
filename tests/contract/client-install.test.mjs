@@ -40,6 +40,8 @@ const CLIENT_ROOTS = {
   grok: '.grok/skills',
   workbuddy: '.workbuddy/skills',
   pi: '.agents/skills',
+  // ZCode scans the shared Agent Skills root natively; shared-root-only like Pi.
+  zcode: '.agents/skills',
 };
 
 async function copyPackageFixture(packageRoot) {
