@@ -2,6 +2,12 @@
 
 本文件记录 `rex-harness` 独立产品的公开变化。版本遵循 Semantic Versioning。
 
+## [0.6.2] - 2026-09-16
+
+### Fixed
+
+- **技能投影 digest 登记**：v0.6.1 修改 `skill-sources/rex-test-design/SKILL.md` 后，`src/clients/projection-history.json` 未同步登记新的 canonical digest，导致消费方（AIOS）的客户端投影校验与 CI `scripts-tests` 全部失败；现补记该 digest，投影升级路径恢复。
+
 ## [0.6.1] - 2026-09-16
 
 ### Fixed
