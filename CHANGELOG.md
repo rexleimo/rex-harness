@@ -2,6 +2,11 @@
 
 本文件记录 `rex-harness` 独立产品的公开变化。版本遵循 Semantic Versioning。
 
+## [0.6.1] - 2026-09-16
+
+### Fixed
+
+- **`rex-test-design` 技能文档编码修复**：`skill-sources/rex-test-design/SKILL.md` 在历史提交中被破坏的中文标点（原以 `U+FFFD` 占位）按语义重建，技能说明阅读与复制不再出现乱码。
 ## [0.6.0] - 2026-09-13
 
 ### Added
