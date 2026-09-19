@@ -42,6 +42,8 @@ const CLIENT_ROOTS = {
   pi: '.agents/skills',
   // ZCode scans the shared Agent Skills root natively; shared-root-only like Pi.
   zcode: '.agents/skills',
+  // Qoder's verified project skill root is its own .qoder/skills.
+  qoder: '.qoder/skills',
 };
 
 async function copyPackageFixture(packageRoot) {

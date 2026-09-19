@@ -27,6 +27,9 @@ const CLIENT_SKILL_ROOTS = Object.freeze({
   // ZCode also scans the shared Agent Skills root (project .agents/skills after
   // .zcode/skills); same rule as Pi — shared root only, no .zcode/skills copy.
   zcode: path.join('.agents', 'skills'),
+  // Qoder's verified project skill root is its own .qoder/skills (docs.qoder.com
+  // Skills page); shared-root scanning is not verified upstream.
+  qoder: path.join('.qoder', 'skills'),
 });
 export const rexWorkflowSkill = Object.freeze({
   id: 'rex-workflow',

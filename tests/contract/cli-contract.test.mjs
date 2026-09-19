@@ -40,6 +40,7 @@ test('doctor reports a standalone-ready kernel with bundled Providers', () => {
     'workbuddy',
     'pi',
     'zcode',
+    'qoder',
   ]);
   assert.deepEqual(report.errors, []);
 });
