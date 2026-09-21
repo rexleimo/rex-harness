@@ -29,6 +29,7 @@ const expectedSkills = rexNativeProviderBindings
   .filter((binding) => binding.provider.kind === 'skill')
   .map((binding) => binding.provider.id)
   .concat('rex-workflow')
+  .concat('rex-engineering-standards')
   .sort();
 
 const CLIENT_ROOTS = {

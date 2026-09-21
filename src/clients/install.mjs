@@ -36,11 +36,24 @@ export const rexWorkflowSkill = Object.freeze({
   instructionsRef: 'skill-sources/rex-workflow/SKILL.md',
 });
 
+/**
+ * Shared baseline skills shipped with the package but not bound to a
+ * Capability. They ride every client projection alongside the workflow entry
+ * and the Provider skills (e.g. the engineering quality baseline).
+ */
+export const rexSharedSkills = Object.freeze([
+  Object.freeze({ id: 'rex-engineering-standards' }),
+]);
+
 function skillIds() {
   const providerSkills = rexNativeProviderBindings
     .filter((binding) => binding.provider.kind === 'skill')
     .map((binding) => binding.provider.id);
-  return [rexWorkflowSkill.id, ...providerSkills];
+  return [
+    rexWorkflowSkill.id,
+    ...providerSkills,
+    ...rexSharedSkills.map((skill) => skill.id),
+  ];
 }
 
 function lstatOrNull(filePath) {

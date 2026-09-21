@@ -5,6 +5,7 @@ import test from 'node:test';
 import { fileURLToPath } from 'node:url';
 
 import { rexNativeProviderBindings } from '../../src/providers/catalog.mjs';
+import { rexSharedSkills } from '../../src/clients/install.mjs';
 
 const REX_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const SKILL_SOURCES_ROOT = path.join(REX_ROOT, 'skill-sources');
@@ -20,8 +21,16 @@ test('canonical skills are discoverable and keep activation logic out of prompts
 
   assert.deepEqual(
     skillDirectories.map((entry) => entry.name).sort(),
-    [...expectedSkills, 'rex-workflow'].sort(),
+    [...expectedSkills, 'rex-workflow', ...rexSharedSkills.map((skill) => skill.id)].sort(),
   );
+  // Shared baseline skills ship with the package but are not Capability
+  // Providers: they keep the discoverable frontmatter contract without the
+  // activation-driven description pattern.
+  for (const shared of rexSharedSkills) {
+    const file = path.join(root, shared.id, 'SKILL.md');
+    const content = (await readFile(file, 'utf8')).replace(/\r\n/g, '\n');
+    assert.match(content, /^---\nname: [a-z0-9-]+\ndescription: .+\n---\n/u);
+  }
   for (const entry of skillDirectories.filter((candidate) => expectedSkills.includes(candidate.name))) {
     const file = path.join(root, entry.name, 'SKILL.md');
     const content = (await readFile(file, 'utf8')).replace(/\r\n/g, '\n');

@@ -2,7 +2,16 @@
 
 本文件记录 `rex-harness` 独立产品的公开变化。版本遵循 Semantic Versioning。
 
-## [0.6.2] - 2026-09-16
+## [0.7.0] - 2026-09-21
+
+### Added
+
+- **工程质量基线技能 `rex-engineering-standards`**：代码生产类 Capability（`rex-implement` / `rex-refactor-hardening` / `rex-code-review` / `rex-design`）的共同质量基线与 Definition of Done 现在随 rex-harness 一起发布——Clean Architecture 依赖规则与边界纪律（高内聚低耦合、最小接口、命名即边界测试）、Ousterhout 深层模块（小接口深实现、警惕浅模块与预留参数、战略编程优于战术编程）、Clean Code 命名/函数/错误处理规则、DRY 与正交性、测试担保基线、工具链基线（新项目必须带 lint + pre-commit + CI + 测试框架 + 结构化日志）、consequential 改动的 ADD 文档基线。独立使用 rex-harness（无 AIOS 宿主）时质量基线不再缺失。
+- `src/clients/projection-history.json` 登记新技能的 canonical digest，客户端投影升级路径开箱即用。
+
+### Changed
+
+- 技能目录由 13 个增至 14 个；消费方（AIOS）的 `rex-client-projection` 采用计数与投影校验同步适配。
 
 ### Fixed
 
