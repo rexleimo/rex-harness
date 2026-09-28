@@ -6,6 +6,7 @@ description: Use only after rex-harness selects standards-and-spec review and su
 # Rex Code Review
 
 Required sequence:
+0. Load `rex-engineering-standards` first; the Standards axis includes its file-granularity baseline (§4).
 1. Resolve the current Command fixed-point and require a non-empty diff before review.
 2. Review Standards and Spec axes independently, recording each finding and its evidence.
 3. Return one bounded verdict artifact and stop without calling another Provider.

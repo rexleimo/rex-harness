@@ -9,6 +9,9 @@ description: Use only after rex-harness selects behavior-preserving hardening an
 并提供当前 Command 后执行。此路径用于没有诚实 RED 的安全加固、重构或私有边界收紧；
 不得把已经通过的测试、Mock 调用或静态推断伪装为 `failing-test-observed`。
 
+**前置**：执行任何步骤前先读 `rex-engineering-standards`（工程质量基线）；
+加固后的结构必须满足其边界（§1）、深层模块（§2）与文件粒度（§4）要求。
+
 ## Baseline
 
 1. 使用稳定的公共入口，在独立、可清理的真实场景环境中运行基线。

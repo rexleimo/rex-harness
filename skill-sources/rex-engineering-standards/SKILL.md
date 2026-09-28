@@ -1,17 +1,20 @@
 ---
 name: rex-engineering-standards
-description: "Shared engineering quality baseline for all code-producing work in the rex capability chain. 工程质量基线：代码生成/修改/审查前加载，用经典软件工程原则（Clean Architecture 边界、深层模块、Clean Code、DRY、测试担保、工具链自动化）约束生成物。TRIGGER: 写代码/改代码/审查代码前、用户要求代码质量或架构规范、新建项目或包需要工具链基线"
+description: "Shared engineering quality baseline for all code-producing work in the rex capability chain. 工程质量基线：代码生成/修改/审查前加载，用经典软件工程原则（Clean Architecture 边界、深层模块、Clean Code、文件粒度、DRY、测试担保、工具链自动化）约束生成物。TRIGGER: 写代码/改代码/审查代码前、用户要求代码质量或架构规范、新建项目或包需要工具链基线"
 ---
 
 # Rex Engineering Standards
 
 所有代码生产工作的共同质量基线。本技能不替代任何 `rex-*` Provider 的流程——
 它是实现、加固、设计、审查之前**必须先读的标准**，也是 Definition of Done 的出处。
+它随 Rex 投影分发为**共享参照技能**：不是 Rex Command 可选中的 Provider，
+而是被 `rex-implement` / `rex-design` / `rex-code-review` / `rex-refactor-hardening`
+在执行前显式引用。
 
 ## 何时加载
 
-- `aios-workflow-router` 路由到代码生产类 Provider 时：`rex-implement`、
-  `rex-refactor-hardening`、`rex-code-review`、`rex-design`——执行前先读本标准。
+- `rex-implement` / `rex-design` / `rex-code-review` / `rex-refactor-hardening`
+  执行前先读本标准（各 Provider 流程的第一步）。
 - 用户提出代码质量、规范、架构、可维护性相关要求时。
 - 新建项目 / 新包 / 新模块，需要工具链基线时。
 
@@ -21,7 +24,7 @@ description: "Shared engineering quality baseline for all code-producing work in
 - 不管 Fowler 坏味道清单（归 `rex-code-review` smell 基线，已覆盖，不重复）。
 - 不管测试方法论（归 `rex-tdd` / `rex-strict-tdd` / `verification-loop`）。
 - 本技能只提供**上游的设计与质量标准**：边界怎么划、模块做多深、代码长什么样、
-  工具链必须有什么、做到什么程度算完成。
+  文件怎么切、工具链必须有什么、做到什么程度算完成。
 
 ## 1. 架构边界（Clean Architecture）
 
@@ -63,13 +66,28 @@ description: "Shared engineering quality baseline for all code-producing work in
 - **正交性**：改一个需求只动一个地方。修改前预估爆炸半径，动了多处 = 结构信号。
 - **童子军军规**：离开代码库时，让它比你看到时更干净——小步、持续、可验证。
 
-## 4. 测试基线
+## 4. 文件粒度基线
+
+> 文件是阅读和复用的第一单位：命名不清、职责堆积的文件是模块边界失守的第一信号。
+
+- **一个文件一个职责**：一个文件只回答一个问题。文件名说不清它装什么 = 职责不清，
+  先拆或先改名，再写代码。
+- **文件命名表达内容**：遵循仓库既有命名约定（本仓库：kebab-case 动作模块、
+  `index.ts` 作模块入口）；名实不符的文件在触碰时顺手重命名，不将错就错。
+- **行数预算**：单文件软上限约 400 行。接近预算先问能否按职责拆分；确需超限的
+  （generated / 表驱动 / 纯数据文件除外）必须在交付说明里写明为什么它仍是单一职责。
+- **拆分信号**：文件里出现第二组不相关的 import、第二个抽象层级、
+  或一段"放这里也行放哪都行"的代码——都是拆分点。
+- **禁止无语义拆分**：不把一个大文件拆成 `a_v2`、`a_final`、`a_utils` 这类
+  名字；拆出来的每个文件必须能独立说出自己的职责。
+
+## 5. 测试基线
 
 - 核心逻辑必须有自动化覆盖（单元 + 必要的集成）；重构与加固只能在绿色测试后进行。
 - 不得为让测试通过而弱化断言、删用例、跳用例、只验 mock。
 - 测试是重构的担保，也是"行为未变"的证据——没有它们，重构是祈祷。
 
-## 5. 工具链基线（把标准变成自动化）
+## 6. 工具链基线（把标准变成自动化）
 
 > 能机器检查的规则，不靠人肉 review 的记忆。——落地建议：开箱即用模板 +
 > Lint + Pre-commit Hooks + CI，把工程标准转化为自动化流程。
@@ -85,7 +103,7 @@ description: "Shared engineering quality baseline for all code-producing work in
 对已有仓库：遵守仓库既有标准（仓库标准优先），缺项记入交付说明，
 不静默忽略也不擅自引入平行规范。
 
-## 6. 文档基线
+## 7. 文档基线
 
 - Consequential 改动（影响边界、接口、数据结构、运维方式的改动）写一条简短
   ADD（Architecture Design Document）：决策、适用条件、权衡、被拒选项——
@@ -102,10 +120,11 @@ description: "Shared engineering quality baseline for all code-producing work in
 | 2 | 边界清晰 | 改动落在正确的模块/层；依赖方向未被破坏；无接口泄漏 |
 | 3 | 模块够深 | 新抽象隐藏真实细节；无薄转发、无预留参数 |
 | 4 | 命名与函数 | 名实相符；函数单一抽象层级；错误处理统一 |
-| 5 | 测试担保 | 核心路径有自动化覆盖；断言未被弱化 |
-| 6 | 工具链 | Lint / pre-commit / CI / 日志达到 §5 基线 |
-| 7 | 文档 | ADD（consequential 时）+ 接口契约已更新 |
-| 8 | 证据 | focused-tests-pass 等证据信封已附真实引用 |
+| 5 | 文件粒度 | 文件名表达职责；无超预算文件（超限有交付说明）；无职责堆积 |
+| 6 | 测试担保 | 核心路径有自动化覆盖；断言未被弱化 |
+| 7 | 工具链 | Lint / pre-commit / CI / 日志达到 §6 基线 |
+| 8 | 文档 | ADD（consequential 时）+ 接口契约已更新 |
+| 9 | 证据 | focused-tests-pass 等证据信封已附真实引用 |
 
 ## 参考
 

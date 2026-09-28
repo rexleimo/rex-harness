@@ -5,7 +5,7 @@ import test from 'node:test';
 import { fileURLToPath } from 'node:url';
 
 import { rexNativeProviderBindings } from '../../src/providers/catalog.mjs';
-import { rexSharedSkills } from '../../src/clients/install.mjs';
+import { sharedReferenceSkillIds } from '../../src/clients/install.mjs';
 
 const REX_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const SKILL_SOURCES_ROOT = path.join(REX_ROOT, 'skill-sources');
@@ -21,16 +21,8 @@ test('canonical skills are discoverable and keep activation logic out of prompts
 
   assert.deepEqual(
     skillDirectories.map((entry) => entry.name).sort(),
-    [...expectedSkills, 'rex-workflow', ...rexSharedSkills.map((skill) => skill.id)].sort(),
+    [...expectedSkills, 'rex-workflow', ...sharedReferenceSkillIds].sort(),
   );
-  // Shared baseline skills ship with the package but are not Capability
-  // Providers: they keep the discoverable frontmatter contract without the
-  // activation-driven description pattern.
-  for (const shared of rexSharedSkills) {
-    const file = path.join(root, shared.id, 'SKILL.md');
-    const content = (await readFile(file, 'utf8')).replace(/\r\n/g, '\n');
-    assert.match(content, /^---\nname: [a-z0-9-]+\ndescription: .+\n---\n/u);
-  }
   for (const entry of skillDirectories.filter((candidate) => expectedSkills.includes(candidate.name))) {
     const file = path.join(root, entry.name, 'SKILL.md');
     const content = (await readFile(file, 'utf8')).replace(/\r\n/g, '\n');
@@ -75,6 +67,26 @@ test('canonical skills are discoverable and keep activation logic out of prompts
         assert.ok(item.pressures.length >= 2);
       }
       assert.deepEqual(item.files, []);
+    }
+  }
+});
+
+test('shared reference skills stay discoverable and are loaded by code-producing Providers', async () => {
+  const root = SKILL_SOURCES_ROOT;
+  for (const id of sharedReferenceSkillIds) {
+    const content = (await readFile(path.join(root, id, 'SKILL.md'), 'utf8')).replace(/\r\n/g, '\n');
+    assert.match(content, /^---\nname: [a-z0-9-]+\ndescription: .+\n---\n/u);
+    // A shared reference standard is never selectable by a Capability Command,
+    // so it must not carry the Provider activation clause.
+    assert.doesNotMatch(content, /Use only after rex-harness selects/u);
+  }
+  // Trigger-chain guard: the standard is only real if the Providers that must
+  // read it name it in their own sequence. Without this check the skill ships
+  // unreferenced and nothing fails.
+  for (const provider of ['rex-implement', 'rex-design', 'rex-code-review', 'rex-refactor-hardening']) {
+    const content = await readFile(path.join(root, provider, 'SKILL.md'), 'utf8');
+    for (const id of sharedReferenceSkillIds) {
+      assert.ok(content.includes(id), `${provider} SKILL.md must reference shared standard ${id}`);
     }
   }
 });

@@ -1,6 +1,6 @@
 {
   "name": "@rexleimo/rex-harness",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "Standalone evidence-driven workflow control plane for coding agents",
   "type": "module",
   "repository": {

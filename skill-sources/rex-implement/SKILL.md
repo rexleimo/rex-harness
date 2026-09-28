@@ -7,6 +7,9 @@ description: Use only after rex-harness selects bounded implementation execution
 
 仅在 rex-harness 已经激活有边界的实施 Capability，并提供当前 Command 后执行本流程。
 
+**前置**：执行任何步骤前先读 `rex-engineering-standards`（工程质量基线）；
+第 3 步 Self-check gate 与其 Definition of Done 一并逐项确认，文件粒度（§4）不达标不报完成。
+
 ## 步骤
 
 ### 1. 读取契约

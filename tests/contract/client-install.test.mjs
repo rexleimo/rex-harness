@@ -22,14 +22,14 @@ import {
   projectionPayloadDigest,
 } from '../../src/clients/projection-manifest.mjs';
 import { rexNativeProviderBindings } from '../../src/providers/catalog.mjs';
+import { sharedReferenceSkillIds } from '../../src/clients/install.mjs';
 
 const REX_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 
 const expectedSkills = rexNativeProviderBindings
   .filter((binding) => binding.provider.kind === 'skill')
   .map((binding) => binding.provider.id)
-  .concat('rex-workflow')
-  .concat('rex-engineering-standards')
+  .concat('rex-workflow', ...sharedReferenceSkillIds)
   .sort();
 
 const CLIENT_ROOTS = {

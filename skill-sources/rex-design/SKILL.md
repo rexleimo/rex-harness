@@ -7,6 +7,9 @@ description: Use only after rex-harness selects consequential design resolution 
 
 仅在 rex-harness 已经激活设计决策 Capability，并提供当前 Command 后执行本流程。
 
+**前置**：执行任何步骤前先读 `rex-engineering-standards`（工程质量基线）；
+产出的设计选项必须满足其架构边界（§1）与文件粒度（§4）约束。
+
 1. 从当前 Command 提取必须现在决定的问题、硬约束和推迟决定的成本。
 2. 基于仓库现状提出少量真实可行选项，优先包含复用现有设计的选项。
 3. 用一致维度比较正确性、复杂度、兼容性、可测试性、运维成本和可逆性。

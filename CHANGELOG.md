@@ -2,6 +2,33 @@
 
 本文件记录 `rex-harness` 独立产品的公开变化。版本遵循 Semantic Versioning。
 
+## [0.8.0] - 2026-09-28
+
+### Fixed
+
+- **工程标准真正被触发**：`rex-engineering-standards` 之前随包发布但没有任何地方引用它，所
+  以“基线”只是一份不会被加载的文档。现在 `rex-implement` / `rex-design` / `rex-code-review` /
+  `rex-refactor-hardening` 四个代码生产类 Provider 技能把“先读该标准”写为流程第一步，
+  并把文件粒度约束归入各自的完成自查门。
+- `tests/skills/skill-sources.test.mjs` 新增触发链守卫：四个 Provider 技能必须点名每个共享参照
+  技能，否则构建失败——防止同类“零引用技能”静默回归。
+
+### Added
+
+- `rex-engineering-standards` 新增§4 文件粒度基线（单一职责、~400 行软预算、kebab-case 命名、
+  禁止语义空洞拆分）与对应的 Definition of Done 条目；其余章节顺序号同步上提。
+- `scripts/refresh-projection-history.mjs`：从真实技能目录重算 canonical digest 并追加登记到
+  `src/clients/projection-history.json`，修正“改了技能忘登记投影升级凭证”这一类缺陷。
+
+### Changed
+
+- **导出重命名**：`src/clients/install.mjs` 的 `rexSharedSkills`（对象数组）改为
+  `sharedReferenceSkillIds`（技能 id 字符串数组）。名称直接表达“随投影分发、但非 Capability
+  Provider”的语义；共享技能无需额外元数据字段。0.x 内的破坏性导出变更，因此抬 minor 版本。
+- 投影计数保持 14 个技能；Qoder 客户端技能根（`.qoder/skills`）保留。
+
+验证：`npm test` 215/215 通过；`rex-engineering-standards` 历史 digest 保位（append-only）。
+
 ## [0.7.0] - 2026-09-21
 
 ### Added

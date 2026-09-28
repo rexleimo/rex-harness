@@ -37,23 +37,19 @@ export const rexWorkflowSkill = Object.freeze({
 });
 
 /**
- * Shared baseline skills shipped with the package but not bound to a
- * Capability. They ride every client projection alongside the workflow entry
- * and the Provider skills (e.g. the engineering quality baseline).
+ * Shared reference skills ride every client projection alongside the workflow
+ * entry and the Provider skills, but they are not Capability Providers: no
+ * Capability Command can select them, so they carry no capability binding.
+ * Code-producing Providers load them as a prerequisite standard before running
+ * (e.g. the engineering quality baseline).
  */
-export const rexSharedSkills = Object.freeze([
-  Object.freeze({ id: 'rex-engineering-standards' }),
-]);
+export const sharedReferenceSkillIds = Object.freeze(['rex-engineering-standards']);
 
 function skillIds() {
   const providerSkills = rexNativeProviderBindings
     .filter((binding) => binding.provider.kind === 'skill')
     .map((binding) => binding.provider.id);
-  return [
-    rexWorkflowSkill.id,
-    ...providerSkills,
-    ...rexSharedSkills.map((skill) => skill.id),
-  ];
+  return [rexWorkflowSkill.id, ...providerSkills, ...sharedReferenceSkillIds];
 }
 
 function lstatOrNull(filePath) {
