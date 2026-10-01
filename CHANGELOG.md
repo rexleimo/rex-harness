@@ -2,6 +2,13 @@
 
 本文件记录 `rex-harness` 独立产品的公开变化。版本遵循 Semantic Versioning。
 
+## [0.9.0] - 2026-10-01
+
+### Added
+
+- **rex-requirements 新增"写回仓库文档"步骤**：盘问确立的结论当场落盘，不再只活在会话和工作项里。领域术语在用户回答确立时实时 upsert 到仓库根 `CONTEXT.md` 词汇表（一行定义 + 一行"为什么"，不重写用户手写内容）；通过澄清预算或被用户明确拍板的决策写成 `docs/adr/NNNN-<slug>.md` 轻量 ADR（背景/决策/后果，编号递增不重用）。与 `assumptions-recorded` 的分界写死在规则里：假设是待验证的，不落 ADR；已裁决的才落。原"找到第一个可验证切片"顺延为步骤 5。
+- 动机：pi 0.99+ 生态的 `/grill-with-docs` 模式验证了"带状态盘问"的价值——interviews 本身 rex-requirements 已有，缺的是 CONTEXT.md/ADR 写回半边；同时跨会话知识路由在记忆层走 ContextDB（pull-based，召不回等于没有），仓库文档是 push-in-your-face 的补充车道，两者不冲突。
+
 ## [0.8.0] - 2026-09-28
 
 ### Fixed
