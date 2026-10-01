@@ -2,6 +2,12 @@
 
 本文件记录 `rex-harness` 独立产品的公开变化。版本遵循 Semantic Versioning。
 
+## [0.9.1] - 2026-10-01
+
+### Fixed
+
+- `projection-history.json` 登记 rex-requirements 0.9.0 新 canonical digest。0.9.0 改了 SKILL.md 却漏跑 `scripts/refresh-projection-history.mjs`，客户端投影安装因此报 "projection history is missing the current digest"——本条目只是补登记，无行为变化。
+
 ## [0.9.0] - 2026-10-01
 
 ### Added
