@@ -2,6 +2,12 @@
 
 本文件记录 `rex-harness` 独立产品的公开变化。版本遵循 Semantic Versioning。
 
+## [0.10.0] - 2026-10-14
+
+### Added
+
+- **recovery 备份保留修剪（work-8）**：`installClientProjection` 在成功轮（无 conflict/error）结束后修剪 `.rex-projection-recovery/<root>/`：按 skill 归属只保留最近 2 份 `.rex-backup-*`（mtime 排序），结果新增 `prunedRecoveryBackups`（被删路径只读数组）。归属按 install 侧的真实命名格式 `.rex-backup-<skillId>-<uuid>` 严格匹配——skillId 互为前缀的邻居（如 `rex-tdd` / `rex-tdd-advanced`）不会被归到同一个桶，否则它会占用邻居 skill 的保留额并被误删（已用反例对比验证）。无法归属的条目（废弃 skill 的备份、`_purged-*` 等非备份形态）一律不动；冲突/错误轮完全不修剪——出问题的安装可能需要更多恢复点。修复 recovery 目录只增不减的缺陷（历史上父仓库工作区累积 93 个备份 / ~1.16MB）。新模块 `src/clients/recovery-prune.mjs`。
+
 ## [0.9.1] - 2026-10-01
 
 ### Fixed

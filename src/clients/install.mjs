@@ -11,6 +11,7 @@ import {
   writeProjectionMarker,
 } from './projection-manifest.mjs';
 import { rexNativeProviderBindings } from '../providers/catalog.mjs';
+import { pruneRecoveryBackups } from './recovery-prune.mjs';
 
 const PACKAGE_ROOT = fileURLToPath(new URL('../../', import.meta.url));
 const CLIENT_SKILL_ROOTS = Object.freeze({
@@ -559,6 +560,13 @@ export function installClientProjection({
   }
 
   const changedCount = installed.length + updated.length + adopted.length + migrated.length;
+  /* work-8：只在无 error/conflict 的成功轮修剪 recovery 备份——出问题的安装可能需要更多恢复点。 */
+  const prunedRecoveryBackups = errors.length === 0 && conflicts.length === 0
+    ? pruneRecoveryBackups({
+        recoveryDir: recoveryRoot(resolvedTargetRoot),
+        knownSkillIds: sources.plans.map((plan) => plan.skillId),
+      })
+    : Object.freeze([]);
   const status = errors.length > 0 || conflicts.length > 0
     ? 'conflicts'
     : changedCount > 0 ? 'installed' : 'unchanged';
@@ -577,6 +585,7 @@ export function installClientProjection({
     conflictDetails: Object.freeze(conflictDetails),
     errors: Object.freeze(errors),
     recoveries: Object.freeze(recoveryEvents),
+    prunedRecoveryBackups,
   });
 }
 

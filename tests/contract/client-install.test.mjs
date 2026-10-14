@@ -9,6 +9,7 @@ import {
   readdir,
   rm,
   symlink,
+  utimes,
   writeFile,
 } from 'node:fs/promises';
 import os from 'node:os';
@@ -531,4 +532,75 @@ test('client projection rejects unsupported clients', () => {
     () => installClientProjection({ client: 'unknown', rootDir: process.cwd() }),
     /unsupported rex-harness client/u,
   );
+});
+
+test('a successful install prunes stale recovery backups, keeping the newest per skill (work-8)', async () => {
+  const rootDir = await mkdtemp(path.join(os.tmpdir(), 'rex-client-recovery-prune-'));
+  try {
+    const recoveryDir = path.join(rootDir, '.codex', '.rex-projection-recovery', 'skills');
+    await mkdir(recoveryDir, { recursive: true });
+    const seedBackup = async (name, minutesAgo) => {
+      const dir = path.join(recoveryDir, name);
+      await mkdir(dir, { recursive: true });
+      await writeFile(path.join(dir, 'SKILL.md'), 'stale backup payload\n', 'utf8');
+      const seconds = (Date.now() - minutesAgo * 60_000) / 1000;
+      await utimes(dir, seconds, seconds);
+    };
+    const UUIDS = [
+      '11111111-1111-4111-8111-111111111111',
+      '22222222-2222-4222-8222-222222222222',
+      '33333333-3333-4333-8333-333333333333',
+      '44444444-4444-4444-8444-444444444444',
+    ];
+    await seedBackup(`.rex-backup-rex-tdd-${UUIDS[0]}`, 40);
+    await seedBackup(`.rex-backup-rex-tdd-${UUIDS[1]}`, 30);
+    await seedBackup(`.rex-backup-rex-tdd-${UUIDS[2]}`, 20);
+    // 归属不明的三类条目：废弃 skill、skillId 互为前缀的邻居、非备份形态——修剪必须一律不动。
+    await seedBackup('.rex-backup-retired-skill-zzzz-9', 10);
+    await seedBackup(`.rex-backup-rex-tdd-advanced-${UUIDS[3]}`, 5);
+    await mkdir(path.join(recoveryDir, '_purged-20260826_204215'), { recursive: true });
+
+    const result = installClientProjection({ client: 'codex', rootDir });
+
+    assert.equal(result.status, 'installed');
+    assert.equal(result.prunedRecoveryBackups.length, 1);
+    assert.match(result.prunedRecoveryBackups[0], /\.rex-backup-rex-tdd-11111111-1111-4111-8111-111111111111$/u);
+    assert.deepEqual((await readdir(recoveryDir)).sort(), [
+      '.rex-backup-retired-skill-zzzz-9',
+      `.rex-backup-rex-tdd-${UUIDS[1]}`,
+      `.rex-backup-rex-tdd-${UUIDS[2]}`,
+      `.rex-backup-rex-tdd-advanced-${UUIDS[3]}`,
+      '_purged-20260826_204215',
+    ]);
+  } finally {
+    await rm(rootDir, { recursive: true, force: true });
+  }
+});
+
+test('a conflicted install run prunes nothing (work-8 counterexample)', async () => {
+  const rootDir = await mkdtemp(path.join(os.tmpdir(), 'rex-client-recovery-keep-'));
+  try {
+    const target = path.join(rootDir, '.codex', 'skills', 'rex-tdd', 'SKILL.md');
+    await mkdir(path.dirname(target), { recursive: true });
+    await writeFile(target, 'user-owned skill\n', 'utf8');
+    const recoveryDir = path.join(rootDir, '.codex', '.rex-projection-recovery', 'skills');
+    await mkdir(recoveryDir, { recursive: true });
+    for (const name of [
+      '55555555-5555-4555-8555-555555555555',
+      '66666666-6666-4666-8666-666666666666',
+      '77777777-7777-4777-8777-777777777777',
+    ]) {
+      const dir = path.join(recoveryDir, `.rex-backup-rex-tdd-${name}`);
+      await mkdir(dir, { recursive: true });
+      await writeFile(path.join(dir, 'SKILL.md'), 'stale backup payload\n', 'utf8');
+    }
+
+    const result = installClientProjection({ client: 'codex', rootDir });
+
+    assert.equal(result.status, 'conflicts');
+    assert.deepEqual(result.prunedRecoveryBackups, []);
+    assert.equal((await readdir(recoveryDir)).length, 3, 'a conflicted run must keep every recovery point');
+  } finally {
+    await rm(rootDir, { recursive: true, force: true });
+  }
 });

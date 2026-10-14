@@ -89,6 +89,6 @@ AIOS 只能执行当前 Rex Command 中绑定的内置 Provider；它不会加�
 - payload 与 canonical 完全相同且没有 marker 时，可以安全 adopt；marker/link 非普通文件时拒绝写入；
 - 破坏性 update 只有在 target payload 命中 `src/clients/projection-history.json` 的审核 canonical digest 时才允许，合法 marker 本身不足以授权覆盖；
 - staging 期间目标发生变化、目标为 symlink/junction、marker 无效或未知用户内容一律保留并报告 conflict；
-- 替换前的旧目录不会自动删除，而会保留在 discovery root 外的 `.rex-projection-recovery/`，用于崩溃/回滚恢复。
+- 替换前的旧目录不会自动删除，而会保留在 discovery root 外的 `.rex-projection-recovery/`，用于崩溃/回滚恢复；自 0.10.0 起，成功安装（无 conflict/error）会按 skill 修剪该目录，每个 skill 只保留最近 2 份 `.rex-backup-*`（mtime 排序）；归属严格匹配 `.rex-backup-<skillId>-<uuid>` 格式，因此 skillId 互为前缀的邻居不会互占保留额；无法归属的条目（废弃 skill 备份、`_purged-*` 等非备份形态）一律不动，冲突/错误轮不修剪，修剪结果在结果的 `prunedRecoveryBackups` 里报告。
 
-结果返回互斥的 `installed`、`updated`、`migrated`、`adopted`、`skipped`，以及 `conflicts`、`errors`、`recoveries` 和带 digest/reason 的 `conflictDetails`。AIOS lifecycle 必须把 update/migrate/adopt 视为实际变更，不能误报 `unchanged`。
+结果返回互斥的 `installed`、`updated`、`migrated`、`adopted`、`skipped`，以及 `conflicts`、`errors`、`recoveries`、`prunedRecoveryBackups` 和带 digest/reason 的 `conflictDetails`。AIOS lifecycle 必须把 update/migrate/adopt 视为实际变更，不能误报 `unchanged`。
