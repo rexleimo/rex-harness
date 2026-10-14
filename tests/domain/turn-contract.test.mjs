@@ -32,6 +32,15 @@ test('turn outcomes split into material and non-material sets', () => {
   assert.equal(isMaterialTurnResult({ outcome: 'blocked' }), false);
 });
 
+test('external-host outcomes stay in the public wire contract', () => {
+  // 这两个 outcome 由外部宿主产出；宿主桥不得为了“用满枚举”自行映射它们
+  // （映射会让失败轮变成 material 并消耗额度）。删掉它们属破坏性变更，所以保留。
+  assert.ok(TURN_OUTCOMES.includes('repair_required'));
+  assert.ok(TURN_OUTCOMES.includes('replan_required'));
+  assert.ok(MATERIAL_TURN_OUTCOMES.includes('repair_required'));
+  assert.equal(MATERIAL_TURN_OUTCOMES.includes('replan_required'), false);
+});
+
 test('effectRef is deterministic for identical payloads and moves with the token', () => {
   const envelope = withEffectRef(BASE);
   const replayed = withEffectRef({ ...BASE });
