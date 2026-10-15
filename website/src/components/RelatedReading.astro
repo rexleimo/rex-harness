@@ -1,0 +1,25 @@
+---
+import type { Lang } from '../i18n/ui';
+import { t } from '../i18n/ui';
+import { relatedItems } from '../i18n/landing';
+
+const { lang }: { lang: Lang } = Astro.props;
+---
+<section class="border-border bg-border grid grid-cols-1 gap-px scroll-mt-(--nav-height) md:grid-cols-[repeat(auto-fit,minmax(320px,1fr))]" id="related-reading">
+  <div class="bg-background px-[18px] py-10 sm:px-11">
+    <h2 class="font-mono text-[11px] font-medium leading-[1.4] tracking-normal text-muted-foreground mb-5">{t(lang, 'related.label')}</h2>
+    <ul class="flex flex-col gap-2.5">
+      {relatedItems[lang].map((it) => (
+        <li>
+          <a class="border-input hover:border-foreground/25 focus-visible:ring-ring group flex items-center gap-4 rounded-md border px-4 py-3.5 transition-colors" href={it.href}>
+            <span class="min-w-0">
+              <span class="font-mono text-[12px] font-normal leading-[1.4] tracking-normal text-muted-foreground mb-1.5 block">{it.kicker}</span>
+              <span class="text-base font-bold leading-[1.3] tracking-[-0.018em] block text-pretty">{it.title}</span>
+            </span>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ease-out-quart text-foreground ml-auto size-4 flex-none opacity-[0.35] transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>

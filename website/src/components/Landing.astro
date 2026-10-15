@@ -1,0 +1,51 @@
+---
+import type { Lang } from '../i18n/ui';
+import { t } from '../i18n/ui';
+import SiteLayout from '../layouts/SiteLayout.astro';
+import ArticleHero from './ArticleHero.astro';
+import InstallCard from './InstallCard.astro';
+import MobileToc from './MobileToc.astro';
+import ProseArticle from './ProseArticle.astro';
+import CtaPanel from './CtaPanel.astro';
+import TocRail from './TocRail.astro';
+import SkillActions from './SkillActions.astro';
+import RelatedReading from './RelatedReading.astro';
+
+const { lang }: { lang: Lang } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const pathname = `${base}${lang === 'zh' ? '/zh' : ''}/`;
+const title = `${t(lang, 'hero.title')} | rex-harness`;
+const description = lang === 'zh'
+  ? 'rex-harness 是可独立运行的证据驱动工作流控制面：从 Observation 推导 Fact，一次选择一个 Capability，发出类型化 Provider Command，只有匹配的 Evidence 才能推进工作流。'
+  : 'Standalone evidence-driven workflow control plane for coding agents. Derives Facts from Observations, selects one Capability at a time, emits a typed Provider Command, and advances only with matching Evidence.';
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'TechArticle',
+  headline: t(lang, 'hero.title'),
+  description,
+  inLanguage: lang === 'zh' ? 'zh-CN' : 'en',
+  url: `https://rexleimo.github.io${pathname}`,
+  programmingLanguage: 'TypeScript',
+  profiler: { '@type': 'SoftwareSourceCode', name: 'rex-harness', codeRepository: 'https://github.com/rexleimo/rex-harness', url: 'https://www.npmjs.com/package/@rexleimo/rex-harness' },
+};
+---
+<SiteLayout lang={lang} title={title} description={description} pathname={pathname} jsonLd={jsonLd}>
+  <div class="relative w-full">
+    <div class="relative z-10">
+      <article class="[&>*+*]:border-border relative flex h-full flex-col [&>*+*]:-mt-px [&>*+*]:border-t">
+        <ArticleHero lang={lang} />
+        <InstallCard lang={lang} />
+        <MobileToc lang={lang} />
+        <div class="xl:grid xl:grid-cols-[minmax(0,1fr)_232px]">
+          <div class="px-[18px] pb-16 pt-10 sm:px-11 md:pb-20 md:pt-14">
+            <ProseArticle lang={lang} />
+            <CtaPanel lang={lang} />
+          </div>
+          <TocRail lang={lang} />
+        </div>
+        <SkillActions lang={lang} />
+        <RelatedReading lang={lang} />
+      </article>
+    </div>
+  </div>
+</SiteLayout>

@@ -1,0 +1,404 @@
+@import "tailwindcss";
+@import "./fonts.css";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ── Design tokens (extracted from aihero.dev compiled CSS) ─────────────── */
+:root {
+  --nav-height: 62px;
+  --page-background: #f1f2f5;
+  --background: #fbfbfc;
+  --foreground: #14161a;
+  --card: #fff;
+  --card-foreground: #14161a;
+  --popover: #f5f6f8;
+  --popover-foreground: #14161a;
+  --primary: #14161a;
+  --primary-foreground: #fbfbfc;
+  --accent-fill: #f5c451;
+  --accent-fill-hover: #eab534;
+  --accent-fill-foreground: #191510;
+  --secondary: #14161a0f;
+  --secondary-foreground: #14161a;
+  --muted: #f5f6f8;
+  --muted-foreground: #14161a9e;
+  --accent: #14161a0f;
+  --accent-foreground: #14161a;
+  --destructive: #d2483a;
+  --border: #14161a1a;
+  --input: #14161a24;
+  --ring: #14161a59;
+  --radius: 9px;
+  --ah-fg-body: #14161acc;
+  --ah-fg-muted: #14161ab3;
+  --ah-fg-subtle: #14161aa3;
+  --ah-fg-label: #14161a99;
+  --ah-fg-faint: #14161a59;
+  --ah-line: #14161a1a;
+  --ah-line-strong: #14161a24;
+  --ah-line-soft: #14161a12;
+  --ah-hover: #14161a0f;
+  --ah-accent-wash: #14161a0a;
+  --ah-accent-panel: #ecedef;
+  --ah-accent-line: #14161a38;
+  --ah-band: #f1f2f5;
+  --ah-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+  --sidebar: var(--muted);
+  --sidebar-foreground: var(--foreground);
+  --sidebar-accent: var(--ah-hover);
+  --sidebar-accent-foreground: var(--foreground);
+  --sidebar-border: var(--border);
+  --font-geist: "DM Sans", "DM Sans Fallback", sans-serif;
+  --font-geist-mono: "JetBrains Mono", "JetBrains Mono Fallback", monospace;
+  --font-source-serif: "Source Serif 4", "Source Serif 4 Fallback", serif;
+}
+
+.dark {
+  --page-background: #080808;
+  --background: #0b0b0b;
+  --foreground: #f4f3f1;
+  --card: #100f0e;
+  --card-foreground: #f4f3f1;
+  --popover: #0d0d0c;
+  --popover-foreground: #f4f3f1;
+  --primary: #f5c451;
+  --primary-foreground: #191510;
+  --accent-fill: #f5c451;
+  --accent-fill-hover: #ffd873;
+  --accent-fill-foreground: #191510;
+  --secondary: #ffffff12;
+  --secondary-foreground: #f4f3f1;
+  --muted: #0d0d0c;
+  --muted-foreground: #f4f3f199;
+  --accent: #ffffff12;
+  --accent-foreground: #f4f3f1;
+  --border: #ffffff14;
+  --input: #ffffff1f;
+  --ring: #f5c45159;
+  --ah-fg-body: #f4f3f1b8;
+  --ah-fg-muted: #f4f3f199;
+  --ah-fg-subtle: #f4f3f185;
+  --ah-fg-label: #f4f3f17a;
+  --ah-fg-faint: #f4f3f14d;
+  --ah-line: #ffffff14;
+  --ah-line-strong: #ffffff1f;
+  --ah-line-soft: #ffffff0f;
+  --ah-hover: #ffffff12;
+  --ah-accent-wash: #f5c45112;
+  --ah-accent-panel: #1d1a11;
+  --ah-accent-line: #f5c45159;
+  --ah-band: #0e0e0d;
+}
+
+@theme inline {
+  --color-page-background: var(--page-background);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-accent-fill: var(--accent-fill);
+  --color-accent-fill-hover: var(--accent-fill-hover);
+  --color-accent-fill-foreground: var(--accent-fill-foreground);
+  --color-secondary: var(--secondary);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --font-sans: var(--font-geist);
+  --font-mono: var(--font-geist-mono);
+  --font-serif: var(--font-source-serif);
+}
+
+body {
+  background: var(--page-background);
+  color: var(--foreground);
+  font-family: var(--font-geist);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Signature prose (extracted verbatim) ───────────────────────────────── */
+.ah-prose-p {
+  color: var(--ah-fg-body);
+  text-wrap: pretty;
+  margin: 0 0 20px;
+  font-size: 15.5px;
+  line-height: 1.68;
+}
+.ah-prose-a {
+  color: var(--primary);
+  text-decoration: none;
+}
+:root .ah-prose-a {
+  text-underline-offset: 2px;
+  -webkit-text-decoration: underline #14161a59;
+  text-decoration: underline #14161a59;
+  text-decoration-thickness: 1px;
+}
+:root .ah-prose-a:hover {
+  text-decoration-color: var(--foreground);
+}
+.dark .ah-prose-a,
+.dark .ah-prose-a:hover {
+  text-decoration: none;
+}
+.dark .ah-prose-a:hover {
+  color: var(--accent-fill-hover);
+}
+.ah-prose-strong {
+  color: var(--foreground);
+  font-weight: 700;
+}
+.ah-code-inline {
+  font-family: var(--ah-mono);
+  color: var(--foreground);
+  background: var(--ah-hover);
+  border: 1px solid var(--ah-line);
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-size: 0.85em;
+  font-weight: 400;
+}
+.ah-bullets {
+  margin: 0 0 20px;
+  padding: 0;
+  list-style: none;
+}
+.ah-bullets > li {
+  color: var(--ah-fg-body);
+  text-wrap: pretty;
+  margin: 0;
+  font-size: 15.5px;
+  line-height: 1.68;
+  position: relative;
+  list-style: none;
+  padding-left: 17px;
+}
+.ah-bullets > li + li {
+  margin-top: 11px;
+}
+.ah-bullets > li::before {
+  content: "";
+  background: var(--primary);
+  opacity: 0.7;
+  border-radius: 50%;
+  width: 5px;
+  height: 5px;
+  position: absolute;
+  top: calc(0.84em - 2.5px);
+  left: 0;
+}
+.ah-h2 {
+  scroll-margin-top: 72px;
+  color: var(--foreground);
+  font-size: 1.66667em;
+  line-height: 1.33333;
+  margin-top: 1.86667em;
+  margin-bottom: 1.06667em;
+}
+.ah-h2:first-child {
+  margin-top: 0;
+}
+.ah-h2 > a {
+  color: inherit;
+  font-weight: 600;
+  text-decoration: none;
+}
+@media (min-width: 640px) {
+  .ah-prose-p,
+  .ah-bullets > li {
+    font-size: 17.5px;
+  }
+}
+
+/* ── Docs markdown prose (content collections) ─────────────────────────── */
+.docs-prose h2 {
+  scroll-margin-top: 72px;
+  color: var(--foreground);
+  font-size: 1.42em;
+  line-height: 1.33333;
+  margin-top: 1.86667em;
+  margin-bottom: 1.06667em;
+  font-weight: 600;
+  letter-spacing: -0.018em;
+}
+.docs-prose h2:first-child,
+.docs-prose h3:first-child { margin-top: 0; }
+.docs-prose h3 {
+  scroll-margin-top: 72px;
+  color: var(--foreground);
+  font-size: 1.12em;
+  margin-top: 1.7em;
+  margin-bottom: 0.8em;
+  font-weight: 600;
+}
+.docs-prose p {
+  color: var(--ah-fg-body);
+  text-wrap: pretty;
+  margin: 0 0 20px;
+  font-size: 15.5px;
+  line-height: 1.68;
+}
+.docs-prose a {
+  color: var(--primary);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+:root .docs-prose a { text-decoration: underline #14161a59; }
+:root .docs-prose a:hover { text-decoration-color: var(--foreground); }
+.dark .docs-prose a { text-decoration: none; }
+.dark .docs-prose a:hover { color: var(--accent-fill-hover); }
+.docs-prose strong { color: var(--foreground); font-weight: 700; }
+.docs-prose ul, .docs-prose ol {
+  margin: 0 0 20px;
+  padding: 0;
+  list-style: none;
+}
+.docs-prose ol { list-style: decimal; padding-left: 22px; }
+.docs-prose ul > li {
+  color: var(--ah-fg-body);
+  text-wrap: pretty;
+  position: relative;
+  list-style: none;
+  padding-left: 17px;
+  font-size: 15.5px;
+  line-height: 1.68;
+}
+.docs-prose ol > li {
+  color: var(--ah-fg-body);
+  font-size: 15.5px;
+  line-height: 1.68;
+  padding-left: 5px;
+}
+.docs-prose ul > li + li, .docs-prose ol > li + li { margin-top: 11px; }
+.docs-prose ul > li::before {
+  content: "";
+  background: var(--primary);
+  opacity: 0.7;
+  border-radius: 50%;
+  width: 5px;
+  height: 5px;
+  position: absolute;
+  top: calc(0.84em - 2.5px);
+  left: 0;
+}
+.docs-prose code {
+  font-family: var(--ah-mono);
+  color: var(--foreground);
+  background: var(--ah-hover);
+  border: 1px solid var(--ah-line);
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-size: 0.85em;
+  font-weight: 400;
+}
+.docs-prose pre {
+  background: var(--card);
+  border: 1px solid var(--border);
+  overflow-x: auto;
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin: 20px 0;
+  font-size: 13px;
+  line-height: 1.62;
+}
+.docs-prose pre code {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  font-size: inherit;
+  color: var(--foreground);
+}
+.docs-prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 14px;
+  display: block;
+  overflow-x: auto;
+}
+.docs-prose th, .docs-prose td {
+  border: 1px solid var(--ah-line);
+  padding: 8px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+.docs-prose th {
+  background: var(--ah-hover);
+  color: var(--foreground);
+  font-weight: 600;
+  font-size: 13px;
+}
+.docs-prose td code { font-size: 0.82em; }
+.docs-prose blockquote {
+  border-left: 2px solid var(--ah-accent-line);
+  margin: 20px 0;
+  padding: 2px 0 2px 16px;
+  color: var(--ah-fg-muted);
+}
+@media (min-width: 640px) {
+  .docs-prose p,
+  .docs-prose ul > li,
+  .docs-prose ol > li { font-size: 16px; }
+  .docs-prose pre { font-size: 13.5px; }
+}
+
+/* ── Utilities ──────────────────────────────────────────────────────────── */
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+/* Scroll-driven fade mask — extracted verbatim from reference compiled CSS
+   (@property + keyframes + animation-timeline: scroll(self)). */
+@property --scroll-fade-top {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0;
+}
+@property --scroll-fade-bottom {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0;
+}
+@keyframes scroll-fade-top {
+  0% { --scroll-fade-top: 0px; }
+  to { --scroll-fade-top: var(--scroll-fade-size); }
+}
+@keyframes scroll-fade-bottom {
+  0% { --scroll-fade-bottom: var(--scroll-fade-size); }
+  to { --scroll-fade-bottom: 0px; }
+}
+.scroll-fade {
+  --scroll-fade-size: 1.75rem;
+  --scroll-fade-top: var(--scroll-fade-size);
+  --scroll-fade-bottom: var(--scroll-fade-size);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 var(--scroll-fade-top), #000 calc(100% - var(--scroll-fade-bottom)), transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 var(--scroll-fade-top), #000 calc(100% - var(--scroll-fade-bottom)), transparent 100%);
+  animation: linear both scroll-fade-top, linear both scroll-fade-bottom;
+  animation-timeline: scroll(self), scroll(self);
+  animation-range: 0 var(--scroll-fade-size), calc(100% - var(--scroll-fade-size)) 100%;
+}
+@utility ease-out-quart {
+  transition-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Sidebar open-section label turns foreground (reference:
+   group-data-[state=open]/series-section:text-foreground) */
+#sidebar button[data-disclosure][aria-expanded="true"] {
+  color: var(--foreground);
+}
+/* Reduced motion: keep disclosure instant */
+@media (prefers-reduced-motion: reduce) {
+  #pages-sheet, #pages-sheet * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}

@@ -1,0 +1,32 @@
+---
+import type { Lang } from '../i18n/ui';
+import { t } from '../i18n/ui';
+
+const { lang }: { lang: Lang } = Astro.props;
+const INSTALL_CMD = 'npm install -g @rexleimo/rex-harness';
+---
+<section class="bg-muted flex h-full flex-col justify-center border-t px-6 py-8 sm:px-10 sm:py-9" id="install">
+  <p class="font-mono text-[11px] font-medium leading-[1.4] tracking-normal text-muted-foreground mb-3.5">{t(lang, 'install.label')}</p>
+  <div class="border-border bg-muted focus-within:ring-ring dark:bg-card flex w-full flex-wrap items-center gap-x-3 gap-y-2.5 rounded-md border px-3 py-2.5">
+    <span class="font-mono text-xs font-medium flex-none select-none text-[color:var(--ah-fg-faint)]">$</span>
+    <code class="font-mono font-medium text-foreground/90 min-w-0 flex-1 select-all overflow-x-auto overscroll-x-contain whitespace-nowrap bg-transparent text-[11.5px] sm:text-xs">{INSTALL_CMD}</code>
+    <button type="button" data-copy={INSTALL_CMD} class="focus-visible:ring-ring ease-out-quart flex h-[30px] w-full flex-none items-center justify-center rounded-sm transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 motion-reduce:transition-none min-[380px]:ml-auto min-[380px]:w-[30px] bg-accent-fill/[0.14] text-primary hover:bg-accent-fill/25">
+      <span class="sr-only">{t(lang, 'mobile.copy')}</span>
+      <span class="relative inline-flex size-3.5 items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ease-out-quart absolute size-3.5 transition-all duration-300 motion-reduce:transition-none scale-100 opacity-100" data-icon-copy><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ease-out-quart absolute size-3.5 transition-all duration-300 motion-reduce:transition-none scale-50 opacity-0" data-icon-check><polyline points="20 6 9 17 4 12"/></svg>
+      </span>
+    </button>
+  </div>
+  <p class="text-sm leading-relaxed mt-3 text-[color:var(--ah-fg-muted)]">{t(lang, 'install.then')} <code class="font-mono text-xs font-medium text-foreground bg-foreground/[0.055] border-border/70 rounded-[4px] border px-1.5 py-0.5">rex-harness start --work-item &lt;id&gt; --message "…"</code> {t(lang, 'install.inProject')}</p>
+  <dl class="border-border mt-5 flex flex-wrap gap-x-6 gap-y-4 border-t pt-5">
+    <div>
+      <dt class="font-mono text-[11px] font-medium leading-[1.4] tracking-normal text-muted-foreground mb-1.5">{t(lang, 'install.source')}</dt>
+      <dd class="text-sm font-medium leading-snug"><a class="text-primary focus-visible:ring-ring rounded-sm underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2" href="https://github.com/rexleimo/rex-harness">rexleimo/rex-harness</a></dd>
+    </div>
+    <div>
+      <dt class="font-mono text-[11px] font-medium leading-[1.4] tracking-normal text-muted-foreground mb-1.5">{t(lang, 'install.runtime')}</dt>
+      <dd class="text-sm font-medium leading-snug">{t(lang, 'install.runtimeValue')}</dd>
+    </div>
+  </dl>
+</section>

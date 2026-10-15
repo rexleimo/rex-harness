@@ -1,0 +1,22 @@
+---
+import type { Lang } from '../../../i18n/ui';
+import SiteLayout from '../../../layouts/SiteLayout.astro';
+import ProviderHub from '../../../components/ProviderHub.astro';
+
+const lang = 'zh' as Lang;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const pathname = `${base}/zh/docs/providers/`;
+const title = 'Provider 目录';
+const description = 'rex-harness 全部 15 条 Provider 绑定：Capability ID、运行时何时发出每条命令、以及必须交回的 Evidence 令牌。';
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'TechArticle',
+  headline: title,
+  description,
+  inLanguage: 'zh-CN',
+  url: `https://rexleimo.github.io${pathname}`,
+};
+---
+<SiteLayout lang={lang} title={`${title} | rex-harness`} description={description} pathname={pathname} jsonLd={jsonLd}>
+  <ProviderHub lang={lang} />
+</SiteLayout>

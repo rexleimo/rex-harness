@@ -1,0 +1,23 @@
+---
+import type { Lang } from '../../i18n/ui';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import SEO from '../../components/SEO.astro';
+import ProviderHub from '../../components/ProviderHub.astro';
+
+const lang = 'en' as Lang;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const pathname = `${base}/docs/providers/`;
+const title = 'Provider Catalog';
+const description = 'All 15 rex-harness provider bindings: capability IDs, when the runtime issues each command, and the exact evidence tokens they must return.';
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'TechArticle',
+  headline: title,
+  description,
+  inLanguage: 'en',
+  url: `https://rexleimo.github.io${pathname}`,
+};
+---
+<SiteLayout lang={lang} title={`${title} | rex-harness`} description={description} pathname={pathname} jsonLd={jsonLd}>
+  <ProviderHub lang={lang} />
+</SiteLayout>

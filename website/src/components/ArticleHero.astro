@@ -1,0 +1,56 @@
+---
+import type { Lang } from '../i18n/ui';
+import { t } from '../i18n/ui';
+import { docsPath } from '../i18n/docs';
+import Icon from './icons/Icon.astro';
+import RexLogo from './icons/RexLogo.astro';
+
+const { lang }: { lang: Lang } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const INSTALL_CMD = 'npm install -g @rexleimo/rex-harness';
+---
+<div class="bg-card dark:bg-transparent">
+  <div>
+    <div class="relative flex flex-col justify-center px-[18px] pb-10 pt-10 sm:px-11 md:pb-12 md:pt-12">
+      <div class="mb-4 flex flex-wrap items-center gap-x-2.5 gap-y-1">
+        <span class="font-mono text-[10px] font-medium uppercase leading-none tracking-[0.10em] border border-border text-foreground rounded-[5px] px-[7px] py-[5px]">v0.9.1</span>
+        <span class="font-mono text-[12px] font-normal leading-[1.4] tracking-normal text-muted-foreground">{t(lang, 'hero.kicker')}</span>
+      </div>
+      <h1 class="text-[2rem] font-bold leading-[1.06] tracking-[-0.03em] sm:text-[2.5rem] lg:text-[2.75rem] lg:leading-[1.04] lg:tracking-[-0.034em] flex items-start">
+        <span class="-mt-[0.02em] flex h-[1lh] shrink-0 items-center">
+          <span class="size-10 rounded-[11px] bg-foreground/[0.04] p-1.5 text-foreground sm:size-12"><RexLogo class="size-full" /></span>
+        </span>
+        <span class="min-w-0 text-balance ml-3">{t(lang, 'hero.title')}</span>
+      </h1>
+      <p class="text-[17px] font-normal leading-[1.55] sm:text-[18.5px] mt-4 max-w-[48ch] text-pretty text-[color:var(--ah-fg-muted)]">{t(lang, 'hero.lede')}</p>
+      <div class="mt-7 flex w-full flex-wrap items-center justify-between gap-5">
+        <div class="flex flex-wrap items-center gap-3">
+          <div class="items-center gap-2 text-foreground flex text-sm font-medium [&_span:first-child]:w-8 [&_span:first-child]:inline-flex">
+            <span class="w-8 text-foreground"><RexLogo class="size-full" /></span>
+            <div class="flex flex-col"><span class="text-foreground">RexAI</span></div>
+          </div>
+          <a class="border-input bg-background hover:bg-accent hover:text-accent-foreground inline-flex h-9 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-[9px] border px-4 py-2 text-sm font-medium transition-colors" href="https://www.npmjs.com/package/@rexleimo/rex-harness">{t(lang, 'hero.npm')}</a>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+          <button type="button" data-copy={INSTALL_CMD} aria-live="polite" class="border-input bg-background hover:bg-accent hover:text-accent-foreground inline-flex h-9 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-[9px] border px-4 py-2 text-sm font-medium transition-colors">
+            <span class="relative inline-flex size-4 shrink-0 items-center justify-center">
+              <span class="absolute inset-0 inline-flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-4" aria-hidden="true"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg></span>
+            </span>
+            <span class="relative grid">
+              <span aria-hidden="true" class="invisible col-start-1 row-start-1 whitespace-nowrap">{t(lang, 'hero.copy')}</span>
+              <span class="col-start-1 row-start-1 whitespace-nowrap" data-copy-label data-copied={lang === 'zh' ? '已复制！' : 'Copied!'}>{t(lang, 'hero.copy')}</span>
+            </span>
+          </button>
+          <button type="button" data-copy-url class="border-input bg-background hover:bg-accent hover:text-accent-foreground inline-flex h-9 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-[9px] border px-4 py-2 text-sm font-medium transition-colors">
+            <Icon name="share" class="size-4" />
+            {t(lang, 'hero.share')}
+          </button>
+          <a class="border-input bg-background hover:bg-accent hover:text-accent-foreground inline-flex h-9 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-[9px] border px-4 py-2 text-sm font-medium transition-colors" href={docsPath(lang, 'getting-started')}>
+            {t(lang, 'hero.next')}
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-muted-foreground ml-2 h-4 w-4"><path d="m9 18 6-6-6-6"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

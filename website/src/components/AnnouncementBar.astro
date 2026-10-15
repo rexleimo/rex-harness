@@ -1,0 +1,17 @@
+---
+import type { Lang } from '../i18n/ui';
+import { t } from '../i18n/ui';
+import { docsPath } from '../i18n/docs';
+import Icon from './icons/Icon.astro';
+
+const { lang }: { lang: Lang } = Astro.props;
+---
+<aside class="relative mx-auto w-full max-w-[1456px] px-2 print:hidden">
+  <div class="bg-muted/40 border-border flex h-[34px] items-center justify-center gap-2.5 border-x border-b px-4">
+    <span class="text-primary inline-flex shrink-0 items-center rounded-[4px] border border-[color:var(--ah-accent-line)] px-1.5 py-1 font-mono text-[9px] font-medium uppercase leading-none tracking-[0.1em]">{t(lang, 'announcement.pill')}</span>
+    <a class="group focus-visible:ring-ring inline-flex min-w-0 items-center gap-1.5 font-medium tracking-tight underline-offset-4 transition hover:underline" href={docsPath(lang, 'getting-started')}>
+      <span class="truncate leading-[1.4]">{t(lang, 'announcement.text')}</span>
+      <Icon name="arrow-right" class="size-3.5 shrink-0 transition-transform group-hover:translate-x-0.5" />
+    </a>
+  </div>
+</aside>

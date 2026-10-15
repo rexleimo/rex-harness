@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://rexleimo.github.io/rex-harness/sitemap-index.xml

@@ -1,0 +1,84 @@
+---
+import type { Lang } from '../i18n/ui';
+import { t } from '../i18n/ui';
+import { docsPath, homePath } from '../i18n/docs';
+import Icon from './icons/Icon.astro';
+
+const { lang }: { lang: Lang } = Astro.props;
+const tabs = [
+  { id: 'npm', label: t(lang, 'actions.tabNpm'), cmd: 'npm install -g @rexleimo/rex-harness', hint: t(lang, 'actions.npmHint') },
+  { id: 'init', label: t(lang, 'actions.tabInit'), cmd: 'rex-harness init --client claude', hint: t(lang, 'actions.initHint') },
+];
+---
+<section class="bg-muted border-t scroll-mt-(--nav-height) px-5 py-10 sm:px-11 sm:py-11" id="skill-actions">
+  <p class="font-mono text-[11px] font-medium leading-[1.4] tracking-normal text-muted-foreground mb-5">{t(lang, 'actions.label')}</p>
+  <div class="border-border bg-border grid gap-px overflow-hidden rounded-lg border min-[901px]:grid-cols-[repeat(auto-fit,minmax(320px,1fr))]">
+    <div class="bg-background px-6 py-6 sm:py-7">
+      <div class="mb-3.5 flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+        <h2 class="text-lg font-bold leading-[1.2] tracking-[-0.02em] sm:text-xl">{t(lang, 'actions.title')}</h2>
+        <a class="focus-visible:ring-ring inline-flex flex-none rounded-[4px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2" href={docsPath(lang, 'getting-started')}><span class="font-mono text-[12px] text-muted-foreground hover:text-foreground transition-colors">v0.9.1 →</span></a>
+      </div>
+      <div class="flex flex-col gap-3.5">
+        <div class="bg-muted text-muted-foreground inline-flex h-8 w-fit rounded-[9px] p-[3px]" role="tablist" aria-label={t(lang, 'actions.title')}>
+          {tabs.map((tb, i) => (
+            <button type="button" role="tab" id={`tab-${tb.id}`} data-tab={tb.id} aria-selected={i === 0 ? 'true' : 'false'} data-state={i === 0 ? 'active' : 'inactive'} class="data-[state=active]:bg-background focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:outline-ring text-foreground inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-[6px] border border-transparent px-2.5 py-1 text-[13px] font-medium transition-all data-[state=active]:border-input">{tb.label}</button>
+          ))}
+        </div>
+        {tabs.map((tb, i) => (
+          <div class={`min-w-0 flex-1 outline-none ${i === 0 ? '' : 'hidden'}`} data-panel={tb.id} role="tabpanel">
+            <div class="border-border bg-muted focus-within:ring-ring dark:bg-card flex w-full flex-wrap items-center gap-x-3 gap-y-2.5 rounded-md border px-3 py-2.5">
+              <span class="font-mono text-xs font-medium flex-none select-none text-[color:var(--ah-fg-faint)]">$</span>
+              <code class="font-mono font-medium text-foreground/90 min-w-0 flex-1 select-all overflow-x-auto overscroll-x-contain whitespace-nowrap bg-transparent">{tb.cmd}</code>
+              <button type="button" data-copy={tb.cmd} class="focus-visible:ring-ring ease-out-quart flex h-[30px] w-full flex-none items-center justify-center rounded-sm transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 motion-reduce:transition-none min-[380px]:ml-auto min-[380px]:w-[30px] bg-accent-fill/[0.14] text-primary hover:bg-accent-fill/25">
+                <span class="sr-only">{t(lang, 'mobile.copy')}</span>
+                <span class="relative inline-flex size-3.5 items-center justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ease-out-quart absolute size-3.5 transition-all duration-300 scale-100 opacity-100" data-icon-copy><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ease-out-quart absolute size-3.5 transition-all duration-300 scale-50 opacity-0" data-icon-check><polyline points="20 6 9 17 4 12"/></svg>
+                </span>
+              </button>
+            </div>
+            <p class="text-sm leading-relaxed mt-3 text-[color:var(--ah-fg-muted)]">{tb.hint} <code class="font-mono text-xs font-medium text-foreground bg-foreground/[0.055] border-border/70 rounded-[4px] border px-1.5 py-0.5">rex-harness start</code> {t(lang, 'actions.inProject')}</p>
+            <div class="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1.5">
+              <span class="font-mono text-[12px] font-normal leading-[1.4] tracking-normal text-muted-foreground">{t(lang, 'actions.doctor')} <span class="text-[color:var(--ah-fg-body)]">rex-harness doctor</span></span>
+              <a class="text-[13px] leading-[1.35] hover:text-foreground focus-visible:ring-ring ml-auto inline-flex items-center gap-1 text-[color:var(--ah-fg-subtle)] transition-colors" href="https://github.com/rexleimo/rex-harness">{t(lang, 'actions.source')}</a>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+  <nav class="mt-4 flex gap-2.5 min-[901px]:grid min-[901px]:grid-cols-3" aria-label={t(lang, 'actions.label')}>
+    <a class="border-border bg-background hover:border-foreground/30 group min-w-0 flex-1 rounded-md border px-[18px] py-4 transition-colors" href={homePath(lang)}>
+      <p class="font-mono text-[11px] font-medium leading-[1.4] tracking-normal text-muted-foreground mb-2.5">{t(lang, 'actions.prev')}</p>
+      <p class="text-base leading-[1.3] tracking-[-0.018em] group-hover:text-foreground truncate font-medium text-[color:var(--ah-fg-muted)] transition-colors">
+        <span class="flex min-w-0 items-center gap-1.5"><Icon name="arrow-left" class="size-4 shrink-0" /><span class="truncate">{t(lang, 'sidebar.overview')}</span></span>
+      </p>
+    </a>
+    <div class="hidden rounded-md border border-[color:var(--ah-accent-line)] bg-[color:var(--ah-accent-wash)] px-[18px] py-4 min-[901px]:block">
+      <p class="font-mono text-[11px] font-medium leading-[1.4] tracking-normal text-primary mb-2.5">{t(lang, 'actions.here')}</p>
+      <p class="text-base font-bold leading-[1.3] tracking-[-0.018em] text-foreground"><span class="truncate">{t(lang, 'hero.title')}</span></p>
+    </div>
+    <a class="border-border bg-background hover:border-foreground/30 group min-w-0 flex-1 rounded-md border px-[18px] py-4 transition-colors" href={docsPath(lang, 'providers')}>
+      <p class="font-mono text-[11px] font-medium leading-[1.4] tracking-normal text-muted-foreground mb-2.5">{t(lang, 'actions.next')}</p>
+      <p class="text-base leading-[1.3] tracking-[-0.018em] group-hover:text-foreground truncate font-medium text-[color:var(--ah-fg-muted)] transition-colors">
+        <span class="flex min-w-0 items-center gap-1.5"><span class="truncate">{lang === 'zh' ? 'Provider 目录' : 'Provider catalog'}</span><Icon name="arrow-right" class="ml-auto size-4 shrink-0" /></span>
+      </p>
+    </a>
+  </nav>
+</section>
+<script>
+  const tabs = document.querySelectorAll<HTMLButtonElement>('[data-tab]');
+  const panels = document.querySelectorAll<HTMLElement>('[data-panel]');
+  tabs.forEach((tab) => {
+    tab.addEventListener('click', () => {
+      tabs.forEach((t) => {
+        const active = t === tab;
+        t.setAttribute('aria-selected', String(active));
+        t.setAttribute('data-state', active ? 'active' : 'inactive');
+      });
+      panels.forEach((p) => {
+        p.classList.toggle('hidden', p.getAttribute('data-panel') !== tab.getAttribute('data-tab'));
+      });
+    });
+  });
+</script>

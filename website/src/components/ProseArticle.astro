@@ -1,0 +1,15 @@
+---
+import type { Lang } from '../i18n/ui';
+import { t } from '../i18n/ui';
+import { landingSections } from '../i18n/landing';
+
+const { lang }: { lang: Lang } = Astro.props;
+---
+<article class="mx-auto max-w-[70ch] [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
+  {landingSections[lang].map((s) => (
+    <>
+      <h2 class="ah-h2" id={s.id}><a href={`#${s.id}`}>{s.title}</a></h2>
+      <Fragment set:html={s.html} />
+    </>
+  ))}
+</article>

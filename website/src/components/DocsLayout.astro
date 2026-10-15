@@ -1,0 +1,86 @@
+---
+import type { Lang } from '../i18n/ui';
+import { t } from '../i18n/ui';
+import { homePath } from '../i18n/docs';
+import SiteLayout from '../layouts/SiteLayout.astro';
+import Icon from './icons/Icon.astro';
+
+interface Heading { depth: number; text: string; slug: string }
+interface NavItem { title: string; href: string }
+
+interface Props {
+  lang: Lang;
+  title: string;
+  description: string;
+  pathname: string;
+  headings: Heading[];
+  prev?: NavItem;
+  next?: NavItem;
+  groupLabel: string;
+  updated?: string;
+}
+
+const { lang, title, description, pathname, headings, prev, next, groupLabel, updated } = Astro.props;
+const h2s = headings.filter((h) => h.depth === 2);
+const linkCls = 'focus-visible:ring-ring flex w-full items-center gap-1.5 border-l border-[color:var(--ah-line)] py-1.5 pl-[13px] text-[13px] leading-[1.4] text-[color:var(--ah-fg-subtle)] hover:border-primary hover:text-foreground transition-colors';
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'TechArticle',
+  headline: title,
+  description,
+  inLanguage: lang === 'zh' ? 'zh-CN' : 'en',
+  url: `https://rexleimo.github.io${pathname}`,
+};
+---
+<SiteLayout lang={lang} title={`${title} | rex-harness`} description={description} pathname={pathname} jsonLd={jsonLd}>
+  <div class="relative w-full">
+    <div class="relative z-10">
+      <article class="[&>*+*]:border-border relative flex h-full flex-col [&>*+*]:-mt-px [&>*+*]:border-t">
+        <div class="bg-card dark:bg-transparent">
+          <div class="px-[18px] pb-8 pt-10 sm:px-11 md:pb-10 md:pt-12">
+            <div class="mb-3 flex flex-wrap items-center gap-x-2.5 gap-y-1">
+              <span class="font-mono text-[11px] font-medium leading-[1.4] tracking-normal text-primary">{groupLabel}</span>
+              {updated && <span class="font-mono text-[12px] leading-[1.4] text-muted-foreground">· {updated}</span>}
+            </div>
+            <h1 class="text-[1.75rem] font-bold leading-[1.12] tracking-[-0.028em] sm:text-[2.125rem] text-balance">{title}</h1>
+            <p class="text-[15px] leading-[1.6] mt-3 max-w-[60ch] text-pretty text-[color:var(--ah-fg-muted)]">{description}</p>
+            <div class="mt-5">
+              <a class="text-[13px] inline-flex items-center gap-1.5 text-[color:var(--ah-fg-subtle)] hover:text-foreground transition-colors" href={homePath(lang)}><Icon name="arrow-left" class="size-3.5" />{t(lang, 'docs.backHome')}</a>
+            </div>
+          </div>
+        </div>
+        <div class="xl:grid xl:grid-cols-[minmax(0,1fr)_232px]">
+          <div class="px-[18px] pb-16 pt-10 sm:px-11 md:pb-20 md:pt-12 min-w-0">
+            <div class="mx-auto max-w-[70ch] docs-prose">
+              <slot />
+            </div>
+            <nav class="mx-auto mt-14 max-w-[70ch] grid gap-2.5 min-[640px]:grid-cols-2" aria-label="Pagination">
+              {prev ? (
+                <a class="border-border bg-background hover:border-foreground/30 group rounded-md border px-[18px] py-4 transition-colors" href={prev.href}>
+                  <p class="font-mono text-[11px] leading-[1.4] text-muted-foreground mb-2">{t(lang, 'docs.prev')}</p>
+                  <p class="text-[15px] font-medium leading-[1.3] truncate group-hover:text-foreground"><span class="flex items-center gap-1.5"><Icon name="arrow-left" class="size-4 shrink-0" /><span class="truncate">{prev.title}</span></span></p>
+                </a>
+              ) : <span class="hidden min-[640px]:block" />}
+              {next && (
+                <a class="border-border bg-background hover:border-foreground/30 group rounded-md border px-[18px] py-4 transition-colors min-[640px]:text-right" href={next.href}>
+                  <p class="font-mono text-[11px] leading-[1.4] text-muted-foreground mb-2">{t(lang, 'docs.next')}</p>
+                  <p class="text-[15px] font-medium leading-[1.3] truncate group-hover:text-foreground"><span class={'flex items-center gap-1.5 ' + (lang === 'en' ? 'min-[640px]:justify-end' : '')}><span class="truncate">{next.title}</span><Icon name="arrow-right" class="size-4 shrink-0" /></span></p>
+                </a>
+              )}
+            </nav>
+          </div>
+          <aside class="hidden border-l xl:block">
+            <div class="sticky top-(--nav-height) flex max-h-[calc(100vh-var(--nav-height))] flex-col gap-6 overflow-auto px-5 pb-8 pt-5">
+              <nav aria-label={t(lang, 'toc.onThisPage')}>
+                <p class="font-mono text-[11px] font-medium leading-[1.4] tracking-normal text-muted-foreground mb-3">{t(lang, 'toc.onThisPage')}</p>
+                <ul class="flex flex-col">
+                  {h2s.map((h) => <li class="flex"><a class={linkCls} href={`#${h.slug}`}><span class="min-w-0">{h.text}</span></a></li>)}
+                </ul>
+              </nav>
+            </div>
+          </aside>
+        </div>
+      </article>
+    </div>
+  </div>
+</SiteLayout>

@@ -1,0 +1,21 @@
+---
+import type { Lang } from '../i18n/ui';
+import { t } from '../i18n/ui';
+import { tocItems } from '../i18n/landing';
+
+const { lang }: { lang: Lang } = Astro.props;
+const toc = tocItems[lang];
+const linkCls = 'focus-visible:ring-ring flex w-full items-center gap-1.5 border-l border-[color:var(--ah-line)] py-1.5 pl-[13px] text-[13px] leading-[1.4]';
+---
+<details class="group xl:hidden">
+  <summary class="flex cursor-pointer list-none items-center gap-2.5 px-8 py-3.5 [&::-webkit-details-marker]:hidden">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-4 shrink-0 opacity-60"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg>
+    <span class="text-sm font-medium leading-snug">{t(lang, 'toc.onThisPage')}</span>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="group-[[open]]:rotate-90 ml-auto size-4 shrink-0 opacity-60 transition-transform motion-reduce:transition-none"><path d="m9 18 6-6-6-6"/></svg>
+  </summary>
+  <nav class="px-8 pb-5" aria-label={t(lang, 'toc.onThisPage')}>
+    <ul class="flex flex-col">
+      {toc.map(([label, href]) => <li class="flex"><a class={linkCls} href={href}><span class="min-w-0">{label}</span></a></li>)}
+    </ul>
+  </nav>
+</details>

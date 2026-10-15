@@ -1,0 +1,36 @@
+---
+import type { Lang } from '../../../i18n/ui';
+import { allProviders } from '../../../i18n/providers';
+import { docsPath } from '../../../i18n/docs';
+import DocsLayout from '../../../components/DocsLayout.astro';
+import ProviderDetail from '../../../components/ProviderDetail.astro';
+
+const lang = 'en' as Lang;
+
+export function getStaticPaths() {
+  return allProviders().map(({ entry }) => ({ params: { id: entry.id }, props: { id: entry.id } }));
+}
+
+const { id } = Astro.props;
+const { entry } = allProviders().find((p) => p.entry.id === id)!;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const pathname = `${base}/docs/providers/${id}/`;
+const headings = [
+  { depth: 2, text: 'When the runtime issues it', slug: 'when-the-runtime-issues-it' },
+  ...(entry.capabilityId ? [{ depth: 2, text: 'Recipe stages', slug: 'recipe-stages' }] : []),
+  ...(entry.evidence ? [{ depth: 2, text: 'Required evidence', slug: 'evidence-contract' }] : []),
+  { depth: 2, text: 'Chain position', slug: 'chain-position' },
+  { depth: 2, text: 'Source', slug: 'source' },
+];
+---
+<DocsLayout
+  lang={lang}
+  title={entry.title[lang]}
+  description={entry.oneLine[lang]}
+  pathname={pathname}
+  headings={headings}
+  groupLabel="Providers"
+  next={{ title: 'Provider Catalog', href: docsPath(lang, 'providers') }}
+>
+  <ProviderDetail lang={lang} id={id} />
+</DocsLayout>

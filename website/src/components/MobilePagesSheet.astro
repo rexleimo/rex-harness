@@ -1,0 +1,53 @@
+---
+import type { Lang } from '../i18n/ui';
+import { t } from '../i18n/ui';
+import { sidebarSections, homePath } from '../i18n/docs';
+
+const { lang }: { lang: Lang } = Astro.props;
+const here = decodeURI(Astro.url.pathname);
+---
+<button type="button" data-sheet-open class="bg-card/90 border-foreground/10 text-foreground fixed bottom-20 right-5 z-50 flex items-center gap-2 rounded-[9px] border px-3 py-2 shadow-lg backdrop-blur-md lg:hidden dark:bg-gray-800/80" aria-haspopup="dialog" aria-expanded="false">
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-4"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+  Pages
+</button>
+<dialog id="pages-sheet" class="fixed inset-0 z-[60] m-0 h-full max-h-full w-[300px] max-w-[85vw] border-0 bg-transparent p-0 backdrop:bg-black/50 backdrop:backdrop-blur-[2px]">
+  <div class="bg-background border-border flex h-full w-full flex-col border-r overflow-y-auto">
+    <div class="flex items-center justify-between border-b px-4 py-3">
+      <span class="font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground">{t(lang, 'sidebar.docs')}</span>
+      <button type="button" data-sheet-close class="hover:bg-accent hover:text-accent-foreground flex size-8 items-center justify-center rounded-[7px]" aria-label="Close">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-4"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+    </div>
+    <div class="flex flex-col p-2">
+      <a class="text-[13px] leading-[1.35] flex items-center gap-2 rounded-sm p-2 font-medium hover:bg-sidebar-accent transition" href={homePath(lang)}>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-4 shrink-0"><path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M12 22V12"/><path d="m3.3 7 7.703 4.733a2 2 0 0 0 1.994 0L20.7 7"/><path d="m7.5 4.27 9 5.15"/></svg>
+        {t(lang, 'sidebar.overview')}
+      </a>
+      {sidebarSections.map((s) => {
+        const pageActive = s.items.map((it) => it.href(lang)).filter((h) => !h.includes('#')).map(decodeURI);
+        const sectionOpen = s.open || pageActive.includes(here);
+        return (
+        <details open={sectionOpen} class="group/section">
+          <summary class="text-[13px] leading-[1.35] flex cursor-pointer list-none items-start gap-1.5 rounded-sm py-[7px] pr-2 font-normal hover:bg-sidebar-accent transition [&::-webkit-details-marker]:hidden">
+            <span class="font-mono text-[11px] opacity-60">{s.n}</span>
+            <span class="min-w-0 flex-1 [overflow-wrap:anywhere]">{s.label[lang]}</span>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ml-auto size-3.5 shrink-0 text-[color:var(--ah-fg-faint)] transition-transform duration-200 group-open/section:rotate-90"><path d="m9 18 6-6-6-6"/></svg>
+          </summary>
+          <ul class="flex flex-col gap-px pl-6 pb-1">
+            {s.items.map((it) => {
+              const href = it.href(lang);
+              const active = !href.includes('#') && decodeURI(href) === here;
+              return (
+              <li><a class="text-[13px] leading-[1.35] block rounded-sm py-[7px] pr-2 pl-2 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition" href={href} class:list={[active ? 'font-medium bg-sidebar-accent text-sidebar-accent-foreground' : 'text-muted-foreground']}>{it.label[lang]}</a></li>
+              );
+            })}
+          </ul>
+        </details>
+        );
+      })}
+    </div>
+  </div>
+</dialog>
+<script>
+  import '../scripts/sheet';
+</script>

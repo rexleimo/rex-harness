@@ -1,0 +1,44 @@
+---
+import type { Lang } from '../i18n/ui';
+import { t } from '../i18n/ui';
+import { tocItems } from '../i18n/landing';
+import { docsPath } from '../i18n/docs';
+import Icon from './icons/Icon.astro';
+
+const { lang }: { lang: Lang } = Astro.props;
+const toc = tocItems[lang];
+const fits: [string, string][] = [
+  [lang === 'zh' ? '架构：双部署模式' : 'Architecture: deployment modes', docsPath(lang, 'architecture')],
+  [lang === 'zh' ? 'Capability 生命周期' : 'Capability lifecycle', docsPath(lang, 'capability-lifecycle')],
+  [lang === 'zh' ? 'Provider 契约' : 'Provider contract', docsPath(lang, 'provider-contract')],
+  [lang === 'zh' ? '工作流所有权' : 'Workflow ownership', docsPath(lang, 'workflow-ownership')],
+];
+const linkCls = 'focus-visible:ring-ring flex w-full items-center gap-1.5 border-l border-[color:var(--ah-line)] py-1.5 pl-[13px] text-[13px] leading-[1.4] text-[color:var(--ah-fg-subtle)] hover:border-primary hover:text-foreground transition-colors';
+const shareText = encodeURIComponent(lang === 'zh' ? 'rex-harness —— 证据驱动的 Agent 工作流控制面' : 'rex-harness — evidence-driven workflow control plane');
+const shareUrl = encodeURIComponent('https://rexleimo.github.io/rex-harness/' + (lang === 'zh' ? 'zh/' : ''));
+---
+<aside class="hidden border-l xl:block">
+  <div class="sticky top-(--nav-height) flex max-h-[calc(100vh-var(--nav-height))] flex-col gap-6 overflow-auto px-5 pb-8 pt-5">
+    <nav aria-label={t(lang, 'toc.onThisPage')}>
+      <p class="font-mono text-[11px] font-medium leading-[1.4] tracking-normal text-muted-foreground mb-3">{t(lang, 'toc.onThisPage')}</p>
+      <ul class="flex flex-col">
+        {toc.map(([label, href]) => <li class="flex"><a class={linkCls} href={href}><span class="min-w-0">{label}</span></a></li>)}
+      </ul>
+    </nav>
+    <div class="border-t border-[color:var(--ah-line)] pt-5">
+      <p class="font-mono text-[11px] font-medium leading-[1.4] tracking-normal text-muted-foreground mb-3">{t(lang, 'toc.whereItFits')}</p>
+      <ul class="flex flex-col gap-1.5">
+        {fits.map(([label, href]) => <li><a class="text-[13px] leading-[1.35] text-[color:var(--ah-fg-subtle)] hover:text-foreground transition-colors" href={href}>{label}</a></li>)}
+      </ul>
+    </div>
+    <div class="border-t border-[color:var(--ah-line)] pt-5">
+      <p class="font-mono text-[11px] font-medium leading-[1.4] tracking-normal text-muted-foreground mb-3">{t(lang, 'toc.share')}</p>
+      <div class="flex gap-2">
+        <a class="focus-visible:ring-ring flex size-8 items-center justify-center rounded-sm border border-[color:var(--ah-line-strong)] text-[color:var(--ah-fg-muted)] transition-colors hover:bg-foreground/5" href={`https://x.com/intent/tweet?text=${shareText}%0A%0A${shareUrl}`} aria-label="Share on X"><Icon name="xsocial" class="size-3.5" /></a>
+        <a class="focus-visible:ring-ring flex size-8 items-center justify-center rounded-sm border border-[color:var(--ah-line-strong)] text-[color:var(--ah-fg-muted)] transition-colors hover:bg-foreground/5" href={`https://bsky.app/intent/compose?text=${shareText}%0A%0A${shareUrl}`} aria-label="Share on Bluesky"><Icon name="bluesky" class="size-3.5" /></a>
+        <a class="focus-visible:ring-ring flex size-8 items-center justify-center rounded-sm border border-[color:var(--ah-line-strong)] text-[color:var(--ah-fg-muted)] transition-colors hover:bg-foreground/5" href={`https://linkedin.com/shareArticle?mini=true&url=${shareUrl}&title=${shareText}`} aria-label="Share on LinkedIn"><Icon name="linkedin" class="size-4" /></a>
+        <button type="button" data-copy-url class="focus-visible:ring-ring flex size-8 items-center justify-center rounded-sm border border-[color:var(--ah-line-strong)] text-[color:var(--ah-fg-muted)] transition-colors hover:bg-foreground/5" aria-label="Copy URL"><Icon name="link" class="size-4" /></button>
+      </div>
+    </div>
+  </div>
+</aside>

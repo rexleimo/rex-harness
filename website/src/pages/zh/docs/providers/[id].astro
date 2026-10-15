@@ -1,0 +1,36 @@
+---
+import type { Lang } from '../../../../i18n/ui';
+import { allProviders } from '../../../../i18n/providers';
+import { docsPath } from '../../../../i18n/docs';
+import DocsLayout from '../../../../components/DocsLayout.astro';
+import ProviderDetail from '../../../../components/ProviderDetail.astro';
+
+const lang = 'zh' as Lang;
+
+export function getStaticPaths() {
+  return allProviders().map(({ entry }) => ({ params: { id: entry.id }, props: { id: entry.id } }));
+}
+
+const { id } = Astro.props;
+const { entry } = allProviders().find((p) => p.entry.id === id)!;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const pathname = `${base}/zh/docs/providers/${id}/`;
+const headings = [
+  { depth: 2, text: '运行时何时发出', slug: '运行时何时发出' },
+  ...(entry.capabilityId ? [{ depth: 2, text: 'Recipe 阶段', slug: 'recipe-阶段' }] : []),
+  ...(entry.evidence ? [{ depth: 2, text: '必须交回的 Evidence', slug: 'evidence-契约' }] : []),
+  { depth: 2, text: '链路位置', slug: '链路位置' },
+  { depth: 2, text: '来源', slug: '来源' },
+];
+---
+<DocsLayout
+  lang={lang}
+  title={entry.title[lang]}
+  description={entry.oneLine[lang]}
+  pathname={pathname}
+  headings={headings}
+  groupLabel="Provider"
+  next={{ title: 'Provider 目录', href: docsPath(lang, 'providers') }}
+>
+  <ProviderDetail lang={lang} id={id} />
+</DocsLayout>

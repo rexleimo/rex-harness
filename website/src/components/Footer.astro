@@ -1,0 +1,65 @@
+---
+import type { Lang } from '../i18n/ui';
+import { t } from '../i18n/ui';
+import { docsPath, homePath } from '../i18n/docs';
+
+const { lang }: { lang: Lang } = Astro.props;
+const REPO = 'https://github.com/rexleimo/rex-harness';
+const dp = (s: string) => docsPath(lang, s);
+const cols = [
+  { label: t(lang, 'footer.project'), links: [
+    ['GitHub', REPO],
+    ['npm', 'https://www.npmjs.com/package/@rexleimo/rex-harness'],
+    [lang === 'zh' ? '更新日志' : 'Changelog', dp('cli-reference')],
+    [lang === 'zh' ? 'Provider 目录' : 'Provider catalog', dp('providers')],
+  ]},
+  { label: t(lang, 'footer.docs'), links: [
+    [lang === 'zh' ? '快速上手' : 'Getting started', dp('getting-started')],
+    [lang === 'zh' ? '架构' : 'Architecture', dp('architecture')],
+    [lang === 'zh' ? 'Capability 生命周期' : 'Capability lifecycle', dp('capability-lifecycle')],
+    [lang === 'zh' ? 'Provider 契约' : 'Provider contract', dp('provider-contract')],
+    [lang === 'zh' ? '工作流所有权' : 'Workflow ownership', dp('workflow-ownership')],
+  ]},
+  { label: t(lang, 'footer.host'), links: [
+    ['AIOS docs', 'https://cli.rexai.top'],
+    ['AIOS Pro', 'https://github.com/rexleimo/aios-pro'],
+    [lang === 'zh' ? 'RexAI 内容站' : 'RexAI content hub', 'https://rexai.top'],
+  ]},
+  { label: t(lang, 'footer.agents'), links: [
+    [lang === 'zh' ? 'CLI 命令参考' : 'CLI reference', dp('cli-reference')],
+    [lang === 'zh' ? '安装与 init' : 'Install & init', dp('getting-started')],
+  ]},
+];
+const bottom = [
+  [lang === 'zh' ? '概览' : 'Overview', homePath(lang)],
+  [lang === 'zh' ? '安装' : 'Install', `${homePath(lang)}#install`],
+  [lang === 'zh' ? '文档' : 'Docs', dp('getting-started')],
+  ['GitHub', REPO],
+];
+---
+<footer class="border-t">
+  <div class="grid gap-8 px-[18px] pt-10 sm:grid-cols-2 sm:px-11 lg:grid-cols-4">
+    {cols.map((c) => (
+      <div>
+        <h3 class="font-mono text-[11px] font-medium leading-[1.4] tracking-normal text-muted-foreground mb-4">{c.label}</h3>
+        <ul class="-my-[5px] flex flex-col items-start [&:has(a:hover,button:hover)_a:not(:hover)]:opacity-60">
+          {c.links.map(([label, href]) => (
+            <li><a class="text-sm font-medium leading-snug rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background inline-block transition-opacity" href={href}>{label}</a></li>
+          ))}
+        </ul>
+      </div>
+    ))}
+  </div>
+  <div class="flex flex-col items-start gap-5 px-[18px] pb-8 pt-5 sm:flex-row sm:items-center lg:px-11">
+    <nav class="-mx-2.5 -my-1 flex flex-wrap items-center [&:has(a:hover,button:hover)_a:not(:hover)]:opacity-60" aria-label="Footer">
+      {bottom.map(([label, href]) => <a class="text-[13px] leading-[1.35] rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background inline-block px-2.5 transition-opacity" href={href}>{label}</a>)}
+    </nav>
+    <button type="button" data-theme-toggle class="hover:bg-accent hover:text-accent-foreground inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md px-3 py-2 font-medium transition-all" aria-label="Toggle theme">
+      <span class="relative inline-flex size-5 shrink-0 items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute size-3.5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 motion-reduce:transition-none"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute size-3.5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 motion-reduce:transition-none"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+      </span>
+      <span class="text-xs font-normal capitalize opacity-80 sm:text-sm">{lang === 'zh' ? '主题' : 'Theme'}</span>
+    </button>
+  </div>
+</footer>

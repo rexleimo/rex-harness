@@ -1,0 +1,46 @@
+---
+import type { Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  title: string;
+  description: string;
+  /** pathname including base, e.g. /rex-harness/docs/architecture/ */
+  pathname: string;
+  ogImage?: string;
+  jsonLd?: object;
+}
+
+const { lang, title, description, pathname, jsonLd } = Astro.props;
+const SITE = 'https://rexleimo.github.io';
+const canonical = `${SITE}${pathname}`;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+// hreflang alternates: same page in en and zh
+const rest = pathname.startsWith(`${base}/zh`) ? pathname.slice(base.length + 3) || '/' : pathname.startsWith(base) ? pathname.slice(base.length) || '/' : pathname;
+const enUrl = `${SITE}${base}${rest}`;
+const zhUrl = `${SITE}${base}/zh${rest === '/' ? '/' : rest}`;
+const ogImage = Astro.props.ogImage ?? `${SITE}${base}/og.png`
+---
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+<link rel="alternate" hreflang="en" href={enUrl} />
+<link rel="alternate" hreflang="zh-Hans" href={zhUrl} />
+<link rel="alternate" hreflang="x-default" href={enUrl} />
+<meta property="og:site_name" content="rex-harness" />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:type" content="website" />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={ogImage} />
+<meta property="og:locale" content={lang === 'zh' ? 'zh_CN' : 'en_US'} />
+<meta property="og:locale:alternate" content={lang === 'zh' ? 'en_US' : 'zh_CN'} />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImage} />
+<meta name="robots" content="index, follow" />
+<meta name="theme-color" content="#f5f6f8" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#0f1115" media="(prefers-color-scheme: dark)" />
+{jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}

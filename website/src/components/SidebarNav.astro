@@ -1,0 +1,58 @@
+---
+import type { Lang } from '../i18n/ui';
+import { t } from '../i18n/ui';
+import { sidebarSections, homePath, docsPath } from '../i18n/docs';
+import Icon from './icons/Icon.astro';
+
+const { lang }: { lang: Lang } = Astro.props;
+const here = decodeURI(Astro.url.pathname);
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const isOverview = here === `${base}/` || here === base || here === `${base}/zh` || here === `${base}/zh/`;
+---
+<div class="text-sidebar-foreground bg-sidebar top-(--nav-height) sticky hidden h-[calc(100svh-var(--nav-height))] w-[264px] flex-col self-start border-r lg:flex" id="sidebar">
+  <div class="no-scrollbar scroll-fade flex min-h-0 flex-1 flex-col overflow-auto">
+    <p class="font-mono text-[11px] font-medium uppercase leading-[1.4] tracking-[0.08em] text-muted-foreground px-4 pb-2 pt-4">{t(lang, 'sidebar.docs')}</p>
+    <div class="relative flex w-full min-w-0 flex-col p-2 py-1">
+      <ul class="flex w-full min-w-0 flex-col gap-px">
+        <li class="relative">
+          <a {...(isOverview ? { 'aria-current': 'page', 'data-active': 'true' } : {})} class="peer/menu-button text-[13px] leading-[1.35] flex w-full items-center overflow-hidden rounded-sm p-2 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground gap-2" href={homePath(lang)}>
+            <Icon name="package" class="size-4 shrink-0" />
+            <span class="min-w-0 flex-1 truncate text-left">{t(lang, 'sidebar.overview')}</span>
+          </a>
+        </li>
+        <li class="relative">
+          <a class="peer/menu-button text-[13px] leading-[1.35] flex w-full items-center overflow-hidden rounded-sm p-2 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 gap-2" href={docsPath(lang, 'getting-started')}>
+            <Icon name="book" class="size-4 shrink-0" />
+            <span class="min-w-0 flex-1 truncate text-left">{lang === 'zh' ? '全部文档' : 'All docs'}</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+    {sidebarSections.map((s) => {
+      const pageActive = s.items.map((it) => it.href(lang)).filter((h) => !h.includes('#')).map(decodeURI);
+      const sectionOpen = s.open || pageActive.includes(here);
+      return (
+      <div class="relative flex w-full min-w-0 flex-col p-2 py-1">
+        <button type="button" data-disclosure={`#sec-${s.n}`} aria-expanded={sectionOpen ? 'true' : 'false'} class="text-[13px] leading-[1.35] text-muted-foreground flex w-full items-start gap-1.5 rounded-sm py-[7px] pr-2 text-left font-normal outline-none hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 ring-sidebar-ring transition">
+          <span class="font-mono text-[11px] opacity-60">{s.n}</span>
+          <span class="min-w-0 flex-1 [overflow-wrap:anywhere]">{s.label[lang]}</span>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class={`ml-auto size-3.5 shrink-0 text-[color:var(--ah-fg-faint)] transition-transform duration-200 motion-reduce:transition-none ${sectionOpen ? 'rotate-90' : 'rotate-0'}`} data-disclosure-icon aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+        <ul id={`sec-${s.n}`} class={`flex w-full min-w-0 flex-col gap-px pl-6 ${sectionOpen ? '' : 'hidden'}`}>
+          {s.items.map((it) => {
+            const href = it.href(lang);
+            const active = !href.includes('#') && decodeURI(href) === here;
+            return (
+              <li class="relative">
+                <a class="text-[13px] leading-[1.35] flex w-full items-center overflow-hidden rounded-sm py-[7px] pr-2 pl-2 text-left outline-hidden hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 ring-sidebar-ring transition" href={href} class:list={[active ? 'font-medium text-sidebar-accent-foreground bg-sidebar-accent' : 'text-muted-foreground']}>
+                  <span class="min-w-0 flex-1 [overflow-wrap:anywhere]">{it.label[lang]}</span>
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+      );
+    })}
+  </div>
+</div>

@@ -1,0 +1,1603 @@
+html
+  head
+    meta
+    meta
+    link
+    link
+    link
+    link
+    link
+    link
+    link
+    link
+    link
+    link
+    link
+    script
+    script
+    script
+    script
+    script
+    script
+    script
+    script
+    script
+    script
+    script
+    script
+    script
+    script
+    script
+    script
+    script
+    script
+    script
+    script
+    script
+    script
+    script
+    script
+    script
+    script
+    script
+    script
+    script
+    script
+    script
+    script
+    script
+    script
+    script
+    script
+    script
+    script
+    script
+    script
+    script
+    script
+    script
+    script
+    script
+    script
+    script
+    script
+    link
+    link
+    meta
+    title
+      "The /grill-me Skill"
+    meta
+    link
+    link
+    meta
+    meta
+    meta
+    meta
+    meta
+    meta
+    meta
+    link
+    link
+    script
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+  body. bg-page-background relative overflow-x-hidden dm_sans_a9f192c9-module__XWmwiG__variable jetbrains_mono_c0387be-module__-O29tG__variable source_serif_4_a627ba9d-module__VtY5rq__variable antialiased font-sans
+    div
+    script
+      "{"@context":"https://schema.org","@type":"Organization","name":"AI Hero","url":""
+    script
+      "{"@context":"https://schema.org","@type":"WebSite","name":"AI Hero","url":"https"
+    div
+      ol. z-100 fixed top-0 flex max-h-screen w-full flex-col-reverse p-4 sm:right-0 sm:top-auto
+    script
+      "!function(){try{var d=document.documentElement,c=d.classList;c.remove('light','d"
+    template
+    div. h-[34px] print:hidden
+    div. relative mx-auto w-full max-w-[1456px] px-2
+      div. bg-background border-x print:border-none
+        header. bg-background/90 h-(--nav-height) z-50 flex w-full items-center gap-5 border-b px-[18px] backdrop-blur-md
+          span. flex shrink-0 items-center
+            a. group focus-visible:ring-ring flex items-center gap-2.5 rounded-[7px] leading-none transition focus-visible:outline-none focus-visible:ring-2 href=/
+              img. h-(--nav-height) w-auto shrink-0 object-contain object-bottom src=/_next/image?url=%2Fmatt-pocock-navigation-avatar%402x.png&w alt=
+              span. text-foreground text-[15.5px] font-bold leading-none tracking-[-0.01em]
+                span. font-mono
+                  "AI"
+                "Hero"
+          nav. hidden items-center lg:flex
+            ul. flex items-center gap-0.5
+              li. flex items-center
+                a. gap-2 whitespace-nowrap rounded-md disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none href=/courses
+                  span. inline-flex items-center rounded-[7px] px-3 py-[7px] text-[13.5px] leading-none transition-colors duration-200 group-hover/nav-item:bg-foreground/[0.06]
+                    span. wrap-break-word whitespace-normal text-balance
+                      "Courses"
+          nav. ml-auto hidden items-center lg:flex
+            ul. flex items-center gap-[18px]
+              li. flex items-center
+                button. text-[color:var(--ah-fg-muted)] hover:text-foreground focus-visible:ring-ring inline-flex items-center rounded-[6px] text-[13px] leading-none transition-colors focus-visible:outline-none
+                  "Search"
+              li. hidden items-center lg:flex
+                a. text-[color:var(--ah-fg-muted)] hover:text-foreground focus-visible:ring-ring inline-flex items-center rounded-[6px] text-[13px] leading-none transition-colors focus-visible:outline-none href=/newsletter
+                  "Newsletter"
+              li. flex items-center
+                div. animate-pulse bg-foreground/10 h-2 w-[35px] rounded
+              li. hidden items-center lg:flex
+                span. bg-foreground/[0.06] inline-flex min-w-[152px] items-center justify-center rounded-[8px] px-3.5 py-2 text-[13px] font-bold
+          div. ml-auto flex items-center gap-0.5 lg:hidden
+            button. text-foreground opacity-70 hover:bg-foreground/[0.06] hover:opacity-100 focus-visible:ring-ring flex size-9 items-center justify-center rounded-[7px]
+              svg. size-5
+                circle
+                path
+            a. text-foreground opacity-70 hover:bg-foreground/[0.06] hover:opacity-100 focus-visible:ring-ring flex size-9 items-center justify-center rounded-[7px] href=/newsletter
+              svg. size-5
+                path
+                path
+            button. text-foreground opacity-70 hover:bg-foreground/[0.06] hover:opacity-100 focus-visible:ring-ring flex size-9 items-center justify-center rounded-[7px]
+              svg. size-5
+                line
+                line
+                line
+        div. group/sidebar-wrapper flex w-full min-h-0 has-data-[variant=inset]:bg-background
+          div. text-sidebar-foreground flex-col bg-sidebar top-(--nav-height) w-[264px] sticky hidden h-[calc(100svh-var(--nav-height))] self-start border-r
+            div. flex min-h-0 flex-1 flex-col overflow-auto group-data-[collapsible=icon]:overflow-hidden no-scrollbar scroll-fade gap-0 px-[18px]
+              div. ring-sidebar-ring outline-hidden flex shrink-0 items-center rounded-md transition-[margin,opacity] duration-200 ease-linear focus-visible:ring-2
+                "Explore"
+              div. relative flex w-full min-w-0 flex-col p-0
+                ul. flex w-full min-w-0 flex-col gap-px
+                  li. group/menu-item relative
+                    a. peer/menu-button flex w-full items-center overflow-hidden p-2 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] href=/learn
+                      svg. size-4 shrink-0
+                        path
+                        path
+                        path
+                      span. min-w-0 flex-1 truncate text-left
+                        "Map"
+                  li. group/menu-item relative
+                    template
+                    a. peer/menu-button flex w-full items-center overflow-hidden p-2 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] href=/skills
+                      svg. size-4 shrink-0
+                        path
+                        path
+                        path
+                        path
+                      span. min-w-0 flex-1 truncate text-left
+                        "Skills"
+                      svg. ml-auto size-3.5 shrink-0 text-[color:var(--ah-fg-faint)] transition-transform duration-200 motion-reduce:transition-none rotate-90
+                        path
+                    ul. flex w-full min-w-0 flex-col gap-px
+                      li. group/menu-item relative
+                        a. peer/menu-button flex w-full overflow-hidden p-2 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] focus-visible:ring-2 href=/skills
+                          span. min-w-0 flex-1 [overflow-wrap:anywhere]
+                            "Overview"
+                      li. group/menu-item relative
+                        div. group/series-section
+                          button. text-[13px] leading-[1.35] text-muted-foreground h-auto items-start gap-1.5 rounded-sm py-[7px] pr-2 font-normal
+                            span. font-mono text-[11px] font-medium leading-none tabular-nums flex h-[18px] shrink-0 items-center w-4
+                              "1"
+                            span. min-w-0 flex-1 truncate text-left
+                              "Getting Started"
+                            svg. ml-auto mt-0.5 size-3.5 shrink-0 text-[color:var(--ah-fg-faint)] transition-transform group-data-[state=open]/series-section:rotate-90
+                              path
+                          div. mt-px overflow-hidden
+                      li. group/menu-item relative
+                        div. group/series-section
+                          button. text-[13px] leading-[1.35] text-muted-foreground h-auto items-start gap-1.5 rounded-sm py-[7px] pr-2 font-normal
+                            span. font-mono text-[11px] font-medium leading-none tabular-nums flex h-[18px] shrink-0 items-center w-4
+                              "2"
+                            span. min-w-0 flex-1 truncate text-left
+                              "The Main Flow"
+                            svg. ml-auto mt-0.5 size-3.5 shrink-0 text-[color:var(--ah-fg-faint)] transition-transform group-data-[state=open]/series-section:rotate-90
+                              path
+                          div. mt-px overflow-hidden
+                      li. group/menu-item relative
+                        div. group/series-section
+                          button. text-[13px] leading-[1.35] text-muted-foreground h-auto items-start gap-1.5 rounded-sm py-[7px] pr-2 font-normal
+                            span. font-mono text-[11px] font-medium leading-none tabular-nums flex h-[18px] shrink-0 items-center w-4
+                              "3"
+                            span. min-w-0 flex-1 truncate text-left
+                              "Shaping"
+                            svg. ml-auto mt-0.5 size-3.5 shrink-0 text-[color:var(--ah-fg-faint)] transition-transform group-data-[state=open]/series-section:rotate-90
+                              path
+                          div. mt-px overflow-hidden
+                      li. group/menu-item relative
+                        div. group/series-section
+                          button. text-[13px] leading-[1.35] text-muted-foreground h-auto items-start gap-1.5 rounded-sm py-[7px] pr-2 font-normal
+                            span. font-mono text-[11px] font-medium leading-none tabular-nums flex h-[18px] shrink-0 items-center w-4
+                              "4"
+                            span. min-w-0 flex-1 truncate text-left
+                              "Engineering"
+                            svg. ml-auto mt-0.5 size-3.5 shrink-0 text-[color:var(--ah-fg-faint)] transition-transform group-data-[state=open]/series-section:rotate-90
+                              path
+                          div. mt-px overflow-hidden
+                      li. group/menu-item relative
+                        div. group/series-section
+                          button. text-[13px] leading-[1.35] h-auto items-start gap-1.5 rounded-sm py-[7px] pr-2 font-normal hover:bg-sidebar-accent
+                            span. font-mono text-[11px] font-medium leading-none tabular-nums flex h-[18px] shrink-0 items-center w-4
+                              "5"
+                            span. min-w-0 flex-1 truncate text-left
+                              "Productivity Skills"
+                            svg. ml-auto mt-0.5 size-3.5 shrink-0 text-[color:var(--ah-fg-faint)] transition-transform group-data-[state=open]/series-section:rotate-90
+                              path
+                          div. mt-px overflow-hidden
+                            ul. flex w-full min-w-0 flex-col gap-px
+                              li. group/menu-item relative
+                                a. peer/menu-button flex w-full overflow-hidden p-2 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] focus-visible:ring-2 href=/skills-grill-me
+                                  span. font-mono text-[11px] font-medium leading-none tabular-nums flex h-[18px] shrink-0 items-center w-5
+                                    "5.1"
+                                  span. min-w-0 flex-1 truncate text-left
+                                    "The /grill-me Skill"
+                              li. group/menu-item relative
+                                a. peer/menu-button flex w-full overflow-hidden p-2 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] focus-visible:ring-2 href=/skills-handoff
+                                  span. font-mono text-[11px] font-medium leading-none tabular-nums flex h-[18px] shrink-0 items-center w-5
+                                    "5.2"
+                                  span. min-w-0 flex-1 truncate text-left
+                                    "The /handoff Skill"
+                              li. group/menu-item relative
+                                a. peer/menu-button flex w-full overflow-hidden p-2 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] focus-visible:ring-2 href=/skills-to-questionnaire
+                                  span. font-mono text-[11px] font-medium leading-none tabular-nums flex h-[18px] shrink-0 items-center w-5
+                                    "5.3"
+                                  span. min-w-0 flex-1 truncate text-left
+                                    "The /to-questionnaire Skill"
+                              li. group/menu-item relative
+                                a. peer/menu-button flex w-full overflow-hidden p-2 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] focus-visible:ring-2 href=/skills-teach
+                                  span. font-mono text-[11px] font-medium leading-none tabular-nums flex h-[18px] shrink-0 items-center w-5
+                                    "5.4"
+                                  span. min-w-0 flex-1 truncate text-left
+                                    "The /teach Skill"
+                              li. group/menu-item relative
+                                a. peer/menu-button flex w-full overflow-hidden p-2 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] focus-visible:ring-2 href=/skills-wait-what
+                                  span. font-mono text-[11px] font-medium leading-none tabular-nums flex h-[18px] shrink-0 items-center w-5
+                                    "5.5"
+                                  span. min-w-0 flex-1 truncate text-left
+                                    "The /wait-what Skill"
+                              li. group/menu-item relative
+                                a. peer/menu-button flex w-full overflow-hidden p-2 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] focus-visible:ring-2 href=/skills-writing-for-agents
+                                  span. font-mono text-[11px] font-medium leading-none tabular-nums flex h-[18px] shrink-0 items-center w-5
+                                    "5.6"
+                                  span. min-w-0 flex-1 truncate text-left
+                                    "The /writing-for-agents Skill"
+                      li. group/menu-item relative
+                        div. group/series-section
+                          button. text-[13px] leading-[1.35] text-muted-foreground h-auto items-start gap-1.5 rounded-sm py-[7px] pr-2 font-normal
+                            span. font-mono text-[11px] font-medium leading-none tabular-nums flex h-[18px] shrink-0 items-center w-4
+                              "6"
+                            span. min-w-0 flex-1 truncate text-left
+                              "Reference Skills"
+                            svg. ml-auto mt-0.5 size-3.5 shrink-0 text-[color:var(--ah-fg-faint)] transition-transform group-data-[state=open]/series-section:rotate-90
+                              path
+                          div. mt-px overflow-hidden
+                  li. group/menu-item relative
+                    a. peer/menu-button flex w-full items-center overflow-hidden p-2 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] href=/open-source
+                      svg. size-4 shrink-0
+                        path
+                        path
+                        path
+                        path
+                      span. min-w-0 flex-1 truncate text-left
+                        "Open source"
+                  li. group/menu-item relative
+                    a. peer/menu-button flex w-full items-center overflow-hidden p-2 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] href=/videos
+                      svg. size-4 shrink-0
+                        path
+                        path
+                      span. min-w-0 flex-1 truncate text-left
+                        "Videos"
+              div. ring-sidebar-ring outline-hidden flex shrink-0 items-center rounded-md transition-[margin,opacity] duration-200 ease-linear focus-visible:ring-2
+                "Guides"
+              div. relative flex w-full min-w-0 flex-col p-0
+                ul. flex w-full min-w-0 flex-col gap-px
+                  li. group/menu-item relative
+                    a. peer/menu-button flex w-full items-center overflow-hidden p-2 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] href=/llm-fundamentals
+                      span. min-w-0 flex-1 truncate text-left
+                        "LLM Fundamentals"
+                  li. group/menu-item relative
+                    a. peer/menu-button flex w-full items-center overflow-hidden p-2 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] href=/ai-engineer-roadmap
+                      span. min-w-0 flex-1 truncate text-left
+                        "AI Engineer Roadmap"
+                  li. group/menu-item relative
+                    a. peer/menu-button flex w-full items-center overflow-hidden p-2 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] href=/ai-coding-dictionary
+                      span. min-w-0 flex-1 truncate text-left
+                        "AI Coding Dictionary"
+              div. ring-sidebar-ring outline-hidden flex shrink-0 items-center rounded-md transition-[margin,opacity] duration-200 ease-linear focus-visible:ring-2
+                "Topics"
+              template
+              div. relative flex w-full min-w-0 flex-col p-2 py-1
+                ul. flex w-full min-w-0 flex-col gap-px
+                  li. group/menu-item relative
+                    div. flex h-8 items-center gap-2 rounded-md px-2
+                      div. bg-muted animate-pulse rounded-md max-w-(--skeleton-width) h-4 flex-1
+                  li. group/menu-item relative
+                    div. flex h-8 items-center gap-2 rounded-md px-2
+                      div. bg-muted animate-pulse rounded-md max-w-(--skeleton-width) h-4 flex-1
+                  li. group/menu-item relative
+                    div. flex h-8 items-center gap-2 rounded-md px-2
+                      div. bg-muted animate-pulse rounded-md max-w-(--skeleton-width) h-4 flex-1
+              template
+              div. relative flex w-full min-w-0 flex-col p-2 py-1
+                ul. flex w-full min-w-0 flex-col gap-px
+                  li. group/menu-item relative
+                    div. flex h-8 items-center gap-2 rounded-md px-2
+                      div. bg-muted animate-pulse rounded-md max-w-(--skeleton-width) h-4 flex-1
+                  li. group/menu-item relative
+                    div. flex h-8 items-center gap-2 rounded-md px-2
+                      div. bg-muted animate-pulse rounded-md max-w-(--skeleton-width) h-4 flex-1
+                  li. group/menu-item relative
+                    div. flex h-8 items-center gap-2 rounded-md px-2
+                      div. bg-muted animate-pulse rounded-md max-w-(--skeleton-width) h-4 flex-1
+              template
+              div. relative flex w-full min-w-0 flex-col p-2 py-1
+                ul. flex w-full min-w-0 flex-col gap-px
+                  li. group/menu-item relative
+                    div. flex h-8 items-center gap-2 rounded-md px-2
+                      div. bg-muted animate-pulse rounded-md max-w-(--skeleton-width) h-4 flex-1
+                  li. group/menu-item relative
+                    div. flex h-8 items-center gap-2 rounded-md px-2
+                      div. bg-muted animate-pulse rounded-md max-w-(--skeleton-width) h-4 flex-1
+                  li. group/menu-item relative
+                    div. flex h-8 items-center gap-2 rounded-md px-2
+                      div. bg-muted animate-pulse rounded-md max-w-(--skeleton-width) h-4 flex-1
+              template
+              div. relative flex w-full min-w-0 flex-col p-2 py-1
+                ul. flex w-full min-w-0 flex-col gap-px
+                  li. group/menu-item relative
+                    div. flex h-8 items-center gap-2 rounded-md px-2
+                      div. bg-muted animate-pulse rounded-md max-w-(--skeleton-width) h-4 flex-1
+                  li. group/menu-item relative
+                    div. flex h-8 items-center gap-2 rounded-md px-2
+                      div. bg-muted animate-pulse rounded-md max-w-(--skeleton-width) h-4 flex-1
+                  li. group/menu-item relative
+                    div. flex h-8 items-center gap-2 rounded-md px-2
+                      div. bg-muted animate-pulse rounded-md max-w-(--skeleton-width) h-4 flex-1
+              template
+              div. relative flex w-full min-w-0 flex-col p-2 py-1
+                ul. flex w-full min-w-0 flex-col gap-px
+                  li. group/menu-item relative
+                    div. flex h-8 items-center gap-2 rounded-md px-2
+                      div. bg-muted animate-pulse rounded-md max-w-(--skeleton-width) h-4 flex-1
+                  li. group/menu-item relative
+                    div. flex h-8 items-center gap-2 rounded-md px-2
+                      div. bg-muted animate-pulse rounded-md max-w-(--skeleton-width) h-4 flex-1
+                  li. group/menu-item relative
+                    div. flex h-8 items-center gap-2 rounded-md px-2
+                      div. bg-muted animate-pulse rounded-md max-w-(--skeleton-width) h-4 flex-1
+              template
+              div. relative flex w-full min-w-0 flex-col p-2 py-1
+                ul. flex w-full min-w-0 flex-col gap-px
+                  li. group/menu-item relative
+                    div. flex h-8 items-center gap-2 rounded-md px-2
+                      div. bg-muted animate-pulse rounded-md max-w-(--skeleton-width) h-4 flex-1
+                  li. group/menu-item relative
+                    div. flex h-8 items-center gap-2 rounded-md px-2
+                      div. bg-muted animate-pulse rounded-md max-w-(--skeleton-width) h-4 flex-1
+                  li. group/menu-item relative
+                    div. flex h-8 items-center gap-2 rounded-md px-2
+                      div. bg-muted animate-pulse rounded-md max-w-(--skeleton-width) h-4 flex-1
+              template
+              div. relative flex w-full min-w-0 flex-col p-2 py-1
+                ul. flex w-full min-w-0 flex-col gap-px
+                  li. group/menu-item relative
+                    div. flex h-8 items-center gap-2 rounded-md px-2
+                      div. bg-muted animate-pulse rounded-md max-w-(--skeleton-width) h-4 flex-1
+                  li. group/menu-item relative
+                    div. flex h-8 items-center gap-2 rounded-md px-2
+                      div. bg-muted animate-pulse rounded-md max-w-(--skeleton-width) h-4 flex-1
+                  li. group/menu-item relative
+                    div. flex h-8 items-center gap-2 rounded-md px-2
+                      div. bg-muted animate-pulse rounded-md max-w-(--skeleton-width) h-4 flex-1
+              template
+              div. relative flex w-full min-w-0 flex-col p-2 py-1
+                ul. flex w-full min-w-0 flex-col gap-px
+                  li. group/menu-item relative
+                    div. flex h-8 items-center gap-2 rounded-md px-2
+                      div. bg-muted animate-pulse rounded-md max-w-(--skeleton-width) h-4 flex-1
+                  li. group/menu-item relative
+                    div. flex h-8 items-center gap-2 rounded-md px-2
+                      div. bg-muted animate-pulse rounded-md max-w-(--skeleton-width) h-4 flex-1
+                  li. group/menu-item relative
+                    div. flex h-8 items-center gap-2 rounded-md px-2
+                      div. bg-muted animate-pulse rounded-md max-w-(--skeleton-width) h-4 flex-1
+              template
+              div. relative flex w-full min-w-0 flex-col p-2 py-1
+                ul. flex w-full min-w-0 flex-col gap-px
+                  li. group/menu-item relative
+                    div. flex h-8 items-center gap-2 rounded-md px-2
+                      div. bg-muted animate-pulse rounded-md max-w-(--skeleton-width) h-4 flex-1
+                  li. group/menu-item relative
+                    div. flex h-8 items-center gap-2 rounded-md px-2
+                      div. bg-muted animate-pulse rounded-md max-w-(--skeleton-width) h-4 flex-1
+                  li. group/menu-item relative
+                    div. flex h-8 items-center gap-2 rounded-md px-2
+                      div. bg-muted animate-pulse rounded-md max-w-(--skeleton-width) h-4 flex-1
+          div. flex min-w-0 flex-1 flex-col
+            div. flex-1
+              main. bg-card w-full dark:bg-transparent
+                script
+                  "{"@context":"https://schema.org","@type":"BlogPosting","headline":"The /grill-me"
+                div. relative w-full
+                  div. relative z-10
+                    article. [&>*+*]:border-border relative flex h-full flex-col [&>*+*]:-mt-px [&>*+*]:border-t
+                      div. bg-card dark:bg-transparent
+                        div
+                          div. relative flex flex-col justify-center px-[18px] pb-10 pt-10 sm:px-11 md:pb-12 md:pt-12
+                            div. mb-4 flex flex-wrap items-center gap-x-2.5 gap-y-1
+                              span. font-mono text-[10px] font-medium uppercase leading-none tracking-[0.10em] border border-border text-foreground px-[7px]
+                                "17 / 27"
+                              span. font-mono text-[12px] font-normal leading-[1.4] tracking-normal text-muted-foreground
+                                "AI Skills for Real Engineers · 5 min read · Updated Aug 24, 2026"
+                            h1. text-[2rem] font-bold leading-[1.06] tracking-[-0.03em] sm:text-[2.5rem] lg:text-[2.75rem] lg:leading-[1.04] lg:tracking-[-0.034em] flex items-start
+                              span. -mt-[0.02em] flex h-[1lh] shrink-0 items-center
+                                img. size-10 rounded-[11px] sm:size-12 src=https://res.cloudinary.com/total-typescript/image/upload/c_l alt=
+                              span. min-w-0 text-balance
+                                "The /grill-me Skill"
+                            p. text-[17px] font-normal leading-[1.55] sm:text-[18.5px] mt-4 max-w-[48ch] text-pretty text-[color:var(--ah-fg-muted)]
+                              "Align on an idea before committing to it."
+                            div. mt-7 flex w-full flex-wrap items-center justify-between gap-5
+                              div. flex flex-wrap items-center gap-3
+                                div. items-center gap-2 text-foreground flex text-sm font-medium [&_img]:w-8
+                                  img. rounded-full src=https://res.cloudinary.com/total-typescript/image/upload/c_l alt=Matt Pocock
+                                  div. flex flex-col
+                                    span. text-foreground
+                                      "Matt Pocock"
+                                button. inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50
+                                  "Subscribe"
+                              div. flex flex-wrap items-center gap-2
+                                button. inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50
+                                  span. relative inline-flex size-4 shrink-0 items-center justify-center
+                                    span. absolute inset-0 inline-flex items-center justify-center
+                                      svg. size-4
+                                        rect
+                                        path
+                                  span. relative grid
+                                    span. invisible col-start-1 row-start-1 whitespace-nowrap
+                                      "Copy page"
+                                    span. col-start-1 row-start-1 whitespace-nowrap
+                                      "Copy page"
+                                button. inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50
+                                  svg. size-4
+                                    circle
+                                    circle
+                                    circle
+                                    line
+                                    line
+                                  "Share"
+                                a. inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 href=/skills-handoff
+                                  "Next page"
+                                  svg. text-muted-foreground ml-2 h-4 w-4
+                                    path
+                                    path
+                          section. bg-muted flex h-full flex-col justify-center px-6 py-8 sm:px-10 sm:py-9 border-t
+                            p. font-mono text-[11px] font-medium leading-[1.4] tracking-normal text-muted-foreground mb-3.5
+                              "Install this skill"
+                            div. border-border bg-muted focus-within:ring-ring dark:bg-card flex w-full flex-wrap items-center gap-x-3 gap-y-2.5
+                              span. font-mono text-xs font-medium flex-none select-none text-[color:var(--ah-fg-faint)]
+                                "$"
+                              code. font-mono font-medium text-foreground/90 min-w-0 flex-1 select-all overflow-x-auto overscroll-x-contain whitespace-nowrap bg-transparent
+                                "npx skills@latest add mattpocock/skills --skill=grill-me"
+                              button. focus-visible:ring-ring ease-out-quart flex h-[30px] w-full flex-none items-center justify-center rounded-sm transition-colors
+                                span. sr-only
+                                span. relative inline-flex size-3.5 items-center justify-center
+                                  svg. ease-out-quart absolute size-3.5 transition-all duration-300 motion-reduce:transition-none scale-100 opacity-100
+                                    rect
+                                    path
+                                  svg. ease-out-quart absolute size-3.5 transition-all duration-300 motion-reduce:transition-none scale-50 opacity-0
+                                    polyline
+                            p. text-sm leading-relaxed mt-3 text-[color:var(--ah-fg-muted)]
+                              "Then type"
+                              code. font-mono text-xs font-medium text-foreground bg-foreground/[0.055] border-border/70 rounded-[4px] border px-1.5 py-0.5
+                                "/"
+                                "grill-me"
+                              "in your coding agent."
+                            dl. border-border mt-5 flex flex-wrap gap-x-6 gap-y-4 border-t pt-5
+                              div
+                                dt. font-mono text-[11px] font-medium leading-[1.4] tracking-normal text-muted-foreground mb-1.5
+                                  "Source"
+                                dd. text-sm font-medium leading-snug
+                                  a. text-primary focus-visible:ring-ring rounded-sm underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 href=https://github.com/mattpocock/skills
+                                    "mattpocock/skills"
+                      details. group xl:hidden
+                        summary. flex cursor-pointer list-none items-center gap-2.5 px-8 py-3.5 [&::-webkit-details-marker]:hidden
+                          svg. size-4 shrink-0 opacity-60
+                            line
+                            line
+                            line
+                          span. text-sm font-medium leading-snug
+                            "On this page"
+                          svg. group-[[open]]:rotate-90 ml-auto size-4 shrink-0 opacity-60 transition-transform motion-reduce:transition-none
+                            path
+                        nav. px-8 pb-5
+                          ul. flex flex-col
+                            li. flex
+                              a. focus-visible:ring-ring flex w-full items-center gap-1.5 border-l py-1.5 pl-[13px] text-[13px] leading-[1.4] href=#what-it-does
+                                span. min-w-0
+                                  span
+                                    "What it does"
+                            li. flex
+                              a. focus-visible:ring-ring flex w-full items-center gap-1.5 border-l py-1.5 pl-[13px] text-[13px] leading-[1.4] href=#when-to-reach-for-it
+                                span. min-w-0
+                                  span
+                                    "When to reach for it"
+                            li. flex
+                              a. focus-visible:ring-ring flex w-full items-center gap-1.5 border-l py-1.5 pl-[13px] text-[13px] leading-[1.4] href=#its-a-conversation-not-an-interview
+                                span. min-w-0
+                                  span
+                                    "It's a conversation, not an interview"
+                            li. flex
+                              a. focus-visible:ring-ring flex w-full items-center gap-1.5 border-l py-1.5 pl-[13px] text-[13px] leading-[1.4] href=#grillable-and-ungrillable
+                                span. min-w-0
+                                  span
+                                    "Grillable and ungrillable"
+                            li. flex
+                              a. focus-visible:ring-ring flex w-full items-center gap-1.5 border-l py-1.5 pl-[13px] text-[13px] leading-[1.4] href=#its-working-if
+                                span. min-w-0
+                                  span
+                                    "It's working if"
+                            li. flex
+                              a. focus-visible:ring-ring flex w-full items-center gap-1.5 border-l py-1.5 pl-[13px] text-[13px] leading-[1.4] href=#common-questions
+                                span. min-w-0
+                                  span
+                                    "Common questions"
+                            li. flex
+                              a. focus-visible:ring-ring flex w-full items-center gap-1.5 border-l py-1.5 pl-[13px] text-[13px] leading-[1.4] href=#where-it-fits
+                                span. min-w-0
+                                  span
+                                    "Where it fits"
+                            li. flex
+                              a. focus-visible:ring-ring flex w-full items-center gap-1.5 border-l py-1.5 pl-[13px] text-[13px] leading-[1.4] href=#related-reading
+                                span. min-w-0
+                                  "Related reading"
+                      div. xl:grid xl:grid-cols-[minmax(0,1fr)_232px]
+                        div. px-[18px] pb-16 pt-10 sm:px-11 md:pb-20 md:pt-14
+                          article. prose prose-hr:border-border dark:prose-invert prose-a:text-primary sm:prose-lg lg:prose-lg mx-auto [&>*:last-child]:mb-0 max-w-[70ch] [&>*:first-child]:mt-0
+                            h2. scroll-mt-[72px]
+                              a. text-inherit! w-full font-semibold no-underline href=#what-it-does
+                                "What it does"
+                            p. ah-prose-p
+                              code. ah-code-inline
+                                "grill-me"
+                              "takes a"
+                              strong. ah-prose-strong
+                                "loose idea"
+                              "and interviews you until you can commit to it. You do not need a worked-out plan"
+                              a. decoration-primary/40 underline-offset-4 hover:decoration-primary href=/ai-coding-dictionary/session
+                                "session"
+                              "exists to produce one. It asks in"
+                              strong. ah-prose-strong
+                                "rounds"
+                              ". Each round is the whole"
+                              strong. ah-prose-strong
+                                "frontier"
+                              ", which is every question whose prerequisites you have already settled. So it ne"
+                            p. ah-prose-p
+                              "It is"
+                              strong. ah-prose-strong
+                                a. decoration-primary/40 underline-offset-4 hover:decoration-primary href=/ai-coding-dictionary/stateless
+                                  "stateless"
+                              ". It writes no files and leaves no workspace behind. The only result is a cleare"
+                            h2. scroll-mt-[72px]
+                              a. text-inherit! w-full font-semibold no-underline href=#when-to-reach-for-it
+                                "When to reach for it"
+                            p. ah-prose-p
+                              "You invoke this by typing"
+                              code. ah-code-inline
+                                "/grill-me"
+                              "; the"
+                              a. decoration-primary/40 underline-offset-4 hover:decoration-primary href=/ai-coding-dictionary/agent
+                                "agent"
+                              "won't reach for it on its own. Start it in a"
+                              strong. ah-prose-strong
+                                "fresh conversation"
+                              ", not on top of a plan you already had an agent write."
+                            p. ah-prose-p
+                              "Reach for it as soon as you have an idea worth taking seriously (a feature, a pr"
+                            p. ah-prose-p
+                              "Which of the three"
+                              a. decoration-primary/40 underline-offset-4 hover:decoration-primary href=/ai-coding-dictionary/grilling
+                                "grilling"
+                              "skills you want depends on what is in front of you:"
+                            ul. ah-bullets
+                              li
+                                strong. ah-prose-strong
+                                  "Anything, anywhere."
+                                "Use"
+                                code. ah-code-inline
+                                  "grill-me"
+                                ". It needs no repo and writes no files, and the subject doesn't have to be code."
+                              li
+                                strong. ah-prose-strong
+                                  "A codebase to align against."
+                                "Use"
+                                a. ah-prose-a href=/skills-grill-with-docs
+                                  "grill-with-docs"
+                                ". It is the same interview, but"
+                                a. decoration-primary/40 underline-offset-4 hover:decoration-primary href=/ai-coding-dictionary/stateful
+                                  "stateful"
+                                ": it reads your code and keeps what it learns in"
+                                code. ah-code-inline
+                                  "GLOSSARY.md"
+                                "and ADRs."
+                              li
+                                strong. ah-prose-strong
+                                  "Too big for one session."
+                                "Use"
+                                a. ah-prose-a href=/skills-wayfinder
+                                  "wayfinder"
+                                ". It charts the effort as a map and runs grilling sessions inside it."
+                            p. ah-prose-p
+                              "Leave"
+                              a. decoration-primary/40 underline-offset-4 hover:decoration-primary href=/ai-coding-dictionary/agent-mode
+                                "plan mode"
+                              "off."
+                              a. decoration-primary/40 underline-offset-4 hover:decoration-primary href=/ai-coding-dictionary/agent-mode
+                                "Plan mode"
+                              "makes the agent hurry to produce a plan, when you want it to keep asking questio"
+                            h2. scroll-mt-[72px]
+                              a. text-inherit! w-full font-semibold no-underline href=#its-a-conversation-not-an-interview
+                                "It's a conversation, not an interview"
+                            p. ah-prose-p
+                              "The skill asks the questions, but"
+                              strong. ah-prose-strong
+                                "you"
+                              "own the scope. People often miss this. It is the difference between a session th"
+                            p. ah-prose-p
+                              "The failure mode is"
+                              strong. ah-prose-strong
+                                "passivity"
+                              ": answering "agreed, agreed, agreed" for forty questions and coming out with a p"
+                            p. ah-prose-p
+                              "Being active means steering. Push back on a question that is less detailed than "
+                            p. ah-prose-p
+                              "The opposite error is real but rarer: staying in the interview so long you never"
+                            h2. scroll-mt-[72px]
+                              a. text-inherit! w-full font-semibold no-underline href=#grillable-and-ungrillable
+                                "Grillable and ungrillable"
+                            p. ah-prose-p
+                              "Some questions can be answered by talking. Others can't, and no amount of grilli"
+                            p. ah-prose-p
+                              ""One long form or three pages?" and "how should this interaction feel?" are"
+                              strong. ah-prose-strong
+                                "ungrillable"
+                              ". You need something to react to before you can answer them. When you hit one, s"
+                              a. ah-prose-a href=/skills-prototype
+                                "prototype"
+                              ", look at it, then come back and answer in one line."
+                            p. ah-prose-p
+                              "Sessions grow too long when you try to talk through an ungrillable question. The"
+                            h2. scroll-mt-[72px]
+                              a. text-inherit! w-full font-semibold no-underline href=#its-working-if
+                                "It's working if"
+                            ul. ah-bullets
+                              li
+                                "You disagree with something. A session with no pushback from you is a session yo"
+                              li
+                                "Questions arrive in a few rounds, not one at a time for a long time, and later r"
+                              li
+                                "You end up somewhere you didn't expect, because a question showed you a decision"
+                              li
+                                "At the end you could defend each choice to someone who wasn't there."
+                            h2. scroll-mt-[72px]
+                              a. text-inherit! w-full font-semibold no-underline href=#common-questions
+                                "Common questions"
+                            p. ah-prose-p
+                              strong. ah-prose-strong
+                                "How many questions should I expect, and how do I know when it ends?"
+                              "Count rounds, not questions. Forty-six questions across four rounds is an ordina"
+                            p. ah-prose-p
+                              strong. ah-prose-strong
+                                "It asked me two hundred questions. What went wrong?"
+                              "Usually the scope was too large. Ask the agent to break the work into smaller pi"
+                              strong. ah-prose-strong
+                                a. decoration-primary/40 underline-offset-4 hover:decoration-primary href=/ai-coding-dictionary/smart-zone
+                                  "dumb zone"
+                              ", where the"
+                              a. decoration-primary/40 underline-offset-4 hover:decoration-primary href=/ai-coding-dictionary/context-window
+                                "context window"
+                              "is full enough that the questions get worse."
+                            p. ah-prose-p
+                              strong. ah-prose-strong
+                                "Can I go back to one question at a time?"
+                              "Yes. Add this to your global"
+                              code. ah-code-inline
+                                "CLAUDE.md"
+                              ":"
+                            div. group relative w-full
+                              button. inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none
+                                svg. lucide lucide-copy
+                                  rect
+                                  path
+                              pre. bg-card! text-xs! sm:text-sm! border-border overflow-x-auto border
+                                div
+                                  div. flex
+                                    div. flex-1 px-2
+                                      span
+                                        "When grilling, ask one question at a time."
+                            p. ah-prose-p
+                              strong. ah-prose-strong
+                                "What if I genuinely don't know the answer?"
+                              "Say so. "I don't know" is a real answer, and a question you can't answer is usua"
+                            p. ah-prose-p
+                              strong. ah-prose-strong
+                                "Do I start a fresh session before writing the spec?"
+                              "No. The value of the session is the"
+                              a. decoration-primary/40 underline-offset-4 hover:decoration-primary href=/ai-coding-dictionary/context
+                                "context"
+                              "you just built. Hand the same conversation straight to"
+                              a. ah-prose-a href=/skills-to-spec
+                                "to-spec"
+                              "."
+                            p. ah-prose-p
+                              strong. ah-prose-strong
+                                "Does the model matter?"
+                              "More than for most skills. Grilling depends on the"
+                              a. decoration-primary/40 underline-offset-4 hover:decoration-primary href=/ai-coding-dictionary/model
+                                "model"
+                              "'s own knowledge of how systems break, so use your best one. Implementation most"
+                            h2. scroll-mt-[72px]
+                              a. text-inherit! w-full font-semibold no-underline href=#where-it-fits
+                                "Where it fits"
+                            p. ah-prose-p
+                              code. ah-code-inline
+                                "grill-me"
+                              "is a"
+                              strong. ah-prose-strong
+                                "standalone you can run anywhere, on anything"
+                              ". Because it is"
+                              a. decoration-primary/40 underline-offset-4 hover:decoration-primary href=/ai-coding-dictionary/stateless
+                                "stateless"
+                              ", it is portable. It needs no repo, workspace, or setup, and does not assume the"
+                            p. ah-prose-p
+                              "Portability is the only difference from"
+                              a. ah-prose-a href=/skills-grill-with-docs
+                                "grill-with-docs"
+                              ". That skill runs the same interview, but reads a codebase to align against and "
+                              code. ah-code-inline
+                                "GLOSSARY.md"
+                              "and ADRs. Both use the"
+                              a. ah-prose-a href=/skills-grilling
+                                "grilling"
+                              "skill underneath."
+                              code. ah-code-inline
+                                "grill-me"
+                              "is the user-invoked entry point that keeps no state."
+                            p. ah-prose-p
+                              "If what you grilled does turn out to be software, you can hand the same conversa"
+                              a. ah-prose-a href=/skills-to-spec
+                                "to-spec"
+                              "and carry on into the build flow (an option, not the point of the skill). When y"
+                              a. ah-prose-a href=/skills-ask-matt
+                                "ask-matt"
+                              "routes you."
+                            aside. not-prose border-primary/30 bg-primary/5 my-10 flex flex-col gap-5 rounded-xl border p-6
+                              div. flex flex-col gap-2
+                                span. font-mono text-[11px] font-medium leading-[1.4] tracking-normal text-primary
+                                  "AI Hero · Free email course"
+                                h3. text-[1.3125rem] font-bold leading-[1.15] tracking-[-0.02em] sm:text-[1.5rem] sm:tracking-[-0.022em] text-foreground text-balance font-sans
+                                  "Pressure-testing finds weak decisions. It does not ship the feature."
+                                p. text-[17px] font-normal leading-[1.55] sm:text-[18.5px] text-foreground/80 text-balance
+                                  "One command installs all 22 skills. Seven free lessons pick up where pressure-te"
+                              div. bg-foreground/[0.06] h-12 w-full animate-pulse rounded-[9px]
+                        aside. hidden border-l xl:block
+                          div. sticky top-(--nav-height) flex max-h-[calc(100vh-var(--nav-height))] flex-col gap-6 overflow-auto px-5 pb-8 pt-5
+                            nav
+                              p. font-mono text-[11px] font-medium leading-[1.4] tracking-normal text-muted-foreground mb-3
+                                "On this page"
+                              ul. flex flex-col
+                                li. flex
+                                  a. focus-visible:ring-ring flex w-full items-center gap-1.5 border-l py-1.5 pl-[13px] text-[13px] leading-[1.4] href=#what-it-does
+                                    span. min-w-0
+                                      span
+                                        "What it does"
+                                li. flex
+                                  a. focus-visible:ring-ring flex w-full items-center gap-1.5 border-l py-1.5 pl-[13px] text-[13px] leading-[1.4] href=#when-to-reach-for-it
+                                    span. min-w-0
+                                      span
+                                        "When to reach for it"
+                                li. flex
+                                  a. focus-visible:ring-ring flex w-full items-center gap-1.5 border-l py-1.5 pl-[13px] text-[13px] leading-[1.4] href=#its-a-conversation-not-an-interview
+                                    span. min-w-0
+                                      span
+                                        "It's a conversation, not an interview"
+                                li. flex
+                                  a. focus-visible:ring-ring flex w-full items-center gap-1.5 border-l py-1.5 pl-[13px] text-[13px] leading-[1.4] href=#grillable-and-ungrillable
+                                    span. min-w-0
+                                      span
+                                        "Grillable and ungrillable"
+                                li. flex
+                                  a. focus-visible:ring-ring flex w-full items-center gap-1.5 border-l py-1.5 pl-[13px] text-[13px] leading-[1.4] href=#its-working-if
+                                    span. min-w-0
+                                      span
+                                        "It's working if"
+                                li. flex
+                                  a. focus-visible:ring-ring flex w-full items-center gap-1.5 border-l py-1.5 pl-[13px] text-[13px] leading-[1.4] href=#common-questions
+                                    span. min-w-0
+                                      span
+                                        "Common questions"
+                                li. flex
+                                  a. focus-visible:ring-ring flex w-full items-center gap-1.5 border-l py-1.5 pl-[13px] text-[13px] leading-[1.4] href=#where-it-fits
+                                    span. min-w-0
+                                      span
+                                        "Where it fits"
+                                li. flex
+                                  a. focus-visible:ring-ring flex w-full items-center gap-1.5 border-l py-1.5 pl-[13px] text-[13px] leading-[1.4] href=#related-reading
+                                    span. min-w-0
+                                      "Related reading"
+                            div. border-t pt-5
+                              section. grid grid-cols-[minmax(0,1fr)]
+                                p. font-mono text-[11px] font-medium leading-[1.4] tracking-normal text-muted-foreground mb-3
+                                  "Where this fits"
+                                ol. flex snap-x snap-proximity gap-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden min-[901px]:flex-col min-[901px]:gap-[7px] min-[901px]:overflow-visible
+                                  li. flex flex-none snap-start items-center min-[901px]:flex-auto
+                                    a. flex items-center gap-2.5 focus-visible:ring-ring group rounded-sm focus-visible:outline-none focus-visible:ring-2 href=/skills-setup-matt-pocock-skills
+                                      span. size-[7px] flex-none rounded-full transition-colors bg-foreground/20
+                                      span. font-mono text-xs font-medium whitespace-nowrap transition-colors text-[color:var(--ah-fg-label)] group-hover:text-foreground
+                                        "Getting Started"
+                                  li. flex flex-none snap-start items-center min-[901px]:flex-auto
+                                    a. flex items-center gap-2.5 focus-visible:ring-ring group rounded-sm focus-visible:outline-none focus-visible:ring-2 href=/skills-grill-with-docs
+                                      span. size-[7px] flex-none rounded-full transition-colors bg-foreground/20
+                                      span. font-mono text-xs font-medium whitespace-nowrap transition-colors text-[color:var(--ah-fg-label)] group-hover:text-foreground
+                                        "The Main Flow"
+                                  li. flex flex-none snap-start items-center min-[901px]:flex-auto
+                                    a. flex items-center gap-2.5 focus-visible:ring-ring group rounded-sm focus-visible:outline-none focus-visible:ring-2 href=/skills-wayfinder
+                                      span. size-[7px] flex-none rounded-full transition-colors bg-foreground/20
+                                      span. font-mono text-xs font-medium whitespace-nowrap transition-colors text-[color:var(--ah-fg-label)] group-hover:text-foreground
+                                        "Shaping"
+                                  li. flex flex-none snap-start items-center min-[901px]:flex-auto
+                                    a. flex items-center gap-2.5 focus-visible:ring-ring group rounded-sm focus-visible:outline-none focus-visible:ring-2 href=/skills-improve-codebase-architecture
+                                      span. size-[7px] flex-none rounded-full transition-colors bg-foreground/20
+                                      span. font-mono text-xs font-medium whitespace-nowrap transition-colors text-[color:var(--ah-fg-label)] group-hover:text-foreground
+                                        "Engineering"
+                                  li. flex flex-none snap-start items-center min-[901px]:flex-auto
+                                    span. flex items-center gap-2.5
+                                      span. size-[7px] flex-none rounded-full transition-colors bg-primary
+                                      span. font-mono text-xs font-medium whitespace-nowrap transition-colors text-primary
+                                        "Productivity Skills"
+                                  li. flex flex-none snap-start items-center min-[901px]:flex-auto
+                                    a. flex items-center gap-2.5 focus-visible:ring-ring group rounded-sm focus-visible:outline-none focus-visible:ring-2 href=/skills-pr
+                                      span. size-[7px] flex-none rounded-full transition-colors bg-foreground/20
+                                      span. font-mono text-xs font-medium whitespace-nowrap transition-colors text-[color:var(--ah-fg-label)] group-hover:text-foreground
+                                        "Reference Skills"
+                            div. border-t pt-5
+                              p. font-mono text-[11px] font-medium leading-[1.4] tracking-normal text-muted-foreground mb-2.5
+                                "Share"
+                              div. flex gap-2
+                                a. focus-visible:ring-ring flex size-8 items-center justify-center rounded-sm border text-[color:var(--ah-fg-muted)] transition-colors hover:bg-foreground/5 href=https://x.com/intent/tweet?text=The%20%2Fgrill-me%20Skill%20
+                                  span. sr-only
+                                    "Share on X"
+                                  svg
+                                    path
+                                a. focus-visible:ring-ring flex size-8 items-center justify-center rounded-sm border text-[color:var(--ah-fg-muted)] transition-colors hover:bg-foreground/5 href=https://bsky.app/intent/compose?text=The%20%2Fgrill-me%20Ski
+                                  span. sr-only
+                                    "Share on Bluesky"
+                                  svg
+                                    path
+                                a. focus-visible:ring-ring flex size-8 items-center justify-center rounded-sm border text-[color:var(--ah-fg-muted)] transition-colors hover:bg-foreground/5 href=https://linkedin.com/shareArticle?mini=true&url=https%3A%2F%
+                                  span. sr-only
+                                    "Share on LinkedIn"
+                                  svg. size-6
+                                    path
+                                    rect
+                                    circle
+                                button. focus-visible:ring-ring flex size-8 items-center justify-center rounded-sm border text-[color:var(--ah-fg-muted)] transition-colors hover:bg-foreground/5
+                                  span. sr-only
+                                    "Copy URL"
+                                  svg. size-4
+                                    rect
+                                    path
+                      section. bg-muted scroll-mt-(--nav-height)
+                        div. px-5 py-10 sm:px-11 sm:py-11
+                          p. font-mono text-[11px] font-medium leading-[1.4] tracking-normal text-muted-foreground mb-5
+                            "Skill actions"
+                          div. border-border bg-border grid gap-px overflow-hidden rounded-lg border min-[901px]:grid-cols-[repeat(auto-fit,minmax(320px,1fr))]
+                            div. bg-background px-6 py-6 sm:py-7
+                              div. mb-3.5 flex flex-wrap items-center justify-between gap-x-4 gap-y-2
+                                h2. text-lg font-bold leading-[1.2] tracking-[-0.02em] sm:text-xl
+                                  "Install the skills"
+                                a. focus-visible:ring-ring inline-flex flex-none rounded-[4px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 href=https://www.skills.sh/mattpocock/skills
+                                  img src=https://www.skills.sh/b/mattpocock/skills alt=Live Skills.sh install count
+                              div. flex flex-col gap-3.5
+                                div. bg-muted text-muted-foreground inline-flex items-center justify-center h-8 w-fit rounded-[9px] p-[3px]
+                                  button. data-[state=active]:bg-background dark:data-[state=active]:text-foreground focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:outline-ring dark:data-[state=active]:border-input dark:data-[state=active]:bg-input/30 text-foreground dark:text-muted-foreground inline-flex
+                                    "All agents"
+                                  button. data-[state=active]:bg-background dark:data-[state=active]:text-foreground focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:outline-ring dark:data-[state=active]:border-input dark:data-[state=active]:bg-input/30 text-foreground dark:text-muted-foreground inline-flex
+                                    "Claude Code"
+                                div. flex-1 outline-none min-w-0
+                                  div. border-border bg-muted focus-within:ring-ring dark:bg-card flex w-full flex-wrap items-center gap-x-3 gap-y-2.5
+                                    span. font-mono text-xs font-medium flex-none select-none text-[color:var(--ah-fg-faint)]
+                                      "$"
+                                    code. font-mono font-medium text-foreground/90 min-w-0 flex-1 select-all overflow-x-auto overscroll-x-contain whitespace-nowrap bg-transparent
+                                      "npx skills@latest add mattpocock/skills"
+                                    button. focus-visible:ring-ring ease-out-quart flex h-[30px] w-full flex-none items-center justify-center rounded-sm transition-colors
+                                      span. sr-only
+                                      span. relative inline-flex size-3.5 items-center justify-center
+                                        svg. ease-out-quart absolute size-3.5 transition-all duration-300 motion-reduce:transition-none scale-100 opacity-100
+                                        rect
+                                        path
+                                        svg. ease-out-quart absolute size-3.5 transition-all duration-300 motion-reduce:transition-none scale-50 opacity-0
+                                        polyline
+                                  p. text-sm leading-relaxed mt-3 text-[color:var(--ah-fg-muted)]
+                                    "Installs the whole set. Then type"
+                                    code. font-mono text-xs font-medium text-foreground bg-foreground/[0.055] border-border/70 rounded-[4px] border px-1.5 py-0.5
+                                      "/"
+                                      "grill-me"
+                                    "in your coding agent."
+                                  div. mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1.5
+                                    span. font-mono text-[12px] font-normal leading-[1.4] tracking-normal text-muted-foreground
+                                      "Update with"
+                                      span. text-[color:var(--ah-fg-body)]
+                                        "npx skills update"
+                                    a. text-[13px] leading-[1.35] hover:text-foreground focus-visible:ring-ring ml-auto inline-flex items-center gap-1 text-[color:var(--ah-fg-subtle)] transition-colors href=https://www.skills.sh/mattpocock/skills
+                                      "Skills.sh"
+                                      svg. size-3
+                                        path
+                                        path
+                                div. flex-1 outline-none min-w-0
+                          nav. mt-4 flex gap-2.5 min-[901px]:grid min-[901px]:grid-cols-3
+                            a. border-border bg-background hover:border-foreground/30 focus-visible:ring-ring group min-w-0 flex-1 rounded-md border px-[18px] href=/skills-implement-spec
+                              p. font-mono text-[11px] font-medium leading-[1.4] tracking-normal text-muted-foreground mb-2.5
+                                "Previous skill"
+                              p. text-base leading-[1.3] tracking-[-0.018em] group-hover:text-foreground truncate font-medium text-[color:var(--ah-fg-muted)] transition-colors
+                                span. flex min-w-0 items-center gap-1.5
+                                  svg. size-4 shrink-0
+                                    path
+                                    path
+                                  span. font-mono text-xs font-medium truncate min-[901px]:hidden
+                                    "/"
+                                    "implement-spec"
+                                  span. hidden truncate min-[901px]:inline
+                                    "The /implement-spec Skill"
+                            div. hidden rounded-md border border-[color:var(--ah-accent-line)] bg-[color:var(--ah-accent-wash)] px-[18px] py-4 min-[901px]:block
+                              p. font-mono text-[11px] font-medium leading-[1.4] tracking-normal text-primary mb-2.5
+                                "You are here"
+                              p. text-base font-bold leading-[1.3] tracking-[-0.018em] text-foreground
+                                span. flex min-w-0 items-center gap-1.5
+                                  span. font-mono text-xs font-medium truncate min-[901px]:hidden
+                                    "/"
+                                    "grill-me"
+                                  span. hidden truncate min-[901px]:inline
+                                    "The /grill-me Skill"
+                            a. border-border bg-background hover:border-foreground/30 focus-visible:ring-ring group min-w-0 flex-1 rounded-md border px-[18px] href=/skills-handoff
+                              p. font-mono text-[11px] font-medium leading-[1.4] tracking-normal text-muted-foreground mb-2.5
+                                "Next skill"
+                              p. text-base leading-[1.3] tracking-[-0.018em] group-hover:text-foreground truncate font-medium text-[color:var(--ah-fg-muted)] transition-colors
+                                span. flex min-w-0 items-center gap-1.5
+                                  span. font-mono text-xs font-medium truncate min-[901px]:hidden
+                                    "/"
+                                    "handoff"
+                                  span. hidden truncate min-[901px]:inline
+                                    "The /handoff Skill"
+                                  svg. ml-auto size-4 shrink-0
+                                    path
+                                    path
+                      div. flex w-full flex-col gap-2.5 px-[18px] py-8 sm:px-11 xl:hidden
+                        p. font-mono text-[11px] font-medium leading-[1.4] tracking-normal text-muted-foreground
+                          "Share"
+                        div. flex gap-2
+                          a. focus-visible:ring-ring flex size-8 items-center justify-center rounded-sm border text-[color:var(--ah-fg-muted)] transition-colors hover:bg-foreground/5 href=https://x.com/intent/tweet?text=The%20%2Fgrill-me%20Skill%20
+                            span. sr-only
+                              "Share on X"
+                            svg
+                              path
+                          a. focus-visible:ring-ring flex size-8 items-center justify-center rounded-sm border text-[color:var(--ah-fg-muted)] transition-colors hover:bg-foreground/5 href=https://bsky.app/intent/compose?text=The%20%2Fgrill-me%20Ski
+                            span. sr-only
+                              "Share on Bluesky"
+                            svg
+                              path
+                          a. focus-visible:ring-ring flex size-8 items-center justify-center rounded-sm border text-[color:var(--ah-fg-muted)] transition-colors hover:bg-foreground/5 href=https://linkedin.com/shareArticle?mini=true&url=https%3A%2F%
+                            span. sr-only
+                              "Share on LinkedIn"
+                            svg. size-6
+                              path
+                              rect
+                              circle
+                          button. focus-visible:ring-ring flex size-8 items-center justify-center rounded-sm border text-[color:var(--ah-fg-muted)] transition-colors hover:bg-foreground/5
+                            span. sr-only
+                              "Copy URL"
+                            svg. size-4
+                              rect
+                              path
+                      section. border-border bg-border grid grid-cols-1 gap-px scroll-mt-(--nav-height) md:grid-cols-[repeat(auto-fit,minmax(320px,1fr))]
+                        div. bg-background px-[18px] py-10 sm:px-11
+                          h2. font-mono text-[11px] font-medium leading-[1.4] tracking-normal text-muted-foreground mb-5
+                            "Related reading"
+                          ul. flex flex-col gap-2.5
+                            li
+                              a. border-input hover:border-foreground/25 focus-visible:ring-ring group flex items-center gap-4 rounded-md border px-4 href=/things-people-get-wrong-with-grill-me-and-grill-with-docs
+                                span. min-w-0
+                                  span. font-mono text-[12px] font-normal leading-[1.4] tracking-normal text-muted-foreground mb-1.5 block
+                                    "Video"
+                                  span. text-base font-bold leading-[1.3] tracking-[-0.018em] block text-pretty
+                                    "9 Things People Get Wrong With /grill-me and /grill-with-docs"
+                                svg. ease-out-quart text-foreground ml-auto size-4 flex-none opacity-[0.35] transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none
+                                  path
+                                  path
+                            li
+                              a. border-input hover:border-foreground/25 focus-visible:ring-ring group flex items-center gap-4 rounded-md border px-4 href=/skills-handoff
+                                span. min-w-0
+                                  span. font-mono text-[12px] font-normal leading-[1.4] tracking-normal text-muted-foreground mb-1.5 block
+                                    "Video"
+                                  span. text-base font-bold leading-[1.3] tracking-[-0.018em] block text-pretty
+                                    "The /handoff Skill"
+                                svg. ease-out-quart text-foreground ml-auto size-4 flex-none opacity-[0.35] transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none
+                                  path
+                                  path
+                    div. bg-background/95 border-border fixed inset-x-0 bottom-0 z-40 border-t pb-[env(safe-area-inset-bottom)] backdrop-blur-md desk:hidden
+                      div. flex items-center gap-2.5 px-4 py-3
+                        button. bg-accent-fill text-accent-fill-foreground hover:bg-accent-fill-hover focus-visible:ring-ring flex h-11 flex-1 items-center justify-center gap-2
+                          span. sr-only
+                          span. relative inline-flex size-4 items-center justify-center
+                            svg. ease-out-quart absolute size-4 transition-all duration-300 motion-reduce:transition-none scale-100 opacity-100
+                              rect
+                              path
+                            svg. ease-out-quart absolute size-4 transition-all duration-300 motion-reduce:transition-none scale-50 opacity-0
+                              polyline
+                          "Copy install command"
+                        a. border-input text-[color:var(--ah-fg-subtle)] hover:text-foreground hover:border-foreground/30 focus-visible:ring-ring flex size-11 flex-none items-center justify-center href=https://github.com/mattpocock/skills
+                          svg. size-4
+                            path
+                            path
+            footer. border-border w-full border-t print:hidden
+              div. grid grid-cols-1 gap-9 border-b border-border px-[18px] pb-8 pt-10 sm:grid-cols-2 lg:grid-cols-[repeat(4,minmax(0,1fr))]
+                div
+                  h3. font-mono text-[11px] font-medium leading-[1.4] tracking-normal text-muted-foreground mb-4
+                    "Learn"
+                  ul. -my-[5px] flex flex-col items-start [&:has(a:hover,button:hover)_a:not(:hover)]:opacity-60 [&:has(a:hover,button:hover)_button:not(:hover)]:opacity-60
+                    li
+                      a. text-sm font-medium leading-snug rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background inline-block href=/workshops/ai-coding-crash-course
+                        "AI Coding Crash Course"
+                    li
+                      a. text-sm font-medium leading-snug rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background inline-block href=/workshops/ai-sdk-v6-crash-course
+                        "AI SDK v6 Crash Course"
+                    li
+                      a. text-sm font-medium leading-snug rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background inline-block href=/llm-fundamentals
+                        "LLM Fundamentals"
+                    li
+                      a. text-sm font-medium leading-snug rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background inline-block href=/ai-coding-dictionary
+                        "AI Coding Dictionary"
+                    li
+                      a. text-sm font-medium leading-snug rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background inline-block href=/ai-engineer-roadmap
+                        "The AI Engineer Roadmap"
+                    li
+                      a. text-sm font-medium leading-snug rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background inline-block href=/vercel-ai-sdk-tutorial
+                        "Vercel AI SDK Tutorial"
+                    li
+                      a. text-sm font-medium leading-snug rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background inline-block href=/model-context-protocol-tutorial
+                        "Model Context Protocol Tutorial"
+                div
+                  h3. font-mono text-[11px] font-medium leading-[1.4] tracking-normal text-muted-foreground mb-4
+                    "Cohorts"
+                  ul. -my-[5px] flex flex-col items-start [&:has(a:hover,button:hover)_a:not(:hover)]:opacity-60 [&:has(a:hover,button:hover)_button:not(:hover)]:opacity-60
+                    li
+                      a. text-sm font-medium leading-snug rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background inline-block href=/cohorts/ai-coding-for-real-engineers-m0k0w
+                        "AI Coding for Real Engineers"
+                    li
+                      a. text-sm font-medium leading-snug rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background inline-block href=/cohorts/claude-code-for-real-engineers-2026-04
+                        "Claude Code for Real Engineers"
+                    li
+                      a. text-sm font-medium leading-snug rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background inline-block href=/cohorts/build-your-own-ai-personal-assistant-in-typescript
+                        "Build Your Own AI Personal Assistant in TypeScript"
+                    li
+                      a. text-sm font-medium leading-snug rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background inline-block href=/cohorts/build-deepsearch-in-typescript
+                        "Build DeepSearch in TypeScript"
+                div
+                  h3. font-mono text-[11px] font-medium leading-[1.4] tracking-normal text-muted-foreground mb-4
+                    "Account"
+                  div. bg-foreground/10 h-3 w-24 rounded-sm
+                div
+                  h3. font-mono text-[11px] font-medium leading-[1.4] tracking-normal text-muted-foreground mb-4
+                    "Agents"
+                  ul. -my-[5px] flex flex-col items-start [&:has(a:hover,button:hover)_a:not(:hover)]:opacity-60 [&:has(a:hover,button:hover)_button:not(:hover)]:opacity-60
+                    li
+                      a. font-mono text-[13px] leading-[1.35] rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background inline-block href=/sitemap.md
+                        "sitemap.md"
+                    li
+                      a. font-mono text-[13px] leading-[1.35] rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background inline-block href=/llms.txt
+                        "llms.txt"
+                    li
+                      a. font-mono text-[13px] leading-[1.35] rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background inline-block href=/skills.md
+                        "skills.md"
+                    li
+                      a. font-mono text-[13px] leading-[1.35] rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background inline-block href=/rss.xml
+                        "rss.xml"
+              div. flex flex-col items-start gap-5 px-[18px] pb-8 pt-5 sm:flex-row sm:items-center lg:px-11
+                nav. -mx-2.5 -my-1 flex flex-wrap items-center [&:has(a:hover,button:hover)_a:not(:hover)]:opacity-60 [&:has(a:hover,button:hover)_button:not(:hover)]:opacity-60
+                  a. text-[13px] leading-[1.35] rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background inline-block px-2.5 href=/posts
+                    "Browse All"
+                  a. text-[13px] leading-[1.35] rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background inline-block px-2.5 href=/skills
+                    "Skills"
+                  a. text-[13px] leading-[1.35] rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background inline-block px-2.5 href=/skills/subscribe
+                    "Free course"
+                  a. text-[13px] leading-[1.35] rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background inline-block px-2.5 href=/ai-coding-dictionary
+                    "Dictionary"
+                  a. text-[13px] leading-[1.35] rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background inline-block px-2.5 href=/faq
+                    "FAQ"
+                  a. text-[13px] leading-[1.35] rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background inline-block px-2.5 href=/privacy
+                    "Terms"
+                button. items-center justify-center whitespace-nowrap font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0
+                  span. relative inline-flex size-5 shrink-0 items-center justify-center
+                    svg. absolute size-3.5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 motion-reduce:transition-none
+                      circle
+                      path
+                      path
+                      path
+                      path
+                      path
+                      path
+                      path
+                      path
+                    svg. absolute size-3.5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 motion-reduce:transition-none
+                      path
+                  span. text-xs font-normal capitalize opacity-80 sm:text-sm
+                    "Theme"
+        button. bg-card/90 border-foreground/10 fixed bottom-20 right-5 z-50 flex items-center gap-2 rounded-[9px]
+          svg. size-4
+            line
+            line
+            line
+          "Pages"
+    script
+      "requestAnimationFrame(function(){$RT=performance.now()});"
+    script
+    div
+      aside. relative mx-auto w-full max-w-[1456px] px-2 print:hidden
+        div. bg-muted/40 border-border flex h-[34px] items-center justify-center gap-2.5 border-x border-b px-4
+          span. text-primary inline-flex shrink-0 items-center rounded-[4px] border border-[color:var(--ah-accent-line)] px-1.5 py-1 font-mono
+            "New"
+          a. group focus-visible:ring-ring inline-flex min-w-0 items-center gap-1.5 font-medium tracking-tight underline-offset-4 transition href=/s/crash-course
+            span. truncate leading-[1.4]
+              "AI Coding Crash Course is out now."
+            svg. size-3.5 shrink-0 transition-transform group-hover:translate-x-0.5
+              path
+              path
+    script
+      "$RB=[];$RV=function(a){$RT=performance.now();for(var b=0;b<a.length;b+=2){var c="
+    div
+      a. peer/menu-button flex w-full items-center overflow-hidden p-2 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] href=/skills
+        svg. size-4 shrink-0
+          path
+          path
+          path
+          path
+        span. min-w-0 flex-1 truncate text-left
+          "Skills"
+        svg. ml-auto size-3.5 shrink-0 text-[color:var(--ah-fg-faint)] transition-transform duration-200 motion-reduce:transition-none rotate-90
+          path
+      ul. flex w-full min-w-0 flex-col gap-px
+        li. group/menu-item relative
+          a. peer/menu-button flex w-full overflow-hidden p-2 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] focus-visible:ring-2 href=/skills
+            span. min-w-0 flex-1 [overflow-wrap:anywhere]
+              "Overview"
+        li. group/menu-item relative
+          div. group/series-section
+            button. text-[13px] leading-[1.35] text-muted-foreground h-auto items-start gap-1.5 rounded-sm py-[7px] pr-2 font-normal
+              span. font-mono text-[11px] font-medium leading-none tabular-nums flex h-[18px] shrink-0 items-center w-4
+                "1"
+              span. min-w-0 flex-1 truncate text-left
+                "Getting Started"
+              svg. ml-auto mt-0.5 size-3.5 shrink-0 text-[color:var(--ah-fg-faint)] transition-transform group-data-[state=open]/series-section:rotate-90
+                path
+            div. mt-px overflow-hidden
+        li. group/menu-item relative
+          div. group/series-section
+            button. text-[13px] leading-[1.35] text-muted-foreground h-auto items-start gap-1.5 rounded-sm py-[7px] pr-2 font-normal
+              span. font-mono text-[11px] font-medium leading-none tabular-nums flex h-[18px] shrink-0 items-center w-4
+                "2"
+              span. min-w-0 flex-1 truncate text-left
+                "The Main Flow"
+              svg. ml-auto mt-0.5 size-3.5 shrink-0 text-[color:var(--ah-fg-faint)] transition-transform group-data-[state=open]/series-section:rotate-90
+                path
+            div. mt-px overflow-hidden
+        li. group/menu-item relative
+          div. group/series-section
+            button. text-[13px] leading-[1.35] text-muted-foreground h-auto items-start gap-1.5 rounded-sm py-[7px] pr-2 font-normal
+              span. font-mono text-[11px] font-medium leading-none tabular-nums flex h-[18px] shrink-0 items-center w-4
+                "3"
+              span. min-w-0 flex-1 truncate text-left
+                "Shaping"
+              svg. ml-auto mt-0.5 size-3.5 shrink-0 text-[color:var(--ah-fg-faint)] transition-transform group-data-[state=open]/series-section:rotate-90
+                path
+            div. mt-px overflow-hidden
+        li. group/menu-item relative
+          div. group/series-section
+            button. text-[13px] leading-[1.35] text-muted-foreground h-auto items-start gap-1.5 rounded-sm py-[7px] pr-2 font-normal
+              span. font-mono text-[11px] font-medium leading-none tabular-nums flex h-[18px] shrink-0 items-center w-4
+                "4"
+              span. min-w-0 flex-1 truncate text-left
+                "Engineering"
+              svg. ml-auto mt-0.5 size-3.5 shrink-0 text-[color:var(--ah-fg-faint)] transition-transform group-data-[state=open]/series-section:rotate-90
+                path
+            div. mt-px overflow-hidden
+        li. group/menu-item relative
+          div. group/series-section
+            button. text-[13px] leading-[1.35] h-auto items-start gap-1.5 rounded-sm py-[7px] pr-2 font-normal hover:bg-sidebar-accent
+              span. font-mono text-[11px] font-medium leading-none tabular-nums flex h-[18px] shrink-0 items-center w-4
+                "5"
+              span. min-w-0 flex-1 truncate text-left
+                "Productivity Skills"
+              svg. ml-auto mt-0.5 size-3.5 shrink-0 text-[color:var(--ah-fg-faint)] transition-transform group-data-[state=open]/series-section:rotate-90
+                path
+            div. mt-px overflow-hidden
+              ul. flex w-full min-w-0 flex-col gap-px
+                li. group/menu-item relative
+                  a. peer/menu-button flex w-full overflow-hidden p-2 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] focus-visible:ring-2 href=/skills-grill-me
+                    span. font-mono text-[11px] font-medium leading-none tabular-nums flex h-[18px] shrink-0 items-center w-5
+                      "5.1"
+                    span. min-w-0 flex-1 truncate text-left
+                      "/grill-me"
+                li. group/menu-item relative
+                  a. peer/menu-button flex w-full overflow-hidden p-2 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] focus-visible:ring-2 href=/skills-handoff
+                    span. font-mono text-[11px] font-medium leading-none tabular-nums flex h-[18px] shrink-0 items-center w-5
+                      "5.2"
+                    span. min-w-0 flex-1 truncate text-left
+                      "/handoff"
+                li. group/menu-item relative
+                  a. peer/menu-button flex w-full overflow-hidden p-2 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] focus-visible:ring-2 href=/skills-to-questionnaire
+                    span. font-mono text-[11px] font-medium leading-none tabular-nums flex h-[18px] shrink-0 items-center w-5
+                      "5.3"
+                    span. min-w-0 flex-1 truncate text-left
+                      "/to-questionnaire"
+                li. group/menu-item relative
+                  a. peer/menu-button flex w-full overflow-hidden p-2 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] focus-visible:ring-2 href=/skills-teach
+                    span. font-mono text-[11px] font-medium leading-none tabular-nums flex h-[18px] shrink-0 items-center w-5
+                      "5.4"
+                    span. min-w-0 flex-1 truncate text-left
+                      "/teach"
+                li. group/menu-item relative
+                  a. peer/menu-button flex w-full overflow-hidden p-2 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] focus-visible:ring-2 href=/skills-wait-what
+                    span. font-mono text-[11px] font-medium leading-none tabular-nums flex h-[18px] shrink-0 items-center w-5
+                      "5.5"
+                    span. min-w-0 flex-1 truncate text-left
+                      "/wait-what"
+                li. group/menu-item relative
+                  a. peer/menu-button flex w-full overflow-hidden p-2 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] focus-visible:ring-2 href=/skills-writing-for-agents
+                    span. font-mono text-[11px] font-medium leading-none tabular-nums flex h-[18px] shrink-0 items-center w-5
+                      "5.6"
+                    span. min-w-0 flex-1 truncate text-left
+                      "/writing-for-agents"
+        li. group/menu-item relative
+          div. group/series-section
+            button. text-[13px] leading-[1.35] text-muted-foreground h-auto items-start gap-1.5 rounded-sm py-[7px] pr-2 font-normal
+              span. font-mono text-[11px] font-medium leading-none tabular-nums flex h-[18px] shrink-0 items-center w-4
+                "6"
+              span. min-w-0 flex-1 truncate text-left
+                "Reference Skills"
+              svg. ml-auto mt-0.5 size-3.5 shrink-0 text-[color:var(--ah-fg-faint)] transition-transform group-data-[state=open]/series-section:rotate-90
+                path
+            div. mt-px overflow-hidden
+    script
+      "$RC("B:1","S:1")"
+    div
+      div. group/collapsible
+        div. relative flex w-full min-w-0 flex-col p-0
+          button. ring-sidebar-ring outline-hidden flex shrink-0 items-center px-2 transition-[margin,opacity] duration-200 ease-linear focus-visible:ring-2
+            span
+              "Think Like an AI Engineer"
+            svg. ml-auto size-3.5 shrink-0 text-[color:var(--ah-fg-faint)] transition-transform group-data-[state=open]/collapsible:rotate-90
+              path
+          div. mt-px overflow-hidden
+    script
+      "$RC("B:2","S:2")"
+    div
+      div. group/collapsible
+        div. relative flex w-full min-w-0 flex-col p-0
+          button. ring-sidebar-ring outline-hidden flex shrink-0 items-center px-2 transition-[margin,opacity] duration-200 ease-linear focus-visible:ring-2
+            span
+              "Learn How LLMs Think"
+            svg. ml-auto size-3.5 shrink-0 text-[color:var(--ah-fg-faint)] transition-transform group-data-[state=open]/collapsible:rotate-90
+              path
+          div. mt-px overflow-hidden
+    script
+      "$RC("B:3","S:3")"
+    div
+      div. group/collapsible
+        div. relative flex w-full min-w-0 flex-col p-0
+          button. ring-sidebar-ring outline-hidden flex shrink-0 items-center px-2 transition-[margin,opacity] duration-200 ease-linear focus-visible:ring-2
+            span
+              "Set Up Your Agent"
+            svg. ml-auto size-3.5 shrink-0 text-[color:var(--ah-fg-faint)] transition-transform group-data-[state=open]/collapsible:rotate-90
+              path
+          div. mt-px overflow-hidden
+    script
+      "$RC("B:4","S:4")"
+    div
+      div. group/collapsible
+        div. relative flex w-full min-w-0 flex-col p-0
+          button. ring-sidebar-ring outline-hidden flex shrink-0 items-center px-2 transition-[margin,opacity] duration-200 ease-linear focus-visible:ring-2
+            span
+              "Score First Wins"
+            svg. ml-auto size-3.5 shrink-0 text-[color:var(--ah-fg-faint)] transition-transform group-data-[state=open]/collapsible:rotate-90
+              path
+          div. mt-px overflow-hidden
+    script
+      "$RC("B:5","S:5")"
+    div
+      div. group/collapsible
+        div. relative flex w-full min-w-0 flex-col p-0
+          button. ring-sidebar-ring outline-hidden flex shrink-0 items-center px-2 transition-[margin,opacity] duration-200 ease-linear focus-visible:ring-2
+            span
+              "Get Better Results"
+            svg. ml-auto size-3.5 shrink-0 text-[color:var(--ah-fg-faint)] transition-transform group-data-[state=open]/collapsible:rotate-90
+              path
+          div. mt-px overflow-hidden
+    script
+      "$RC("B:6","S:6")"
+    div
+      div. group/collapsible
+        div. relative flex w-full min-w-0 flex-col p-0
+          button. ring-sidebar-ring outline-hidden flex shrink-0 items-center px-2 transition-[margin,opacity] duration-200 ease-linear focus-visible:ring-2
+            span
+              "Build the Right Thing"
+            svg. ml-auto size-3.5 shrink-0 text-[color:var(--ah-fg-faint)] transition-transform group-data-[state=open]/collapsible:rotate-90
+              path
+          div. mt-px overflow-hidden
+    script
+      "$RC("B:7","S:7")"
+    div
+      div. group/collapsible
+        div. relative flex w-full min-w-0 flex-col p-0
+          button. ring-sidebar-ring outline-hidden flex shrink-0 items-center px-2 transition-[margin,opacity] duration-200 ease-linear focus-visible:ring-2
+            span
+              "Ship Solid Code"
+            svg. ml-auto size-3.5 shrink-0 text-[color:var(--ah-fg-faint)] transition-transform group-data-[state=open]/collapsible:rotate-90
+              path
+          div. mt-px overflow-hidden
+    script
+      "$RC("B:8","S:8")"
+    div
+      div. group/collapsible
+        div. relative flex w-full min-w-0 flex-col p-0
+          button. ring-sidebar-ring outline-hidden flex shrink-0 items-center px-2 transition-[margin,opacity] duration-200 ease-linear focus-visible:ring-2
+            span
+              "Build a Software Factory"
+            svg. ml-auto size-3.5 shrink-0 text-[color:var(--ah-fg-faint)] transition-transform group-data-[state=open]/collapsible:rotate-90
+              path
+          div. mt-px overflow-hidden
+    script
+      "$RC("B:9","S:9")"
+    div
+      div. group/collapsible
+        div. relative flex w-full min-w-0 flex-col p-0
+          button. ring-sidebar-ring outline-hidden flex shrink-0 items-center px-2 transition-[margin,opacity] duration-200 ease-linear focus-visible:ring-2
+            span
+              "Meta / Announcements"
+            svg. ml-auto size-3.5 shrink-0 text-[color:var(--ah-fg-faint)] transition-transform group-data-[state=open]/collapsible:rotate-90
+              path
+          div. mt-px overflow-hidden
+    script
+      "$RC("B:a","S:a")"
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "(self.__next_f=self.__next_f||[]).push([0])"
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"1:\"$Sreact.fragment\"\n3:I[948389,[\"/_next/static/chunk"
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"6:I[241849,[\"/_next/static/chunks/1j9gv-u7wmbzv.js\",\"/"
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"b:I[497877,[\"/_next/static/chunks/1j9gv-u7wmbzv.js\",\"/"
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"0:{\"P\":null,\"c\":[\"\",\"skills-grill-me\"],\"q\":\"\""
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"10:I[286521,[\"/_next/static/chunks/1j9gv-u7wmbzv.js\",\""
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"_c3bo92e.js\",\"/_next/static/chunks/1rskstr6roem-.js\",\"
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"/0kmx70s2x49fm.js\"],\"ThemeProvider\"]\n22:I[137537,[\"/"
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"ript\",\"script-8\",{\"src\":\"/_next/static/chunks/24lx3"
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"8:[\"$\",\"$1\",\"c\",{\"children\":[\"$Lf\",[[\"$\",\"sc"
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"13:[]\n9:\"$W13\"\na:[\"$\",\"$1\",\"h\",{\"children\":[n"
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"2:[\"$\",\"$L18\",null,{\"children\":[\"$\",\"html\",null"
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"2e:I[326741,[\"/_next/static/chunks/1j9gv-u7wmbzv.js\",\""
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"15:[[\"$\",\"meta\",\"0\",{\"charSet\":\"utf-8\"}],[\"$\""
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"30:I[630597,[\"/_next/static/chunks/1j9gv-u7wmbzv.js\",\""
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"2a:[\"$\",\"$L30\",null,{\"startsAt\":\"2026-08-17T07:00:"
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"28:{\"kind\":\"workshop-buy\",\"id\":\"workshop-2ozd9\",\"
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"32:I[967574,[\"/_next/static/chunks/1j9gv-u7wmbzv.js\",\""
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"e:[\"$\",\"$L32\",null,{\"initialList\":{\"id\":\"list_pp"
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"34:I[602824,[\"/_next/static/chunks/1j9gv-u7wmbzv.js\",\""
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"38:I[396416,[\"/_next/static/chunks/1j9gv-u7wmbzv.js\",\""
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"ks/0whoymvzqg51u.js\"],\"SidebarMinimalFallback\"]\n3c:I["
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"c/chunks/24lx3c4hhbik8.js\",\"/_next/static/chunks/0whoym"
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"nks/15ke5wwa0ql8s.js\",\"/_next/static/chunks/24lx3c4hhbi"
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"36:[\"$\",\"$L38\",null,{\"defaultOpen\":true,\"className"
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"4e:I[608324,[\"/_next/static/chunks/1j9gv-u7wmbzv.js\",\""
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"42:[\"$\",\"$L4e\",null,{\"href\":\"/skills\",\"label\":\"
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"4f:I[656167,[\"/_next/static/chunks/1j9gv-u7wmbzv.js\",\""
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"51:I[957610,[\"/_next/static/chunks/1j9gv-u7wmbzv.js\",\""
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"53:I[957610,[\"/_next/static/chunks/1j9gv-u7wmbzv.js\",\""
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"56:I[678078,[\"/_next/static/chunks/1j9gv-u7wmbzv.js\",\""
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"57:I[473555,[\"/_next/static/chunks/1j9gv-u7wmbzv.js\",\""
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"58:I[956109,[\"/_next/static/chunks/1j9gv-u7wmbzv.js\",\""
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"59:I[608324,[\"/_next/static/chunks/1j9gv-u7wmbzv.js\",\""
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"f:[\"$\",\"main\",null,{\"className\":\"bg-card w-full da"
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"46:[\"$\",\"$L59\",null,{\"title\":\"Set Up Your Agent\","
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"47:[\"$\",\"$L59\",null,{\"title\":\"Score First Wins\",\"
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"45:[\"$\",\"$L59\",null,{\"title\":\"Learn How LLMs Think"
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"44:[\"$\",\"$L59\",null,{\"title\":\"Think Like an AI Eng"
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"5a:I[94739,[\"/_next/static/chunks/1j9gv-u7wmbzv.js\",\"/"
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"5b:I[810519,[\"/_next/static/chunks/1j9gv-u7wmbzv.js\",\""
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"5c:I[931356,[\"/_next/static/chunks/1j9gv-u7wmbzv.js\",\""
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"5d:I[458932,[\"/_next/static/chunks/1j9gv-u7wmbzv.js\",\""
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"5e:I[931356,[\"/_next/static/chunks/1j9gv-u7wmbzv.js\",\""
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"5f:I[470356,[\"/_next/static/chunks/1j9gv-u7wmbzv.js\",\""
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"60:I[901125,[\"/_next/static/chunks/1j9gv-u7wmbzv.js\",\""
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"61:I[356366,[\"/_next/static/chunks/1j9gv-u7wmbzv.js\",\""
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"50:[\"$\",\"div\",null,{\"className\":\"bg-card dark:bg-t"
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"62:I[288441,[\"/_next/static/chunks/1j9gv-u7wmbzv.js\",\""
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"63:I[19595,[\"/_next/static/chunks/1j9gv-u7wmbzv.js\",\"/"
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,":HL[\"https://www.skills.sh/b/mattpocock/skills\",\"image"
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"55:[\"$\",\"section\",null,{\"id\":\"skill-actions\",\"ar"
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"54:[\"$\",\"section\",null,{\"aria-label\":\"Where this f"
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"66:I[61981,[\"/_next/static/chunks/1j9gv-u7wmbzv.js\",\"/"
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"67:I[748558,[\"/_next/static/chunks/1j9gv-u7wmbzv.js\",\""
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"68:I[160251,[\"/_next/static/chunks/1j9gv-u7wmbzv.js\",\""
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"64:[\"$\",\"p\",null,{\"className\":\"text-base leading-["
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"52:[\"$\",\"div\",null,{\"className\":\"px-[18px] pb-16 p"
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script
+      "self.__next_f.push([1,"84:I[554358,[\"/_next/static/chunks/1j9gv-u7wmbzv.js\",\""
+    script
+      "globalThis.__UPLOADTHING = [{"slug":"videoUploader","config":{"video":{"maxFileS"
+    script

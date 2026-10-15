@@ -1,0 +1,72 @@
+---
+import '../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
+import type { Lang } from '../i18n/ui';
+import SEO from '../components/SEO.astro';
+import AnnouncementBar from '../components/AnnouncementBar.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SidebarNav from '../components/SidebarNav.astro';
+import Footer from '../components/Footer.astro';
+import MobileInstallBar from '../components/MobileInstallBar.astro';
+import MobilePagesSheet from '../components/MobilePagesSheet.astro';
+
+interface Props {
+  lang: Lang;
+  title: string;
+  description: string;
+  pathname: string;
+  jsonLd?: object;
+}
+
+const { lang, title, description, pathname, jsonLd } = Astro.props;
+const base = import.meta.env.BASE_URL;
+---
+<!doctype html>
+<html lang={lang === 'zh' ? 'zh-CN' : 'en'}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <SEO lang={lang} title={title} description={description} pathname={pathname} jsonLd={jsonLd} />
+    <link rel="icon" type="image/svg+xml" href={`${base}/favicon.svg`} />
+    <link rel="apple-touch-icon" href={`${base}/apple-touch-icon.png`} />
+    <link rel="sitemap" href={`${base}/sitemap-index.xml`} />
+    <ClientRouter />
+    <script is:inline>
+      // Theme: class strategy, no flash
+      (function () {
+        try {
+          var t = localStorage.getItem('theme');
+          var d = t ? t === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+          document.documentElement.classList.toggle('dark', d);
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body class="bg-page-background relative overflow-x-hidden antialiased font-sans">
+    <AnnouncementBar lang={lang} />
+    <div class="relative mx-auto w-full max-w-[1456px] px-2 print:hidden">
+      <div class="bg-background border-x">
+        <SiteHeader lang={lang} />
+        <div class="group/sidebar-wrapper flex w-full min-h-0">
+          <SidebarNav lang={lang} />
+          <div class="flex min-w-0 flex-1 flex-col">
+            <div class="flex-1">
+              <main class="bg-card w-full dark:bg-transparent">
+                <slot />
+              </main>
+            </div>
+            <Footer lang={lang} />
+          </div>
+        </div>
+      </div>
+    </div>
+    <MobileInstallBar lang={lang} />
+    <MobilePagesSheet lang={lang} />
+    <script>
+      import '../scripts/clipboard';
+      import '../scripts/disclosure';
+      import '../scripts/codecopy';
+      import '../scripts/scrollspy';
+    </script>
+  </body>
+</html>

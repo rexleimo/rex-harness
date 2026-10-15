@@ -1,0 +1,119 @@
+---
+import type { Lang } from '../i18n/ui';
+import { getProvider, allProviders, chainOrder, evidenceGlossary, hubLabels } from '../i18n/providers';
+import { providerPath, docsPath } from '../i18n/docs';
+
+const { lang, id }: { lang: Lang; id: string } = Astro.props;
+const data = getProvider(id);
+if (!data) throw new Error(`unknown provider: ${id}`);
+const { entry, group, detail } = data;
+
+const ci = chainOrder.indexOf(id);
+const prevId = ci > 0 ? chainOrder[ci - 1] : undefined;
+const nextId = ci >= 0 && ci < chainOrder.length - 1 ? chainOrder[ci + 1] : undefined;
+const siblings = group.items.filter((p) => p.id !== id);
+
+const L = {
+  when: hubLabels.detailWhen[lang],
+  stages: hubLabels.stagesTitle[lang],
+  evidence: hubLabels.evidenceTitle[lang],
+  chain: hubLabels.chainTitle[lang],
+  source: hubLabels.sourceTitle[lang],
+  related: hubLabels.relatedTitle[lang],
+  prevLabel: lang === 'zh' ? '上一环' : 'Previous link',
+  nextLabel: lang === 'zh' ? '下一环' : 'Next link',
+  chainNote: lang === 'zh'
+    ? '链路位置描述典型顺序；运行时按证据落地情况逐环发出，允许跳过与抢占（如 rex-debug）。'
+    : 'Chain position describes the typical order; the runtime issues links one at a time as evidence lands, with skips and preemptions allowed (e.g. rex-debug).',
+  instrRef: `skill-sources/${entry.id}/SKILL.md`,
+};
+const headings = [
+  { depth: 2, text: L.when, slug: lang === 'zh' ? '运行时何时发出' : 'when-the-runtime-issues-it' },
+  ...(entry.capabilityId ? [{ depth: 2, text: L.stages, slug: lang === 'zh' ? 'recipe-阶段' : 'recipe-stages' }] : []),
+  ...(entry.evidence ? [{ depth: 2, text: L.evidence, slug: lang === 'zh' ? 'evidence-契约' : 'evidence-contract' }] : []),
+  { depth: 2, text: L.chain, slug: lang === 'zh' ? '链路位置' : 'chain-position' },
+  { depth: 2, text: L.source, slug: lang === 'zh' ? '来源' : 'source' },
+];
+const chip = 'font-mono text-[11px] text-foreground/90 bg-foreground/[0.055] border-border/70 rounded-[4px] border px-1.5 py-0.5';
+const h2 = 'text-[1.25rem] font-bold leading-[1.2] tracking-[-0.02em] mt-10 mb-3';
+---
+<div>
+  <p class="text-[15px] leading-[1.7] text-[color:var(--ah-fg-muted)]">{detail.summary[lang]}</p>
+
+  <h2 class={h2} id={headings[0].slug}>{L.when}</h2>
+  <p class="text-[14px] leading-[1.7]">{entry.whenSelected[lang]}</p>
+
+  {entry.capabilityId && (
+    <>
+      <h2 class={h2} id={headings.find((h) => h.slug.includes('recipe') || h.slug.includes('阶段'))?.slug}>{L.stages}</h2>
+      <p class="text-[13px] leading-[1.6] mb-4 text-[color:var(--ah-fg-muted)]">
+        {lang === 'zh' ? 'Capability' : 'Capability'} <code class={chip}>{entry.capabilityId}</code>
+      </p>
+      {detail.stages?.map((s, i) => (
+        <div class="border-border border rounded-md p-4 mb-3">
+          <p class="font-mono text-[11px] text-primary mb-1.5">{String(i + 1).padStart(2, '0')} · {s.id}</p>
+          <p class="text-[13.5px] leading-[1.65]">{s.objective[lang]}</p>
+          <p class="mt-2.5 flex flex-wrap gap-1.5">
+            {s.evidence.map((tok) => <code class={chip}>{tok}</code>)}
+          </p>
+        </div>
+      ))}
+      {!detail.stages && <p class="text-[13px] text-[color:var(--ah-fg-muted)]">{lang === 'zh' ? '该 Provider 不带独立 Recipe：它约束其它 Provider 的执行方式。' : 'This provider ships no standalone recipe: it constrains how other providers execute.'}</p>}
+    </>
+  )}
+
+  {entry.evidence && (
+    <>
+      <h2 class={h2} id={headings.find((h) => h.slug.includes('evidence') || h.slug.includes('契约'))?.slug}>{L.evidence}</h2>
+      <p class="text-[13px] leading-[1.6] mb-4 text-[color:var(--ah-fg-muted)]">{hubLabels.evidenceNote[lang]}</p>
+      <dl class="border-border divide-border border-t divide-y">
+        {entry.evidence.map((alts) => (
+          <div class="py-3 flex flex-col gap-1.5 sm:flex-row sm:gap-4 sm:items-baseline">
+            <dt class="shrink-0 sm:w-[300px] flex flex-wrap items-center gap-1.5">
+              {alts.map((tok, i) => (
+                <>
+                  {i > 0 && <span class="font-mono text-[10px] text-[color:var(--ah-fg-faint)]">{lang === 'zh' ? '或' : 'or'}</span>}
+                  <code class={chip}>{tok}</code>
+                </>
+              ))}
+            </dt>
+            <dd class="text-[13px] leading-[1.6] text-[color:var(--ah-fg-muted)] min-w-0">
+              {alts.map((tok) => evidenceGlossary[tok]?.[lang] ?? tok).join(lang === 'zh' ? ' / ' : ' · ')}
+            </dd>
+          </div>
+        ))}
+      </dl>
+    </>
+  )}
+
+  <h2 class={h2} id={headings.find((h) => h.slug.includes('chain') || h.slug.includes('链路'))?.slug}>{L.chain}</h2>
+  <div class="grid gap-2.5 min-[560px]:grid-cols-2">
+    {prevId ? (
+      <a class="border-border bg-background hover:border-foreground/30 group rounded-md border px-[18px] py-4 transition-colors" href={providerPath(lang, prevId)}>
+        <p class="font-mono text-[11px] leading-[1.4] text-muted-foreground mb-2">{L.prevLabel}</p>
+        <p class="text-[15px] font-medium leading-[1.3] truncate group-hover:text-foreground">{getProvider(prevId)!.entry.title[lang]}</p>
+      </a>
+    ) : <span class="hidden min-[560px]:block" />}
+    {nextId && (
+      <a class="border-border bg-background hover:border-foreground/30 group rounded-md border px-[18px] py-4 transition-colors min-[560px]:text-right" href={providerPath(lang, nextId)}>
+        <p class="font-mono text-[11px] leading-[1.4] text-muted-foreground mb-2">{L.nextLabel}</p>
+        <p class="text-[15px] font-medium leading-[1.3] truncate group-hover:text-foreground"><span class={'flex items-center gap-1.5 ' + (lang === 'en' ? 'min-[560px]:justify-end' : '')}>{getProvider(nextId)!.entry.title[lang]}</span></p>
+      </a>
+    )}
+  </div>
+  <p class="text-[12.5px] leading-[1.6] mt-3 text-[color:var(--ah-fg-faint)]">{L.chainNote}</p>
+
+  <h2 class={h2} id={headings.find((h) => h.slug.includes('source') || h.slug.includes('来源'))?.slug}>{L.source}</h2>
+  <p class="text-[13px] leading-[1.6] text-[color:var(--ah-fg-muted)] mb-2">{hubLabels.sourceNote[lang]}</p>
+  <p><code class="font-mono text-[12px] text-foreground/90 bg-foreground/[0.055] border-border/70 rounded-[4px] border px-2 py-1">{entry.kind === 'agent' ? 'skill-sources/rex-workflow/references/reviewers.json' : L.instrRef}</code></p>
+
+  <div class="border-border mt-12 border-t pt-6">
+    <p class="font-mono text-[11px] font-medium text-muted-foreground mb-3">{L.relatedTitle}</p>
+    <div class="flex flex-wrap gap-2">
+      <a class="text-[13px] border-border hover:border-foreground/30 rounded-md border px-3 py-1.5 transition-colors" href={docsPath(lang, 'providers')}>{hubLabels.backToCatalog[lang]} →</a>
+      {siblings.map((p) => (
+        <a class="font-mono text-[12px] border-border hover:border-foreground/30 rounded-md border px-3 py-1.5 transition-colors" href={providerPath(lang, p.id)}>{p.id}</a>
+      ))}
+    </div>
+  </div>
+</div>

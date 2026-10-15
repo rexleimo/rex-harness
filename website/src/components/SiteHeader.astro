@@ -1,0 +1,70 @@
+---
+import type { Lang } from '../i18n/ui';
+import { t, switchPath } from '../i18n/ui';
+import { docsPath, homePath } from '../i18n/docs';
+import Icon from './icons/Icon.astro';
+import RexLogo from './icons/RexLogo.astro';
+
+const { lang }: { lang: Lang } = Astro.props;
+const REPO = 'https://github.com/rexleimo/rex-harness';
+const here = decodeURI(Astro.url.pathname);
+---
+<header class="bg-background/90 sticky top-0 h-(--nav-height) z-50 flex w-full items-center gap-5 border-b px-[18px] backdrop-blur-md print:hidden lg:px-11">
+  <span class="flex shrink-0 items-center">
+    <a class="group focus-visible:ring-ring flex items-center gap-2.5 rounded-[7px] leading-none transition focus-visible:outline-none focus-visible:ring-2" href={homePath(lang)}>
+      <span class="flex h-(--nav-height) w-auto shrink-0 items-center justify-center p-[9px] text-foreground"><RexLogo class="h-full w-auto" /></span>
+      <span class="text-foreground text-[15.5px] font-bold leading-none tracking-[-0.01em]"><span class="font-mono">rex</span>-harness</span>
+    </a>
+  </span>
+  <nav class="hidden items-center lg:flex" aria-label="Primary navigation">
+    <ul class="flex items-center gap-0.5">
+      <li class="group/nav-item flex items-center">
+        <a class="whitespace-nowrap rounded-md" href={docsPath(lang, 'getting-started')}>
+          <span class="inline-flex items-center rounded-[7px] px-3 py-[7px] text-[13.5px] leading-none transition-colors duration-200 group-hover/nav-item:bg-foreground/[0.06]">
+            <span class="wrap-break-word whitespace-normal text-balance">{t(lang, 'nav.docs')}</span>
+          </span>
+        </a>
+      </li>
+      <li class="group/nav-item flex items-center">
+        <a class="whitespace-nowrap rounded-md" href={docsPath(lang, 'providers')}>
+          <span class="inline-flex items-center rounded-[7px] px-3 py-[7px] text-[13.5px] leading-none transition-colors duration-200 group-hover/nav-item:bg-foreground/[0.06]">
+            <span class="wrap-break-word whitespace-normal text-balance">{lang === 'zh' ? 'Provider 目录' : 'Providers'}</span>
+          </span>
+        </a>
+      </li>
+      <li class="group/nav-item flex items-center">
+        <a class="whitespace-nowrap rounded-md" href={REPO}>
+          <span class="inline-flex items-center rounded-[7px] px-3 py-[7px] text-[13.5px] leading-none transition-colors duration-200 group-hover/nav-item:bg-foreground/[0.06]">
+            <span class="wrap-break-word whitespace-normal text-balance">GitHub</span>
+          </span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+  <nav class="ml-auto hidden items-center lg:flex" aria-label="User navigation">
+    <ul class="flex items-center gap-[18px]">
+      <li class="flex items-center">
+        <span class="inline-flex items-center rounded-[6px] text-[13px] leading-none" role="group" aria-label={t(lang, 'lang.label')}>
+          <a class={'transition-colors ' + (lang === 'en' ? 'text-foreground font-semibold' : 'text-[color:var(--ah-fg-muted)] hover:text-foreground')} href={switchPath(here, 'en')} lang="en">EN</a>
+          <span class="text-[color:var(--ah-fg-faint)] px-1" aria-hidden="true">/</span>
+          <a class={'transition-colors ' + (lang === 'zh' ? 'text-foreground font-semibold' : 'text-[color:var(--ah-fg-muted)] hover:text-foreground')} href={switchPath(here, 'zh')} lang="zh">中文</a>
+        </span>
+      </li>
+      <li class="flex items-center">
+        <a class="text-[color:var(--ah-fg-muted)] hover:text-foreground inline-flex items-center rounded-[6px] text-[13px] leading-none transition-colors focus-visible:outline-none" href="https://www.npmjs.com/package/@rexleimo/rex-harness">npm</a>
+      </li>
+      <li class="flex items-center">
+        <a class="text-[color:var(--ah-fg-muted)] hover:text-foreground inline-flex items-center rounded-[6px] text-[13px] leading-none transition-colors focus-visible:outline-none" href={`${homePath(lang)}#skill-actions`}>{t(lang, 'nav.changelog')}</a>
+      </li>
+      <li class="flex items-center">
+        <a class="bg-accent-fill text-accent-fill-foreground hover:bg-accent-fill-hover inline-flex min-w-[152px] items-center justify-center rounded-[8px] px-3.5 py-2 text-[13px] font-bold transition-colors" href={`${homePath(lang)}#install`}>{t(lang, 'nav.install')}</a>
+      </li>
+    </ul>
+  </nav>
+  <div class="ml-auto flex items-center gap-0.5 lg:hidden">
+    <a class="text-foreground opacity-70 hover:bg-foreground/[0.06] hover:opacity-100 focus-visible:ring-ring flex size-9 items-center justify-center rounded-[7px] text-[12px] font-semibold" href={switchPath(here, lang === 'zh' ? 'en' : 'zh')} aria-label={t(lang, 'lang.label')}>{lang === 'zh' ? 'EN' : '中'}</a>
+    <a class="text-foreground opacity-70 hover:bg-foreground/[0.06] hover:opacity-100 focus-visible:ring-ring flex size-9 items-center justify-center rounded-[7px]" href={REPO} aria-label="GitHub"><Icon name="github" class="size-5" /></a>
+    <a class="text-foreground opacity-70 hover:bg-foreground/[0.06] hover:opacity-100 focus-visible:ring-ring flex size-9 items-center justify-center rounded-[7px]" href={docsPath(lang, 'getting-started')} aria-label={t(lang, 'nav.docs')}><Icon name="book" class="size-5" /></a>
+    <a class="text-foreground opacity-70 hover:bg-foreground/[0.06] hover:opacity-100 focus-visible:ring-ring flex size-9 items-center justify-center rounded-[7px]" href={`${homePath(lang)}#install`} aria-label="Install"><Icon name="terminal" class="size-5" /></a>
+  </div>
+</header>
