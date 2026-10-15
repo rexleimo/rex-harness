@@ -2,6 +2,12 @@
 
 本文件记录 `rex-harness` 独立产品的公开变化。版本遵循 Semantic Versioning。
 
+## [0.10.1] - 2026-10-15
+
+### Added
+
+- **双语文档站**：`website/` 新增 Astro + Tailwind v4 文档站（en/zh 双语），自定义域名 `harness.rexai.top`。纯产品文档面：`src/` 与 v0.10.0 逐字节相同，无 API、契约或行为变化，故为 patch 版本。
+
 ## [0.10.0] - 2026-10-14
 
 ### Added
