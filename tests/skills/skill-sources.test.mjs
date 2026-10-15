@@ -5,7 +5,7 @@ import test from 'node:test';
 import { fileURLToPath } from 'node:url';
 
 import { rexNativeProviderBindings } from '../../src/providers/catalog.mjs';
-import { sharedReferenceSkillIds } from '../../src/clients/install.mjs';
+import { orchestrationSkillIds, sharedReferenceSkillIds } from '../../src/clients/install.mjs';
 
 const REX_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const SKILL_SOURCES_ROOT = path.join(REX_ROOT, 'skill-sources');
@@ -21,7 +21,7 @@ test('canonical skills are discoverable and keep activation logic out of prompts
 
   assert.deepEqual(
     skillDirectories.map((entry) => entry.name).sort(),
-    [...expectedSkills, 'rex-workflow', ...sharedReferenceSkillIds].sort(),
+    [...expectedSkills, 'rex-workflow', ...sharedReferenceSkillIds, ...orchestrationSkillIds].sort(),
   );
   for (const entry of skillDirectories.filter((candidate) => expectedSkills.includes(candidate.name))) {
     const file = path.join(root, entry.name, 'SKILL.md');
@@ -122,6 +122,116 @@ test('rex-workflow is a CLI-first orchestration skill with bounded context', asy
     assert.ok(item.expected_output.length > 20);
     assert.ok(item.assertions.length >= 3);
     assert.ok(item.pressures.length >= 3);
+    assert.deepEqual(item.files, []);
+  }
+});
+
+test('rex-implement-spec is a standalone-facing orchestration skill outside the capability chain', async () => {
+  const root = path.join(SKILL_SOURCES_ROOT, 'rex-implement-spec');
+  const content = (await readFile(path.join(root, 'SKILL.md'), 'utf8')).replace(/\r\n/g, '\n');
+
+  assert.match(content, /^---\nname: rex-implement-spec\ndescription: .+\n---\n/u);
+  // Not a Provider: no Capability Command can select it, so it must not carry
+  // the Provider activation clause.
+  assert.doesNotMatch(content, /Use only after rex-harness selects/u);
+  // It orchestrates on top of the CLI evidence chain, not around it.
+  assert.match(content, /rex-harness start/u);
+  assert.match(content, /当前 Command/u);
+  assert.match(content, /expectedEvidence/u);
+  assert.match(content, /fail-closed/u);
+  assert.match(content, /集成分支/u);
+  assert.match(content, /worktree/u);
+  assert.match(content, /上下文指针/u);
+  // It orchestrates frontier dispatch but must not invent per-ticket work-item
+  // semantics or bypass the Command authority.
+  assert.match(content, /一个 spec 对应一个工作项/u);
+  assert.doesNotMatch(content, /aios work|aios harness|\.aios\/|ContextDB|skill-workshop/iu);
+
+  const evalSuite = JSON.parse(await readFile(path.join(root, 'evals', 'evals.json'), 'utf8'));
+  assert.equal(evalSuite.skill_name, 'rex-implement-spec');
+  assert.equal(evalSuite.schema_version, 2);
+  assert.equal(evalSuite.evals.length, 3);
+  assert.equal(evalSuite.evals.filter((item) => item.split === 'train').length, 2);
+  assert.equal(evalSuite.evals.filter((item) => item.split === 'validation').length, 1);
+  assert.equal(new Set(evalSuite.evals.map((item) => item.id)).size, evalSuite.evals.length);
+  for (const item of evalSuite.evals) {
+    assert.ok(item.prompt.length > 20);
+    assert.ok(item.expected_output.length > 20);
+    assert.ok(item.assertions.length >= 3);
+    assert.ok(item.pressures.length >= 2);
+    assert.deepEqual(item.files, []);
+  }
+});
+
+test('rex-pr is a standalone-facing closeout orchestration skill outside the capability chain', async () => {
+  const root = path.join(SKILL_SOURCES_ROOT, 'rex-pr');
+  const content = (await readFile(path.join(root, 'SKILL.md'), 'utf8')).replace(/\r\n/g, '\n');
+
+  assert.match(content, /^---\nname: rex-pr\ndescription: .+\n---\n/u);
+  // Not a Provider: no Capability Command can select it, so it must not carry
+  // the Provider activation clause.
+  assert.doesNotMatch(content, /Use only after rex-harness selects/u);
+  // Closeout only: PR requires the completed compact-response state and real evidence.
+  assert.match(content, /completed/u);
+  assert.match(content, /missingEvidence/u);
+  assert.match(content, /fail-closed/u);
+  assert.match(content, /最小可视/u);
+  assert.match(content, /before\/after 验证证据/u);
+  assert.match(content, /merge danger/u);
+  assert.match(content, /one-way|two-way/u);
+  // Real command output replaces checkbox claims; completion stays with the CLI.
+  assert.match(content, /真实命令输出/u);
+  assert.match(content, /完成判据仍是 CLI/u);
+  assert.doesNotMatch(content, /aios work|aios harness|\.aios\/|ContextDB|skill-workshop/iu);
+
+  const evalSuite = JSON.parse(await readFile(path.join(root, 'evals', 'evals.json'), 'utf8'));
+  assert.equal(evalSuite.skill_name, 'rex-pr');
+  assert.equal(evalSuite.schema_version, 2);
+  assert.equal(evalSuite.evals.length, 3);
+  assert.equal(evalSuite.evals.filter((item) => item.split === 'train').length, 2);
+  assert.equal(evalSuite.evals.filter((item) => item.split === 'validation').length, 1);
+  assert.equal(new Set(evalSuite.evals.map((item) => item.id)).size, evalSuite.evals.length);
+  for (const item of evalSuite.evals) {
+    assert.ok(item.prompt.length > 20);
+    assert.ok(item.expected_output.length > 20);
+    assert.ok(item.assertions.length >= 3);
+    assert.ok(item.pressures.length >= 2);
+    assert.deepEqual(item.files, []);
+  }
+});
+
+test('rex-retro is a standalone-facing proposals-only retrospective outside the capability chain', async () => {
+  const root = path.join(SKILL_SOURCES_ROOT, 'rex-retro');
+  const content = (await readFile(path.join(root, 'SKILL.md'), 'utf8')).replace(/\r\n/g, '\n');
+
+  assert.match(content, /^---\nname: rex-retro\ndescription: .+\n---\n/u);
+  // Not a Provider: no Capability Command can select it, so it must not carry
+  // the Provider activation clause.
+  assert.doesNotMatch(content, /Use only after rex-harness selects/u);
+  // Proposals only: no second write path, landing goes through existing loops.
+  assert.match(content, /只提案，不改文件/u);
+  assert.match(content, /不写任何文件/u);
+  assert.match(content, /受控流程/u);
+  // Evidence discipline: per-category accounting and mandatory source references.
+  assert.match(content, /源引用/u);
+  assert.match(content, /未见/u);
+  assert.match(content, /机械违规/u);
+  assert.match(content, /确定性检查/u);
+  // Standalone-facing: must not depend on host-framework machinery.
+  assert.doesNotMatch(content, /aios work|aios harness|\.aios\/|ContextDB|skill-workshop/iu);
+
+  const evalSuite = JSON.parse(await readFile(path.join(root, 'evals', 'evals.json'), 'utf8'));
+  assert.equal(evalSuite.skill_name, 'rex-retro');
+  assert.equal(evalSuite.schema_version, 2);
+  assert.equal(evalSuite.evals.length, 3);
+  assert.equal(evalSuite.evals.filter((item) => item.split === 'train').length, 2);
+  assert.equal(evalSuite.evals.filter((item) => item.split === 'validation').length, 1);
+  assert.equal(new Set(evalSuite.evals.map((item) => item.id)).size, evalSuite.evals.length);
+  for (const item of evalSuite.evals) {
+    assert.ok(item.prompt.length > 20);
+    assert.ok(item.expected_output.length > 20);
+    assert.ok(item.assertions.length >= 3);
+    assert.ok(item.pressures.length >= 2);
     assert.deepEqual(item.files, []);
   }
 });

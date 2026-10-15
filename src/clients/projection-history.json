@@ -28,6 +28,9 @@
       "sha256:b52d6ee1e92a838ea8b78faed3ca8f9c2c644ca0d6f928dba2ce6927d99dc4aa",
       "sha256:86174bd52a54de8b350a3119dbc58c3f80652ce1b7ec434491eba559cfc476e7"
     ],
+    "rex-implement-spec": [
+      "sha256:92eafb69d2f96b47fa11e14be3bd6319b631493ae5c2d7da9c9bc240946945b8"
+    ],
     "rex-minimal-construction": [
       "sha256:36ebb33a47e56d01747398d3a9b69f0e9ce0f5b47a8509469ff060383ba89933",
       "sha256:5a337762d134f02395719f7b20c69d3ff5c5339e05fdbaf97bc0d62bfebb6ab2"
@@ -36,6 +39,9 @@
       "sha256:6f02097f6555647876a947eaf86f509bd7baffc9691642b1b72aa8508ab96c2c",
       "sha256:5af5cfab96a771602c3f9336677680b210fd89da5ddf94467316f27e747382af",
       "sha256:425ea01fee0bf943d43fc4894456535c4588c0bcb6bcc7eedbc9868461f8c35f"
+    ],
+    "rex-pr": [
+      "sha256:3a06dd220d3b9a50f7d8d9d2d57d841aff2d1b7da09c20afdbb2de6ce3560437"
     ],
     "rex-refactor-hardening": [
       "sha256:97e07ee9fdc2ff426c54ba68a25a9940a0318b7d1d69468f772b33450eecaf73",
@@ -51,6 +57,9 @@
       "sha256:75458ab14c6e1d198b9578594ad1df360ca11e40679dd7391baffa0ab47cf65e",
       "sha256:b27f47f2fbe300130dee78c17b2cbcaa9dbc1ee782938665460316f923d80029",
       "sha256:afbc23918b8e1145854dd545abdae16511ff017c9c6022304439b366ad954431"
+    ],
+    "rex-retro": [
+      "sha256:ff8580fdec78e57eaa32f2564165dcaa33bee62c17ca89764c7b06cc87ee65d9"
     ],
     "rex-strict-tdd": [
       "sha256:0a85259c308dbbd4b9f9bbd76b1eff5386fd4ced89dcf181623b73ba6a2010d2",

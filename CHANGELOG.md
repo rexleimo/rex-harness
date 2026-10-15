@@ -2,6 +2,15 @@
 
 本文件记录 `rex-harness` 独立产品的公开变化。版本遵循 Semantic Versioning。
 
+## [0.11.0] - 2026-10-15
+
+### Added
+
+- **新编排 skill `rex-implement-spec`**：面向独立安装用户的「整份 spec 端到端实现」编排入口——用户给出含验收标准与工单图的 spec 时，在 rex-harness CLI 证据链之上安排前沿派发（client 原生子代理 + 每工单 git worktree + 集成分支）与 rex-code-review 收口。它不是 Provider、不被 Capability Command 选择、不发明 per-ticket work-item 语义（一个 spec 对应一个工作项），与 `rex-workflow` 同属编排面。附带 3 条 evals（2 train + 1 validation，schema 2），覆盖三类压力：用户要求跳过规划全并行、子代理自我报告完成、收口时部分完成冒充交付。
+- **新编排 skill `rex-pr`**：工作流收口后的 PR 编排入口——前提是 compact response 已 `completed`（`command=null`、`missingEvidence=[]`），未到 completed 就 fail-closed 报缺口；正文三节（最小可视摘要、before/after 真实命令输出——禁止勾选框自证声明、merge danger 的 one-way/two-way door 与爆炸半径判定）；PR 创建走客户端原生 git/gh，不引入新外部服务。完成判据仍是 CLI completion criteria，不是 PR 本身。附带 3 条 evals：未完成催开 PR、声明替代输出、merge danger 走过场。
+- **新编排 skill `rex-retro`**：独立用户面的会话复盘——复盘一次会话只找「该改环境而不是改代码」的候选（导航指针、确定性检查、编码标准、AGENTS.md 增删、工具经济性、无效指令、信息可达性七类），framework-free：不依赖 ContextDB / skill-workshop / `.aios/`，取证靠对话记录 + git + 仓库记录文件。铁律是只提案不改文件，落地走仓库自己的既有受控流程，不新开第二条写入路径；每条候选必须带源引用，七类逐类交代「未见」。与父仓库 AIOS 绑定版 `retro` 双面并存（同 grill ↔ rex-requirements 先例）。附带 3 条 evals：顺手落地施压、无引用候选、机械违规降级成检查。
+- `install.mjs` 新增导出 `orchestrationSkillIds`（`rex-implement-spec`、`rex-pr`、`rex-retro`）并接入 `skillIds()`；`skillIds()` 改为导出，`scripts/refresh-projection-history.mjs` 与投影契约测试改为复用它，消除 id 清单的第三份拷贝。`projection-history.json` 登记三个 canonical digest。发布时 standalone 安装面将多投影三个 skill（现 14 → 17）。
+
 ## [0.10.1] - 2026-10-15
 
 ### Added

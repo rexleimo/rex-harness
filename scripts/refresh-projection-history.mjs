@@ -2,17 +2,13 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { projectionPayloadDigest } from '../src/clients/projection-manifest.mjs';
-import { rexNativeProviderBindings } from '../src/providers/catalog.mjs';
-import { rexWorkflowSkill, sharedReferenceSkillIds } from '../src/clients/install.mjs';
+import { skillIds } from '../src/clients/install.mjs';
 
 const packageRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const historyPath = path.join(packageRoot, 'src', 'clients', 'projection-history.json');
 const history = JSON.parse(fs.readFileSync(historyPath, 'utf8'));
 
-const providerSkills = rexNativeProviderBindings
-  .filter((binding) => binding.provider.kind === 'skill')
-  .map((binding) => binding.provider.id);
-const ids = [rexWorkflowSkill.id, ...providerSkills, ...sharedReferenceSkillIds];
+const ids = skillIds();
 
 let changed = 0;
 for (const id of ids) {

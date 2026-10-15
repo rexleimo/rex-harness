@@ -17,20 +17,19 @@ import path from 'node:path';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
 
-import { installClientProjection, supportedClients } from '../../src/clients/install.mjs';
+import { installClientProjection, orchestrationSkillIds, sharedReferenceSkillIds, supportedClients } from '../../src/clients/install.mjs';
 import {
   PROJECTION_MARKER_FILE,
   projectionPayloadDigest,
 } from '../../src/clients/projection-manifest.mjs';
 import { rexNativeProviderBindings } from '../../src/providers/catalog.mjs';
-import { sharedReferenceSkillIds } from '../../src/clients/install.mjs';
 
 const REX_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 
 const expectedSkills = rexNativeProviderBindings
   .filter((binding) => binding.provider.kind === 'skill')
   .map((binding) => binding.provider.id)
-  .concat('rex-workflow', ...sharedReferenceSkillIds)
+  .concat('rex-workflow', ...sharedReferenceSkillIds, ...orchestrationSkillIds)
   .sort();
 
 const CLIENT_ROOTS = {

@@ -46,11 +46,18 @@ export const rexWorkflowSkill = Object.freeze({
  */
 export const sharedReferenceSkillIds = Object.freeze(['rex-engineering-standards']);
 
-function skillIds() {
+/**
+ * Orchestration skills are not Providers and are never selected by a Capability
+ * Command. Like rex-workflow they are standalone-install-facing entry points:
+ * they direct the agent's own execution loop on top of the CLI evidence chain.
+ */
+export const orchestrationSkillIds = Object.freeze(['rex-implement-spec', 'rex-pr', 'rex-retro']);
+
+export function skillIds() {
   const providerSkills = rexNativeProviderBindings
     .filter((binding) => binding.provider.kind === 'skill')
     .map((binding) => binding.provider.id);
-  return [rexWorkflowSkill.id, ...providerSkills, ...sharedReferenceSkillIds];
+  return [rexWorkflowSkill.id, ...providerSkills, ...sharedReferenceSkillIds, ...orchestrationSkillIds];
 }
 
 function lstatOrNull(filePath) {
