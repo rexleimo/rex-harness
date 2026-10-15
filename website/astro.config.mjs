@@ -2,10 +2,10 @@ import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import sitemap from '@astrojs/sitemap';
 
-// GitHub Pages project site: https://rexleimo.github.io/rex-harness/
+// GitHub Pages project site with custom domain (Pages serves custom domains at root):
+// https://harness.rexai.top/  (github.io/rex-harness 301-redirects here)
 export default defineConfig({
-  site: 'https://rexleimo.github.io',
-  base: '/rex-harness',
+  site: 'https://harness.rexai.top',
   trailingSlash: 'ignore',
   output: 'static',
   i18n: {
