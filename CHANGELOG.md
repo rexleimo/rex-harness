@@ -2,6 +2,12 @@
 
 本文件记录 `rex-harness` 独立产品的公开变化。版本遵循 Semantic Versioning。
 
+## [Unreleased]
+
+### Fixed
+
+- `rex-pr` 第 1 步只写了裸 `rex-harness <cmd>`，把「入口名不对」和「未安装」两件不同的事混成一件：宿主托管时故意不把 `rex-harness` 装进全局 PATH，因此照技能执行会得到 `command not found`，并被误报成「无 rex 运行时 / 无工作项」——一个合法的收口因此被假阴性拦住。现在技能同时声明两种被支持形态（独立安装 `rex-harness <cmd>` / 宿主托管入口），要求先换入口重试、再用 `doctor` 判运行时存在性，并把停机原因分为三类：入口名错 / 运行时不存在 / Evidence 未收口。同时修正 `--root` 语义：状态命令传工程根（`.rex-harness/` 所在），`doctor` 传 rex 包根——把工程根喂给 `doctor` 会为 14 个 Provider 刷出 `missing Provider instructions` 与 `status: invalid`，那是参数用错，不是安装坏了。`projection-history.json` 登记 rex-pr 新的 payload digest；`rex-workflow` 等其余 skill 仍只写裸 `rex-harness <cmd>`，同类风险未普查。
+
 ## [0.11.0] - 2026-10-15
 
 ### Added
