@@ -2,7 +2,7 @@
 
 本文件记录 `rex-harness` 独立产品的公开变化。版本遵循 Semantic Versioning。
 
-## [Unreleased]
+## [0.11.1] - 2026-10-17
 
 ### Fixed
 
