@@ -9,7 +9,7 @@ description: Use when a rex-harness work item has completed and the user asks yo
 
 ## 定位与前提
 
-- 前提是工作流已完成：`rex-harness resume`（或 `status`）返回 `status=completed`、`command=null`、`missingEvidence=[]`。未到 completed 就不开 PR——fail-closed，向用户报告还差哪些 Evidence，而不是先开 PR 后补证据。
+- 前提是工作流已完成：通过当前环境的 rex 入口执行 `resume`（或 `status`）返回 `status=completed`、`command=null`、`missingEvidence=[]`。未到 completed 就不开 PR——fail-closed，向用户报告还差哪些 Evidence，而不是先开 PR 后补证据。
 - 完成判据仍是 CLI 的 completion criteria，不是 PR 本身；开了 PR 不等于工作项多完成了一次。
 - 不改写 Evidence 记录，不伪造任何命令输出；PR 里引用的每条证据都必须来自真实执行。
 
@@ -21,13 +21,26 @@ description: Use when a rex-harness work item has completed and the user asks yo
 
 ## 执行步骤
 
-1. 确认状态：
+1. 确认状态：先分清「入口对不对」和「工作项收没收口」——两者失败的意义不同。
+
+   rex 有两种被支持的调用形态，命令名不同：
+
+   - **独立安装**：`rex-harness <cmd>`（包已安装、bin 在 PATH）；
+   - **宿主托管**：`aios rex <cmd>`（宿主直接执行内置副本，**故意不装全局 PATH**）。
 
 ```bash
-rex-harness resume --work-item <key> --root <project-root>
+   # 独立安装
+   rex-harness resume --work-item <key> --root <project-root>
+
+   # 宿主托管
+   aios rex resume --work-item <key> --root <project-root>
 ```
 
-返回 `completed` 才继续；否则停在第 1 步。
+   `command not found` 只说明当前形态的入口名不对，**不构成「rex-harness 未安装」的结论**；先换入口重试，再用 `doctor` 判运行时存在性。只有 `doctor` 报错或内置副本不存在才算未安装，这时如实报告「本环境无 rex 运行时」，不要把它写成工作项没完成。
+
+   `--root` 传的是**工程根**（`.rex-harness/` 状态目录所在处）。`doctor` 是唯一例外：它按 `--root` 找 Provider 的 `skill-sources/`，所以它的 `--root` 要传 **rex 包根**（仓库里的 `rex-harness/`，或宿主内置副本里的 `rex-harness/`）。把工程根喂给 `doctor` 会刷出一堆 `missing Provider instructions` 和 `status: invalid`——那是**参数用错**，不是安装坏了。
+
+   返回 `completed` 才继续；否则停在第 1 步，并写明停的是哪一类：入口名错（换入口重试）/ 运行时不存在（报告未安装）/ Evidence 未收口（报告还差哪些）。
 
 2. 汇集素材：从 `.rex-harness/` 的该工作项记录读取 Evidence 引用、completion criteria、涉及的变更范围；再从 git 读取实际 diff（分支名、相对基线的提交列表）。素材与 Evidence 对不上时如实报告，不自行脑补。
 
