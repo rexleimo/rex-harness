@@ -6,6 +6,9 @@ import {
 } from '../domain/execution-receipts.mjs';
 
 const PLACEHOLDER_REF = /artifact-or-command-ref|placeholder|真实存在|todo|tbd/iu;
+// 中文注释：`git:` 命名空间只收对象 id。写成 `git:main-head` 这种“位图描述”不是证据，
+// 只是换了个前缀的占位符。存在性证明需要跨仓库/子模块 odb 的边界决定，已列为非目标。
+const GIT_OBJECT_REF = /^git:[0-9a-f]{7,40}$/iu;
 const NONZERO_RECEIPT_EVIDENCE = new Set([
   'failing-test-observed',
 ]);
@@ -24,24 +27,30 @@ function requiredReceiptExitCode(kind) {
 }
 
 function validateExecutionReceipts(item, resolveReceipt, expectedScenarioCommand) {
-  const expectedExit = requiredReceiptExitCode(item.kind);
-  if (!expectedExit) return;
-  if (typeof resolveReceipt !== 'function') {
-    throw new Error(`evidence ${item.kind} requires an execution receipt resolver`);
-  }
-
   const receiptRefs = item.refs.filter((ref) => ref.startsWith('receipt:'));
   if (receiptRefs.length === 0) {
-    throw new Error(`evidence ${item.kind} requires at least one receipt: reference`);
+    // 中文注释：凭证存在性不按 kind 分等级——但 artifact:/doc:/git: 这些非凭证命名空间照旧不强塞进
+    // receipt store，否则一份需求文档也得伪装成执行回执才能入账。
+    requireExpectedReceipt(item);
+    return;
   }
-
-  const matchingReceipt = receiptRefs.some((ref) => {
+  if (typeof resolveReceipt !== 'function') {
+    throw new Error(`evidence ${item.kind} references a receipt but no execution receipt resolver is available`);
+  }
+  for (const ref of receiptRefs) {
     const resolved = resolveReceipt(ref);
     if (!resolved) throw new Error(`evidence ${item.kind} references an unknown execution receipt: ${ref}`);
     const receipt = normalizeExecutionReceipt(resolved);
     if (executionReceiptRef(receipt) !== ref) {
       throw new Error(`execution receipt resolver returned a mismatched receipt for ${ref}`);
     }
+  }
+
+  const expectedExit = requiredReceiptExitCode(item.kind);
+  if (!expectedExit) return;
+
+  const matchingReceipt = receiptRefs.some((ref) => {
+    const receipt = normalizeExecutionReceipt(resolveReceipt(ref));
     if (expectedScenarioCommand) {
       assertExecutionReceiptMatchesCommand(receipt, expectedScenarioCommand);
     }
@@ -51,6 +60,12 @@ function validateExecutionReceipts(item, resolveReceipt, expectedScenarioCommand
   if (!matchingReceipt) {
     const expectation = expectedExit === 'zero' ? 'a zero exit code' : 'a non-zero exit code';
     throw new Error(`evidence ${item.kind} requires an execution receipt with ${expectation}`);
+  }
+}
+
+function requireExpectedReceipt(item) {
+  if (requiredReceiptExitCode(item.kind)) {
+    throw new Error(`evidence ${item.kind} requires at least one receipt: reference`);
   }
 }
 
@@ -85,6 +100,9 @@ export function validateCommandEvidence(command, evidence = [], {
     if (item.refs.length > 32) throw new TypeError(`evidence ${item.kind} exceeds 32 refs`);
     for (const ref of item.refs) {
       if (PLACEHOLDER_REF.test(ref) || !/^[a-z][a-z0-9+.-]*:.+/iu.test(ref)) {
+        throw new Error(`evidence ${item.kind} contains an invalid or placeholder ref: ${ref}`);
+      }
+      if (ref.startsWith('git:') && !GIT_OBJECT_REF.test(ref)) {
         throw new Error(`evidence ${item.kind} contains an invalid or placeholder ref: ${ref}`);
       }
     }
