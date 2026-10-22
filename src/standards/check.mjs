@@ -56,11 +56,14 @@ export function loadProjectConfig({
   readImpl = (file) => fs.readFileSync(file, 'utf8'),
 } = {}) {
   let raw;
+  let found = true;
   try {
     raw = readImpl(path.join(rootDir, configRelativePath));
   } catch {
-    // 中文注释：没有项目配置就按清单默认跑。这不是赦免——处置照旧逐条执行，只是没有覆盖项。
+    // 中文注释：没有项目配置就按清单默认跟，但要把"这个仓库还没配置过"这件事告诉调用方：
+    // 首次运行把存量仓库刷成一片红不是门禁，是噪声（所以未配置时只报不拦）。
     raw = '{}';
+    found = false;
   }
   let parsed;
   try {
@@ -68,7 +71,9 @@ export function loadProjectConfig({
   } catch (error) {
     return { ok: false, errors: [{ code: 'invalid-budget', path: configRelativePath, message: error.message }] };
   }
-  return resolveStandardConfig(parsed);
+  const resolved = resolveStandardConfig(parsed);
+  // 中文注释：configFound 跟解析结果一起返：调用方拿到的是"有没有配置 + 配置对不对"两个独立事实。
+  return resolved.ok === true ? { ...resolved, configFound: found } : { ...resolved, configFound: found };
 }
 
 const CONTENT_RULES = new Set(['fileLines', 'duplicateLines']);
@@ -94,6 +99,8 @@ function missingRequirements({ rule, layers, edges }) {
     })
     .filter(Boolean);
 }
+
+export const FREEZE_HINT = 'run `rex-harness standards check --freeze` to freeze this stock as baselines and gate future growth';
 
 function measureForRule({ rule, files, rootDir, extensions, readImpl, layers, edges }) {
   if (rule === 'reverseDependencies') {
@@ -134,6 +141,8 @@ export async function runStandards({
   gitImpl,
   readImpl = (file) => fs.readFileSync(file, 'utf8'),
   extensions = DEFAULT_SOURCE_EXTENSIONS,
+  configFound = true,
+  strict = false,
   layers,
   edges = null,
 } = {}) {
@@ -207,11 +216,14 @@ export async function runStandards({
       exemptions: resolved.exemptions,
       baselines: resolved.baselines,
     });
+    // 中文注释：项目还没写过 config/standards.json 时，红灯只报不判——你没配置过的门不该弄挂你的构建。
+    // 写配置（或 --freeze）才是显式接受门禁；--strict 把旧行为留给想先看真相的人。
     const code = report.blocking > 0 ? 1 : 0;
-    exitCode = Math.max(exitCode, code);
-    results.push({ rule: id, status: code ? 'fail' : 'ok', report, exitCode: code });
+    const stock = code === 1 && !strict && !configFound;
+    exitCode = Math.max(exitCode, stock ? 0 : code);
+    results.push({ rule: id, status: stock ? 'stock' : (code ? 'fail' : 'ok'), report, exitCode: stock ? 0 : code });
     emit(io, json, {
-      root: rootDir, rule: id, status: code ? 'fail' : 'ok', reason: null,
+      root: rootDir, rule: id, status: stock ? 'stock' : (code ? 'fail' : 'ok'), reason: null,
       budget: report.budget, measured: report.measured, blocking: report.blocking,
       violations: report.violations, exempt: report.exempt,
     }, report);
@@ -219,9 +231,34 @@ export async function runStandards({
   return { exitCode, results };
 }
 
+/**
+ * 存量债务快照：给 `--freeze` 用，只收 blocking 项的路径与计数。
+ * 中文注释：走同一条 runStandards（strict + 假装无配置）而不是另写一遍度量流程——
+ * “冻下来的存量”和“检查报出的违规”必须同一口径，否则第二天又红一批。
+ */
+export async function collectStockDebt({ rootDir, rule = 'all', gitImpl, readImpl, extensions } = {}) {
+  const { results } = await runStandards({
+    rootDir, rule, io: { log() {} }, gitImpl, readImpl, extensions, configFound: false, strict: true,
+  });
+  const rules = {};
+  for (const item of results) {
+    if (item.status !== 'fail' || !item.report) continue;
+    rules[item.rule] = item.report.violations.map((violation) => ({ path: violation.path, count: violation.count }));
+  }
+  return { rules, totals: Object.fromEntries(Object.entries(rules).map(([key, value]) => [key, value.length])) };
+}
+
 function emit(io, json, record, report) {
   if (json) {
     io.log(JSON.stringify(record));
+    return;
+  }
+  if (record.status === 'stock') {
+    io.log('[standards] STOCK ' + record.rule + ': ' + record.blocking + ' over budget ' + record.budget
+      + ' (reported, not gated: this repository has no config/standards.json)');
+    for (const violation of record.violations.slice(0, 20)) io.log('[standards] STOCK ' + record.rule + ' ' + violation.detail); // 最多打 20 行：满屏堆在终端里不会让人修，只会让人关掉它
+    if (record.violations.length > 20) io.log('[standards] ... ' + (record.violations.length - 20) + ' more; use --json for the full list');
+    io.log('[standards] hint: ' + FREEZE_HINT);
     return;
   }
   if (record.status === 'skip' || record.status === 'measure-error') {

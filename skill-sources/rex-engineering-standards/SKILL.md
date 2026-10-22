@@ -80,6 +80,24 @@ description: "Shared engineering quality baseline for all code-producing work in
   或一段"放这里也行放哪都行"的代码——都是拆分点。
 - **禁止无语义拆分**：不把一个大文件拆成 `a_v2`、`a_final`、`a_utils` 这类
   名字；拆出来的每个文件必须能独立说出自己的职责。
+- 行数的**单一事实源是 `config/standards.json` 的 `budgets`（缺省取子模块规则清单），
+  不是本文里的任何一个数字**。本文只说默认量级；真正判定由 `aios standards check` 执行。
+
+### 4.1 量化门：`standards check` 的四种处置
+
+语义：目录项数、单文件行数、重复行、依赖方向这些可数的事实，走同一个处置模型——
+`pass` / `exempt`（必须写理由）/ `baseline`（存量，只许收缩）/ `violation`（新增越界）。
+
+- **首次运行不拦你**：仓库里没有 `config/standards.json` 时，命令只报告（`STOCK` 前缀，
+  每规则最多 20 行，全量走 `--json`）并以 0 退出。道理：**你没配置过的门不该弄挂你的构建。**
+- `standards check --freeze` 把**当前**存量写进 `baselines` 并报出数量；从这一刻起该仓库进入门禁，
+  同一实体再多一项就红。冻结不是救免，是把「存量」与「新增」分开处置的声明。
+- `--strict` 保留严格旧行为（未配置也红），用来「先看真相」。
+- 近似与局限（写死在规则清单里，不是口头谦称）：重复行是**连续 6 行归一化文本**的窗口近似，
+  改名就看不见、6 行以下的相似不算、单文件自重复不算；依赖方向只拦**内层指向外层**，
+  且分层必须由 `layers` 段声明——引擎不从目录名猜分层，没声明就没得判（SKIP + 原因）。
+- 出口只有一个：`rex-harness standards check`（宿主侧 `aios standards` 是转发）。任何宿主
+  自己再写一份同名判定就是「一条规则两个 owner」，属于缺陷不是便利。
 
 ## 5. 测试基线
 

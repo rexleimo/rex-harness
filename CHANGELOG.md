@@ -2,11 +2,28 @@
 
 本文件记录 `rex-harness` 独立产品的公开变化。版本遵循 Semantic Versioning。
 
-## [Unreleased]
+## [0.12.0] - 2026-10-22
 
-### Unreleased standards work (not tagged yet)
+### Added
 
-- Portable budget engine, quantitative rule manifest, project standards config, and the `standards check` command with its exit-code contract. Landed on the feature branch in 1595b92; no version or tag yet, and this block is not a release entry.
+- **可移植工程标准引擎与 `standards check` 命令**（公开产品面）：目录项数、单文件行数、重复行、依赖方向四条量化规则共用同一个处置模型 —— `pass` / `exempt`（必须写理由）/ `baseline`（存量，只许收缩）/ `violation`。预算、豁免、存量、分层都来自项目自己的 `config/standards.json`；引擎不接受也不返回任何根目录参数，`--root` 由调用方决定。
+- **每条规则的默认预算只有一个 owner**：清单在 `src/domain/quantitative-rules.mjs`，项目只能覆盖。宿主侧曾各自持有的私有数字（目录 8、文件 400）已迁进引擎，本包内保留回归断言，防止“同一条规则两个 owner”。
+- **分层声明与依赖方向判定**：`layers` 段（`order` 外层→内层 + `prefixes` 前缀→层名）是项目自己声明的事实，引擎只把**内层指向外层**的边判红；未声明分层或缺模块图一律 SKIP 并说明缺什么，绝不产出猜测式违规。配置错误码扩到闭集五个（新增 `invalid-layer`：改声明与改预算、改存量、补理由是四种不同的处置动作）。
+- **重复行度量（近似等级，第一期）**：连续 6 行归一化文本相同的窗口，预算 0（零容忍是合法声明）。局限写进清单与测试：改名就看不见、窗口以下的相似不算、单文件自重复不算。
+- **模块图自给**：`standards check --write-edges` 从本仓库 tracked 源码生成 `.aios/standards/module-edges.json`（正则近似，非 AST）。第三方安装面因此不需要任何宿主替它递数据。
+- **`--freeze` / `--strict`**：`--freeze` 把当前存量写进 `baselines` 并报告数量，从此该仓库进入门禁；`--strict` 保留“未配置也拦”的旧行为，用于先看真相。
+
+### Changed
+
+- **首次运行不再把存量仓库刷成红灯**：没有 `config/standards.json` 时，命令进入报告模式（`STOCK` 前缀、每规则最多 20 行、全量走 `--json`、退出码 0）。理由：**你没配置过的门不该弄挂你的构建**。库层 `runStandards` 默认仍是严格口径，宿主自有门禁（如 pretest）不受影响。实测：某真实仓库 `--rule directoryEntries` 从 1077 行红 / exit 1 变成 63 行报告 / exit 0；`--freeze` 后 `baseline=169 blocking=0 exit=0`，再新增一项立刻 `kind=growth` 红灯。
+- 规则的 `coverage` 区分 `all-entities`（一个都没量到 = 度量坏了，报 `measure-error` 且 exit 1）与 `matching-entities`（稀疏结论是正常结果）。此前“0 个也没量到”的守卫会把干净的稀疏规则误判成故障。
+- `domain` 模块不再引用命令层：`collectModuleEdges` 的扩展名清单改为参数注入，避免本包自己的架构守卫判出它声称要拦的那种反向依赖。
+
+### Fixed
+
+- 依赖方向门的输入检查把“输入齐备”（供给函数返回 null）误当成“本构建供不了这个输入”，导致这条规则在任何项目上都静默 SKIP。判定改为先区分“没有这条供给规则”再取“检查返回的原因”，齐备即通过。
+- `runStandards` 缺省 `readImpl` 时每次读文件都抛错并被吞掉，于是 `fileLines` 在 1425 个候选文件上报 `measured=0 / status=ok / exit 0`（静默假通过）。现在量不到任何实体是结构化 `measure-error` + exit 1，只有“tracked 但工作树已删”的 ENOENT 允许不计入。
+- `git:` 证据引用只校验形状不校验合法性：改为要求 7-40 位小写十六进制；`receipt:` 引用在**所有** evidence 种类上都要能在 receipt 存储里解析（此前只查 allowlist 种类，审查阶段的伪造引用能通过）。
 
 ## [0.11.1] - 2026-10-17
 

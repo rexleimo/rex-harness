@@ -3,7 +3,7 @@
  * 担保形状：在临时 git fixture 仓库上跑"红 → 改 → 绿"，并且 --json 与退出码两条路径都断言。 */
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
@@ -189,15 +189,73 @@ test('a tracked file that is missing from the work tree is counted as unreadable
   }
 });
 
-test('the CLI route parses flags and passes the exit code through', async () => {
-  const fx = await makeRepo({ entries: Object.fromEntries(NINE) });
+test('the CLI gates when the project configured itself, and only reports when it did not', async () => {
+  // 中文注释：这一条是发给用户的契约。库层（runStandards 直接调用）永远严格；
+  // 只有**命令层**会因为有仓库从未写过 config/standards.json 而退成“只报不拦”。
+  // 拿一个从未配置过的项目去刷人家一千多条红，不是门禁，是噪声；但一旦项目写了配置，
+  // 门禁就是门禁——这两种状态必须各测试一次，不然“默认宽”会变成默默失控。
+  const quiet = { log: () => {}, error: () => {} };
+  const unconfigured = await makeRepo({ entries: Object.fromEntries(NINE) });
   try {
     const lines = [];
-    const result = await runStandardsArgs(['check', '--root', fx.project, '--rule', 'directoryEntries', '--json'],
+    const advisory = await runStandardsArgs(['check', '--root', unconfigured.project, '--rule', 'directoryEntries', '--json'],
       { io: { log: (l) => lines.push(l), error: () => {} } });
+    assert.equal(advisory.exitCode, 0, '未配置的项目：存量只报告，退出码不变红');
+    assert.equal(JSON.parse(lines[0]).status, 'stock');
 
-    assert.equal(result.exitCode, 1);
-    assert.equal(JSON.parse(lines[0]).status, 'fail');
+    const strict = await runStandardsArgs(['check', '--root', unconfigured.project, '--rule', 'directoryEntries', '--strict'], { io: quiet });
+    assert.equal(strict.exitCode, 1, '--strict 把旧行为留着：想先看真相的人拿得到真实退出码');
+
+    const configured = await makeRepo({ entries: Object.fromEntries(NINE), config: { exemptions: {} } });
+    try {
+      const gated = await runStandardsArgs(['check', '--root', configured.project, '--rule', 'directoryEntries'], { io: quiet });
+      assert.equal(gated.exitCode, 1, '项目写过配置了，这条门就该拦');
+    } finally {
+      await rm(configured.root, { recursive: true, force: true });
+    }
+  } finally {
+    await rm(unconfigured.root, { recursive: true, force: true });
+  }
+});
+
+test('--freeze turns an unconfigured repository into a gated one without hiding its stock', async () => {
+  // 中文注释：这是工单那条验收（首次运行不刷红 + 存量自动进 baseline + 报告数量）的可执行形式。
+  // 冻结后第二次运行必须是严格的，而且新增越界要当场变红——不然冻结就是无期限赦免。
+  const lines = [];
+  const io = { log: (l) => lines.push(l), error: () => {} };
+  const fx = await makeRepo({ entries: Object.fromEntries(NINE) });
+  try {
+    const frozen = await runStandardsArgs(['check', '--root', fx.project, '--rule', 'directoryEntries', '--freeze'], { io });
+    assert.equal(frozen.exitCode, 0);
+    assert.equal(frozen.status, 'frozen');
+    assert.deepEqual(frozen.frozen, { directoryEntries: 1 }, `冻结数量就是存量数：${JSON.stringify(frozen.frozen)}`);
+    assert.match(lines.join('\n'), /frozen stock into config\/standards\.json: directoryEntries=1/u, lines.join('\n'));
+
+    const written = JSON.parse(await readFile(path.join(fx.project, 'config', 'standards.json'), 'utf8'));
+    assert.deepEqual(written.baselines.directoryEntries, [{ path: 'wide', count: 9 }], '冻结的就是当前测量值，不是拍脑袋的数字');
+
+    const after = await runStandardsArgs(['check', '--root', fx.project, '--rule', 'directoryEntries'], { io: QUIET });
+    assert.equal(after.exitCode, 0, '冻完再跑就该绿');
+
+    await writeFile(path.join(fx.project, 'wide', 'j.mjs'), 'export const j = 1;\n', 'utf8');
+    git(fx.project, ['add', '-A']);
+    git(fx.project, ['commit', '--quiet', '-m', 'grew the directory']);
+    const grew = await runStandardsArgs(['check', '--root', fx.project, '--rule', 'directoryEntries'], { io: QUIET });
+    assert.equal(grew.exitCode, 1, '冻结不是赦免：多一项就当场变红');
+  } finally {
+    await rm(fx.root, { recursive: true, force: true });
+  }
+});
+
+test('--freeze refuses to overwrite a project config it cannot parse', async () => {
+  const fx = await makeRepo({ entries: Object.fromEntries(NINE) });
+  await mkdir(path.join(fx.project, 'config'), { recursive: true });
+  await writeFile(path.join(fx.project, 'config', 'standards.json'), '{ not json', 'utf8');
+  try {
+    const refused = await runStandardsArgs(['check', '--root', fx.project, '--freeze'], { io: QUIET });
+    assert.equal(refused.exitCode, 1, '坏配置上覆盖等于把人的决定抹掉，这条命令没这个资格');
+    assert.equal(await readFile(path.join(fx.project, 'config', 'standards.json'), 'utf8'), '{ not json',
+      '拒绝就要真的不动盘：写过一半比不写更糟');
   } finally {
     await rm(fx.root, { recursive: true, force: true });
   }
