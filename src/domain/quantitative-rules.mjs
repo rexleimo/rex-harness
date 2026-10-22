@@ -6,6 +6,8 @@
  * 有两个 owner 就会漂移。任何检查器（宿主仓库的 `aios` 适配层、子模块自己的 CLI、第三方使用者）
  * 都从这里读数，项目侧只声明覆盖项与豁免理由。
  *
+ * 本模块是**纯数据**：不在此处解析覆盖。预算解析只有一个入口——`standard-config.mjs` 的
+ * `resolveStandardConfig()`；两处都能算预算，等于把刚请走的第二个 owner 从后门迎回来。
  * 语义类标准（§1 依赖方向、§2 深层模块）不在这个清单里：它们需要项目声明分层，属另一套输入契约。
  */
 export const QUANTITATIVE_STANDARD_RULES = Object.freeze({
@@ -24,21 +26,3 @@ export const QUANTITATIVE_STANDARD_RULES = Object.freeze({
     dispositions: Object.freeze(['exempt', 'baseline', 'violation']),
   }),
 });
-
-/** 项目侧只允许覆盖这三类字段；其余键视为契约外，由解析方拒绝而不是忽略。 */
-export const QUANTITATIVE_RULE_OVERRIDE_KEYS = Object.freeze([
-  'directoryEntries.budget',
-  'fileLines.budget',
-  'fileLines.exemptions',
-]);
-
-export function quantitativeRuleBudget(ruleId, overrides = {}) {
-  const rule = QUANTITATIVE_STANDARD_RULES[ruleId];
-  if (!rule) throw new TypeError(`unknown quantitative standard rule: ${ruleId}`);
-  const override = overrides[`${ruleId}.budget`];
-  if (override === undefined) return rule.budget;
-  if (!Number.isInteger(override) || override <= 0) {
-    throw new TypeError(`${ruleId}.budget override must be a positive integer`);
-  }
-  return override;
-}
