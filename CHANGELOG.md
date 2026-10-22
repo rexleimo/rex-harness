@@ -4,22 +4,10 @@
 
 ## [Unreleased]
 
-### Tests
+### Unreleased standards work (not tagged yet)
 
-- skills: 新增 `standardsReferenceConsumers` 登记表（公开面导出）与 `tests/skills/standards-provider-wiring.test.mjs`：
-  每个代码生产 Provider 必须在正文开始之前引用 `rex-engineering-standards`，登记表为空即红。之前这条 wiring 只存在于散文里，
-  没有任何机器担保（本仓库据此实测过 30 条 SKILL.md 送达漂移）。
+- Portable budget engine, quantitative rule manifest, project standards config, and the `standards check` command with its exit-code contract. Landed on the feature branch in 1595b92; no version or tag yet, and this block is not a release entry.
 
-### Added
-
-- feat(standards): 新增公开面 `resolveStandardConfig()` / `STANDARD_CONFIG_ERROR_CODES`：项目侧配置只允许声明
-  `budgets` 与 `exemptions`，未知键、非正整数预算、缺 `reason` 的豁免返回结构化错误（`unknown-key` /
-  `invalid-budget` / `missing-reason`）而不是静默回落默认值——静默豁免等于给规则偷偷加第二个 owner。
-  配套 `tests/domain/standard-config.test.mjs` 5 条用例。
-- feat(standards): 公开面导出机器可读的 `QUANTITATIVE_STANDARD_RULES` 清单，
-  把标准 §4 可以客观判定的几条（目录条目 8 / 单文件 400）给出一份机器可读的单一权威。之前这些数字只活在散文和宿主仓常量里，
-  同一个数两个 owner；现在下游使用者与宿主适配层都从公开面读数，项目侧只允许声明覆盖项与豁免理由。语义类标准（§1 依赖方向、
-  §2 模块深度）不在这个清单里。
 ## [0.11.1] - 2026-10-17
 
 ### Fixed
@@ -36,6 +24,24 @@
 - `install.mjs` 新增导出 `orchestrationSkillIds`（`rex-implement-spec`、`rex-pr`、`rex-retro`）并接入 `skillIds()`；`skillIds()` 改为导出，`scripts/refresh-projection-history.mjs` 与投影契约测试改为复用它，消除 id 清单的第三份拷贝。`projection-history.json` 登记三个 canonical digest。发布时 standalone 安装面将多投影三个 skill（现 14 → 17）。
 
 ## [0.10.1] - 2026-10-15
+### Tests
+
+- skills: 新增 `standardsReferenceConsumers` 登记表（公开面导出）与 `tests/skills/standards-provider-wiring.test.mjs`：
+  每个代码生产 Provider 必须在正文开始之前引用 `rex-engineering-standards`，登记表为空即红。之前这条 wiring 只存在于散文里，
+  没有任何机器担保（本仓库据此实测过 30 条 SKILL.md 送达漂移）。
+
+### Added
+
+- feat(standards): 新增公开面 `resolveStandardConfig()` / `STANDARD_CONFIG_ERROR_CODES`：项目侧配置只允许声明
+  `budgets` 与 `exemptions`，未知键、非正整数预算、缺 `reason` 的豁免返回结构化错误（`unknown-key` /
+  `invalid-budget` / `missing-reason`）而不是静默回落默认值——静默豁免等于给规则偷偷加第二个 owner。
+  配套 `tests/domain/standard-config.test.mjs` 5 条用例。
+- feat(standards): 公开面导出机器可读的 `QUANTITATIVE_STANDARD_RULES` 清单，
+  把标准 §4 可以客观判定的几条（目录条目 8 / 单文件 400）给出一份机器可读的单一权威。之前这些数字只活在散文和宿主仓常量里，
+  同一个数两个 owner；现在下游使用者与宿主适配层都从公开面读数，项目侧只允许声明覆盖项与豁免理由。语义类标准（§1 依赖方向、
+  §2 模块深度）不在这个清单里。
+
+
 
 ### Added
 
