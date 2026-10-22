@@ -62,7 +62,7 @@ test('unknown rule ids and non-object inputs are refused', () => {
   assert.deepEqual([...STANDARD_CONFIG_ERROR_CODES], ['unknown-key', 'invalid-budget', 'missing-reason']);
 });
 
-test('a malformed exemption entry fails as an invalid exemption, not a silent pass', () => {
+test('a malformed exemption entry is refused with missing-reason, not silently accepted', () => {
   // 列表形状错：exemptions.fileLines 不是数组
   const notAList = resolveStandardConfig({ exemptions: { fileLines: 'src/tables.ts' } });
   assert.equal(notAList.ok, false);
@@ -78,6 +78,7 @@ test('a malformed exemption entry fails as an invalid exemption, not a silent pa
   // 条目不是对象也不能放过：否则 undefined.path 会被当成合法豁免
   const notAnEntry = resolveStandardConfig({ exemptions: { directoryEntries: ['scripts'] } });
   assert.equal(notAnEntry.ok, false, 'a bare string is not an exemption entry');
-  assert.ok(notAnEntry.errors.some((e) => e.path === 'exemptions.directoryEntries[0]'),
+  assert.ok(notAnEntry.errors.some((e) => e.code === 'missing-reason'
+    && e.path === 'exemptions.directoryEntries[0]'),
     JSON.stringify(notAnEntry.errors));
 });
