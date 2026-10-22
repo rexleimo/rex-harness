@@ -13,7 +13,9 @@ async function skillBody(skillId) {
 }
 
 test('the standards skill is the shared reference the consumers point at', () => {
-  assert.deepEqual([...sharedReferenceSkillIds], ['rex-engineering-standards']);
+  // 中文注释：断言包含关系，不把“只有一个元素”钉死——将来加第二个共享参照技能时会因形状而非语义变红。
+  assert.ok(sharedReferenceSkillIds.includes('rex-engineering-standards'),
+    'the standards baseline must be published as a shared reference skill');
   assert.ok(standardsReferenceConsumers.length >= 4, 'code-producing providers must be registered');
 });
 
