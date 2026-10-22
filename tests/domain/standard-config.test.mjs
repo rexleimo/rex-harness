@@ -28,7 +28,9 @@ test('a declared budget override wins and unknown keys are rejected, not ignored
 });
 
 test('illegal budgets fail as structured errors with the offending path', () => {
-  for (const value of [0, -3, 8.5, '8', null, undefined]) {
+  // 中文注释：0 从这一版起是**合法**声明（零容忍）：duplicateLines 的预算就是 0，
+  // 把 0 当非法等于禁止任何人声明“一行重复都不许”。这条规则的边界是非负，不是正数。
+  for (const value of [-3, 8.5, '8', null, undefined]) {
     const result = resolveStandardConfig({ budgets: { directoryEntries: value } });
     assert.equal(result.ok, false, `${String(value)} must be rejected`);
     assert.ok(result.errors.some((e) => e.code === 'invalid-budget'

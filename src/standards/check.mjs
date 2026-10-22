@@ -12,6 +12,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 import { applyBudgetRule, measureDirectoryEntries, measureFileLines } from '../domain/budget-rule.mjs';
+import { measureDuplicateLines } from '../domain/duplication.mjs';
 import { QUANTITATIVE_STANDARD_RULES } from '../domain/quantitative-rules.mjs';
 import { resolveStandardConfig } from '../domain/standard-config.mjs';
 
@@ -69,8 +70,10 @@ export function loadProjectConfig({
   return resolveStandardConfig(parsed);
 }
 
+const CONTENT_RULES = new Set(['fileLines', 'duplicateLines']);
+
 function measureForRule({ rule, files, rootDir, extensions, readImpl }) {
-  if (rule !== 'fileLines') {
+  if (!CONTENT_RULES.has(rule)) {
     return { measurements: measureDirectoryEntries(files), candidates: files.length, unreadable: 0 };
   }
   const candidates = files.filter((file) => extensions.some((ext) => file.endsWith(ext)));
@@ -86,7 +89,9 @@ function measureForRule({ rule, files, rootDir, extensions, readImpl }) {
       throw error;
     }
   }
-  return { measurements: measureFileLines(reads), candidates: candidates.length, unreadable };
+  // 中文注释：两条读内容的规则共用这一份 reads——同一个文件读两遍不是效率问题，是两份口径可能不一致。
+  const measurements = rule === 'duplicateLines' ? measureDuplicateLines(reads) : measureFileLines(reads);
+  return { measurements, candidates: candidates.length, unreadable };
 }
 
 export async function runStandards({
@@ -137,7 +142,8 @@ export async function runStandards({
       });
       continue;
     }
-    if (measured.candidates > 0 && measured.measurements.size === 0) {
+    const dense = QUANTITATIVE_STANDARD_RULES[id].coverage === 'all-entities';
+    if (dense && measured.candidates > 0 && measured.measurements.size === 0) {
       // 中文注释：有可度量对象却一条也没度量到，不是“干净”，是木柱断了。
       // 这个分支就是本仓库上一次真实出的错：readImpl 没默认值，每次读都报错被吞掉，
       // 于是 fileLines 规则在 1425 个候选文件上报 measured=0 / status=ok / exit 0。

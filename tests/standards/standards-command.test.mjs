@@ -82,7 +82,7 @@ test('--json emits one machine-readable record per rule, and git-less roots read
     const lines = [];
     const good = await runStandards({ rootDir: fx.project, rule: 'all', json: true, io: { log: (l) => lines.push(l) } });
     assert.equal(good.exitCode, 0);
-    assert.equal(lines.length, 2, '一条规则一行 JSON：directoryEntries 与 fileLines');
+    assert.equal(lines.length, 3, '一条规则一行 JSON：directoryEntries、fileLines、duplicateLines');
     const record = JSON.parse(lines[0]);
     assert.deepEqual(Object.keys(record).sort(),
       ['blocking', 'budget', 'exempt', 'measured', 'reason', 'root', 'rule', 'status', 'violations'].sort(),

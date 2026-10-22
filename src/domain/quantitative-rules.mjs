@@ -13,6 +13,10 @@
 export const QUANTITATIVE_STANDARD_RULES = Object.freeze({
   directoryEntries: Object.freeze({
     measure: 'git tracked files grouped by their containing directory',
+    // 中文注释：coverage 说清这条规则会给出多少实体：
+    // all-entities = 每个候选都会得到一个数（因此'一个都没数到'就是度量坏了）；
+    // matching-entities = 只列出命中的那一部分（没人重复就该是空表，不是故障）。
+    coverage: 'all-entities',
     budget: 8,
     source: 'rex-engineering-standards §4 / host AGENTS.md directory budget',
     // 存量超标走 ratchet 基线（只许收缩），新增即红灯；豁免必须带 reason。
@@ -20,9 +24,20 @@ export const QUANTITATIVE_STANDARD_RULES = Object.freeze({
   }),
   fileLines: Object.freeze({
     measure: 'physical lines in one source file, excluding nothing (blank lines count as content)',
+    coverage: 'all-entities',
     budget: 400,
     source: 'rex-engineering-standards §4 行数预算（软上限，超限须在交付说明里写明为何仍是单一职责）',
     exemptions: Object.freeze(['generated', 'data-driven tables', 'pure data files']),
+    dispositions: Object.freeze(['exempt', 'baseline', 'violation']),
+  }),
+  duplicateLines: Object.freeze({
+    // 中文注释：零容忍是有意为之：预算给 1 或者 10 都是把“近似值”当成精度保证，而它做不到。
+    // 存量走 baseline（只许收缩），误报走 exempt 并写清理由——静默跳过等于没有结论。
+    measure: 'lines belonging to a run of >= 6 consecutive normalized lines that also appear in another file (approximation: text lines, no AST)',
+    coverage: 'matching-entities',
+    budget: 0,
+    source: 'rex-engineering-standards §2 提取共享结构 / ADR 0002 假设清单（第一期不追求工具级精度）',
+    limitations: Object.freeze(['identifier renames hide duplication', 'sub-window similarity is not reported', 'self-repetition inside one file is not reported']),
     dispositions: Object.freeze(['exempt', 'baseline', 'violation']),
   }),
 });

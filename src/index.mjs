@@ -98,6 +98,7 @@ export {
 // 中文注释：标准检查命令本身也是公开面的一部分——宿主只准转发（ADR 0001）。
 export { DEFAULT_SOURCE_EXTENSIONS, RULE_IDS, loadProjectConfig, runStandards } from './standards/check.mjs';
 export { runStandardsArgs, standardsHelp } from './cli/standards.mjs';
+export { DUPLICATE_WINDOW_LINES, measureDuplicateLines } from './domain/duplication.mjs';
 export {
   presentStandaloneWorkflow,
   readStandaloneWorkflow,

@@ -46,12 +46,12 @@ function parseBudgetValue(ruleId, value, errors) {
   // 中文注释：两种写法都合法：一个整数（整条规则一个预算），或 `{default, entries}`
   // （按实体给预算）。后者不是宿主需要的特殊照顾——任何仓库都想给生成目录放宽、
   // 给核心入口收紧，而只会“每条规则一个数”的引擎会被宿主适配层顶掉预算，那才是双轨。
-  if (Number.isInteger(value) && value > 0) return value;
+  if (Number.isInteger(value) && value >= 0) return value;
   if (!isPlainObject(value)) {
     errors.push({
       code: 'invalid-budget',
       path: `budgets.${ruleId}`,
-      message: 'budget must be a positive integer or { default, entries: [{path, budget}] }',
+      message: 'budget must be a non-negative integer or { default, entries: [{path, budget}] }',
     });
     return null;
   }
@@ -62,8 +62,8 @@ function parseBudgetValue(ruleId, value, errors) {
   }
   // 中文注释：`default` 与 `entries` 都是可选的——只放宽某几个路径、或只换一个全局上限，
   // 都是真实需求。缺的那半回退到清单默认；但写了就必须是对的形状。
-  if (value.default !== undefined && (!Number.isInteger(value.default) || value.default <= 0)) {
-    errors.push({ code: 'invalid-budget', path: `budgets.${ruleId}.default`, message: 'budget default must be a positive integer' });
+  if (value.default !== undefined && (!Number.isInteger(value.default) || value.default < 0)) {
+    errors.push({ code: 'invalid-budget', path: `budgets.${ruleId}.default`, message: 'budget default must be a non-negative integer' });
   }
   const entries = Array.isArray(value.entries) ? value.entries : [];
   if (value.entries !== undefined && !Array.isArray(value.entries)) {
@@ -83,8 +83,8 @@ function parseBudgetValue(ruleId, value, errors) {
     if (typeof entry.path !== 'string' || !entry.path.trim()) {
       errors.push({ code: 'invalid-budget', path: `${at}.path`, message: 'entry path must be a non-empty string' });
     }
-    if (!Number.isInteger(entry.budget) || entry.budget <= 0) {
-      errors.push({ code: 'invalid-budget', path: `${at}.budget`, message: 'entry budget must be a positive integer' });
+    if (!Number.isInteger(entry.budget) || entry.budget < 0) {
+      errors.push({ code: 'invalid-budget', path: `${at}.budget`, message: 'entry budget must be a non-negative integer' });
     }
   }
   return { default: value.default, entries };

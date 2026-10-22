@@ -71,17 +71,17 @@ function indexByPath(entries) {
  * 这里只保证即使调用方直接塞了怪东西进来，度量也能退回清单默认而不是抛控制流。
  */
 function resolveRuleBudget(value, fallback) {
-  if (Number.isInteger(value) && value > 0) {
+  if (Number.isInteger(value) && value >= 0) {
     return { budget: value, index: new Map() };
   }
   if (value && typeof value === 'object' && !Array.isArray(value)) {
     const entries = new Map();
     for (const entry of Array.isArray(value.entries) ? value.entries : []) {
-      if (entry && typeof entry.path === 'string' && Number.isInteger(entry.budget) && entry.budget > 0) {
+      if (entry && typeof entry.path === 'string' && Number.isInteger(entry.budget) && entry.budget >= 0) {
         entries.set(entry.path, entry.budget);
       }
     }
-    const budget = Number.isInteger(value.default) && value.default > 0 ? value.default : fallback;
+    const budget = Number.isInteger(value.default) && value.default >= 0 ? value.default : fallback;
     return { budget, index: entries };
   }
   return { budget: fallback, index: new Map() };

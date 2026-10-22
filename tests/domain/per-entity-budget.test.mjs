@@ -74,10 +74,9 @@ test('the config layer accepts the structured form and rejects malformed entries
 
   const cases = [
     [{ fileLines: { default: 300, entries: [{ path: 'a.mjs' }] } }, 'budget'],
-    [{ fileLines: { default: 300, entries: [{ path: 'a.mjs', budget: 0 }] } }, 'positive'],
     [{ fileLines: { default: 300, entries: [{ path: 'a.mjs', budget: 200, max: 1 }] } }, 'unknown-key'],
     [{ fileLines: { default: 300, entries: [{ budget: 200 }] } }, 'path'],
-    [{ fileLines: { default: 'x', entries: [] } }, 'positive'],
+    [{ fileLines: { default: 'x', entries: [] } }, 'non-negative'],
   ];
   for (const [budgets, expect] of cases) {
     const bad = resolveStandardConfig({ budgets });
