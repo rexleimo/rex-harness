@@ -11,6 +11,10 @@
  * - 预算值必须是正整数；
  * - 豁免项必须带非空 `reason`。
  * 调用签名错误（传非对象）按程序 bug 处理直接抛错；配置内容错误一律走 `{ ok:false, errors }`。
+ *
+ * 错误码是闭集三个：`unknown-key` / `invalid-budget` / `missing-reason`。其中 `missing-reason`
+ * 覆盖“这条豁免整体不成立”——缺 reason、空白 reason、条目缺 path、条目不是对象、列表不是数组
+ * 共用它，因为对调用方来说处置动作相同（补全或删掉这条豁免），而不是五种不同的病。
  */
 import { QUANTITATIVE_STANDARD_RULES } from './quantitative-rules.mjs';
 
