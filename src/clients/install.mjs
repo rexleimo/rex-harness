@@ -46,6 +46,16 @@ export const rexWorkflowSkill = Object.freeze({
  */
 export const sharedReferenceSkillIds = Object.freeze(['rex-engineering-standards']);
 
+// 中文注释：代码生产型 Provider 的唯一清单。担保测试从这里取名单，而不是在测试里再抄一遍
+// 四个名字——否则“谁必须先加载标准”就有两个 owner。新增代码生产 Provider 必须同时在这里登记，
+// 并在自己的 SKILL.md 正文开始之前带上第 0 步，否则 tests/skills/standards-provider-wiring.test.mjs 变红。
+export const standardsReferenceConsumers = Object.freeze([
+  'rex-implement',
+  'rex-design',
+  'rex-code-review',
+  'rex-refactor-hardening',
+]);
+
 /**
  * Orchestration skills are not Providers and are never selected by a Capability
  * Command. Like rex-workflow they are standalone-install-facing entry points:

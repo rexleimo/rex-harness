@@ -4,6 +4,12 @@
 
 ## [Unreleased]
 
+### Tests
+
+- skills: 新增 `standardsReferenceConsumers` 登记表（公开面导出）与 `tests/skills/standards-provider-wiring.test.mjs`：
+  每个代码生产 Provider 必须在正文开始之前引用 `rex-engineering-standards`，登记表为空即红。之前这条 wiring 只存在于散文里，
+  没有任何机器担保（本仓库据此实测过 30 条 SKILL.md 送达漂移）。
+
 ### Added
 
 - feat(standards): 新增公开面 `resolveStandardConfig()` / `STANDARD_CONFIG_ERROR_CODES`：项目侧配置只允许声明

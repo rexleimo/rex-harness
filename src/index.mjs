@@ -3,7 +3,12 @@
 export { createRexCapabilityPack, validateCapabilityPack } from './kernel/capability-pack.mjs';
 export { toAiosManifest } from './aios/manifest.mjs';
 export { decideNextCapability, decidePromotion } from './composition-root.mjs';
-export { installClientProjection, supportedClients } from './clients/install.mjs';
+export {
+  installClientProjection,
+  supportedClients,
+  standardsReferenceConsumers,
+  sharedReferenceSkillIds,
+} from './clients/install.mjs';
 export { rexNativeProviderBindings } from './providers/catalog.mjs';
 export { deriveSoftwareFacts } from './application/derive-facts.mjs';
 export { evaluateSoftwareRequest } from './application/evaluate-request.mjs';
