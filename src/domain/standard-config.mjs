@@ -60,11 +60,13 @@ function parseBudgetValue(ruleId, value, errors) {
       errors.push({ code: 'unknown-key', path: `budgets.${ruleId}.${key}`, message: `budget object accepts only default and entries; got ${key}` });
     }
   }
-  if (!Number.isInteger(value.default) || value.default <= 0) {
+  // 中文注释：`default` 与 `entries` 都是可选的——只放宽某几个路径、或只换一个全局上限，
+  // 都是真实需求。缺的那半回退到清单默认；但写了就必须是对的形状。
+  if (value.default !== undefined && (!Number.isInteger(value.default) || value.default <= 0)) {
     errors.push({ code: 'invalid-budget', path: `budgets.${ruleId}.default`, message: 'budget default must be a positive integer' });
   }
   const entries = Array.isArray(value.entries) ? value.entries : [];
-  if (!Array.isArray(value.entries)) {
+  if (value.entries !== undefined && !Array.isArray(value.entries)) {
     errors.push({ code: 'invalid-budget', path: `budgets.${ruleId}.entries`, message: 'entries must be an array of {path, budget}' });
   }
   for (const [index, entry] of entries.entries()) {

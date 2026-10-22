@@ -70,19 +70,23 @@ export function loadProjectConfig({
 }
 
 function measureForRule({ rule, files, rootDir, extensions, readImpl }) {
-  if (rule !== 'fileLines') return measureDirectoryEntries(files);
+  if (rule !== 'fileLines') {
+    return { measurements: measureDirectoryEntries(files), candidates: files.length, unreadable: 0 };
+  }
   const candidates = files.filter((file) => extensions.some((ext) => file.endsWith(ext)));
   const reads = [];
+  let unreadable = 0;
   for (const file of candidates) {
     try {
       reads.push({ path: file, content: readImpl(path.join(rootDir, file)) });
-    } catch {
-      // 中文注释：tracked 却读不到（工作树里被删）就不计入，也不猜行数。
-      // 凭空报一条超标和漏报一条真超标，是同一种不诚实。
-      continue;
+    } catch (error) {
+      // 中文注释：只有“tracked 但工作树里已删”这一种情况可以不计入。
+      // 其他错误（包括注入的度量器本身坏了）必须往上抛——静默继续就是空报通过。
+      if (error?.code === 'ENOENT') { unreadable += 1; continue; }
+      throw error;
     }
   }
-  return measureFileLines(reads);
+  return { measurements: measureFileLines(reads), candidates: candidates.length, unreadable };
 }
 
 export async function runStandards({
@@ -92,7 +96,7 @@ export async function runStandards({
   json = false,
   io = console,
   gitImpl,
-  readImpl,
+  readImpl = (file) => fs.readFileSync(file, 'utf8'),
   extensions = DEFAULT_SOURCE_EXTENSIONS,
 } = {}) {
   const resolved = config ?? loadProjectConfig({ rootDir });
@@ -118,9 +122,37 @@ export async function runStandards({
       });
       continue;
     }
+    let measured;
+    try {
+      measured = measureForRule({ rule: id, files: tracked.files, rootDir, extensions, readImpl });
+    } catch (error) {
+      // 中文注释：度量本身坏了（注入的读器抛错、git 输出形状意外）要结构化地报红，
+      // 不是摔一个栈给用户看，也不是静默报 ok。退出码仍是 1，保证 CI 读得到。
+      exitCode = 1;
+      results.push({ rule: id, status: 'measure-error', exitCode: 1 });
+      emit(io, json, {
+        root: rootDir, rule: id, status: 'measure-error',
+        reason: `${id} could not be measured: ${error.message}`,
+        budget: null, measured: 0, blocking: 1, violations: [], exempt: [],
+      });
+      continue;
+    }
+    if (measured.candidates > 0 && measured.measurements.size === 0) {
+      // 中文注释：有可度量对象却一条也没度量到，不是“干净”，是木柱断了。
+      // 这个分支就是本仓库上一次真实出的错：readImpl 没默认值，每次读都报错被吞掉，
+      // 于是 fileLines 规则在 1425 个候选文件上报 measured=0 / status=ok / exit 0。
+      exitCode = 1;
+      results.push({ rule: id, status: 'measure-error', exitCode: 1 });
+      emit(io, json, {
+        root: rootDir, rule: id, status: 'measure-error',
+        reason: `${id} measured 0 of ${measured.candidates} candidate entities; the measure itself is broken`,
+        budget: null, measured: 0, blocking: 1, violations: [], exempt: [],
+      });
+      continue;
+    }
     const report = applyBudgetRule({
       rule: id,
-      measurements: measureForRule({ rule: id, files: tracked.files, rootDir, extensions, readImpl }),
+      measurements: measured.measurements,
       budgets: resolved.budgets,
       exemptions: resolved.exemptions,
       baselines: resolved.baselines,
@@ -142,11 +174,10 @@ function emit(io, json, record, report) {
     io.log(JSON.stringify(record));
     return;
   }
-  if (record.status === 'skip') {
-    io.log(`[standards] SKIP ${record.rule}: ${record.reason}`);
+  if (record.status === 'skip' || record.status === 'measure-error') {
+    io.log(`[standards] ${record.status === 'skip' ? 'SKIP' : 'ERROR'} ${record.rule}: ${record.reason}`);
     return;
-  }
-  for (const violation of record.violations) io.log(`[standards] FAIL ${record.rule} ${violation.detail}`);
+  }  for (const violation of record.violations) io.log(`[standards] FAIL ${record.rule} ${violation.detail}`);
   for (const item of report.recovered) {
     io.log(`[standards] RECOVERED ${record.rule} ${item.path} now ${item.count}; remove its baseline entry`);
   }

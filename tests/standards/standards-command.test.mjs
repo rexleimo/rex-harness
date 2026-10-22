@@ -99,6 +99,91 @@ test('--json emits one machine-readable record per rule, and git-less roots read
   }
 });
 
+test('fileLines actually reads the files it is measuring', async () => {
+  const fx = await makeRepo({
+    entries: {
+      'src/long.mjs': 'x\n'.repeat(450),
+      'src/short.mjs': 'x\n',
+    },
+  });
+  try {
+    const result = await runStandards({ rootDir: fx.project, rule: 'fileLines', io: QUIET });
+    const report = result.results[0].report;
+
+    assert.equal(report.measured, 2, '候选两个文件就只能度量到两个；报 0 又报 ok 是空过');
+    assert.equal(report.blocking, 1);
+    assert.equal(report.violations[0].path, 'src/long.mjs');
+    assert.match(report.violations[0].detail, /450 > budget 400/u, '未声明按实体预算时，用的是清单默认');
+    assert.equal(report.pass[0].limit, 400, '每条处置要把自己那条限额带出来');
+    assert.equal(result.exitCode, 1);
+  } finally {
+    await rm(fx.root, { recursive: true, force: true });
+  }
+});
+
+test('a broken measure reports ERROR and exits nonzero instead of claiming the repository is clean', async () => {
+  const fx = await makeRepo({ entries: { 'src/a.mjs': 'x\n' } });
+  try {
+    const lines = [];
+    const result = await runStandards({
+      rootDir: fx.project,
+      rule: 'fileLines',
+      json: true,
+      io: { log: (l) => lines.push(l), error: () => {} },
+      readImpl: () => { throw new TypeError('not a function-shaped reader'); },
+    });
+
+    assert.equal(result.exitCode, 1, '度量器自已是红的时候，结论不能是 0');
+    assert.equal(JSON.parse(lines[0]).status, 'measure-error');
+    assert.match(JSON.parse(lines[0]).reason, /could not be measured: not a function-shaped reader/u,
+      '要把底层原因带出来：只说“测不了”等于让人再去猜');
+  } finally {
+    await rm(fx.root, { recursive: true, force: true });
+  }
+});
+
+test('every candidate unreadable is reported as an empty measurement, not as a clean repository', async () => {
+  const fx = await makeRepo({ entries: { 'src/a.mjs': 'x\n' } });
+  try {
+    const lines = [];
+    const result = await runStandards({
+      rootDir: fx.project,
+      rule: 'fileLines',
+      json: true,
+      io: { log: (l) => lines.push(l), error: () => {} },
+      readImpl: () => { const error = new Error('missing'); error.code = 'ENOENT'; throw error; },
+    });
+
+    assert.equal(result.exitCode, 1);
+    assert.equal(JSON.parse(lines[0]).status, 'measure-error');
+    assert.match(JSON.parse(lines[0]).reason, /measured 0 of 1 candidate entities/u,
+      '全部 ENOENT 是“工作树与 index 不匹配”，不是“这个仓库很干净”');
+  } finally {
+    await rm(fx.root, { recursive: true, force: true });
+  }
+});
+
+test('a tracked file that is missing from the work tree is counted as unreadable, not as a violation', async () => {
+  const fx = await makeRepo({ entries: { 'src/gone.mjs': 'x\n', 'src/keep.mjs': 'x\n' } });
+  try {
+    execFileSync('git', ['-C', fx.project, 'rm', '-q', '--cached', 'src/gone.mjs'], { stdio: ['ignore', 'pipe', 'pipe'] });
+    await rm(path.join(fx.project, 'src', 'gone.mjs'), { force: true });
+    const result = await runStandards({
+      rootDir: fx.project, rule: 'fileLines', io: QUIET,
+      readImpl: (file) => {
+        const error = new Error('missing');
+        error.code = file.endsWith('gone.mjs') ? 'ENOENT' : undefined;
+        if (error.code) throw error;
+        return 'x\n';
+      },
+    });
+    assert.equal(result.results[0].report.measured, 1);
+    assert.equal(result.exitCode, 0, '只少了那一个读不到的文件，不影响另一个的结论');
+  } finally {
+    await rm(fx.root, { recursive: true, force: true });
+  }
+});
+
 test('the CLI route parses flags and passes the exit code through', async () => {
   const fx = await makeRepo({ entries: Object.fromEntries(NINE) });
   try {

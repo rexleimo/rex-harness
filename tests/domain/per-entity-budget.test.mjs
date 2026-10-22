@@ -73,7 +73,6 @@ test('the config layer accepts the structured form and rejects malformed entries
   assert.deepEqual(ok.budgets.fileLines, { default: 300, entries: [{ path: 'a.mjs', budget: 200 }] });
 
   const cases = [
-    [{ fileLines: { entries: [{ path: 'a.mjs', budget: 200 }] } }, 'default'],
     [{ fileLines: { default: 300, entries: [{ path: 'a.mjs' }] } }, 'budget'],
     [{ fileLines: { default: 300, entries: [{ path: 'a.mjs', budget: 0 }] } }, 'positive'],
     [{ fileLines: { default: 300, entries: [{ path: 'a.mjs', budget: 200, max: 1 }] } }, 'unknown-key'],
@@ -88,4 +87,17 @@ test('the config layer accepts the structured form and rejects malformed entries
     assert.ok(bad.errors.every((e) => ['unknown-key', 'invalid-budget', 'missing-reason', 'invalid-baseline'].includes(e.code)),
       '错误码仍是闭集，不新增第六种');
   }
+
+  // 中文注释：只写 entries 不写 default 也是合法声明：缺的那一半回退到清单默认。
+  // (上一版这里把 entries 定成必填，结果本仓库 50 条 facade 以外的写法全被判成配置错，
+  // 配置错又触犯了响亮失败门 -> 整个架构门直接 FAIL。过度收紧和不够严格一样会伤到真用的人。)
+  const noDefault = resolveStandardConfig({ budgets: { fileLines: { entries: [{ path: 'a.mjs', budget: 200 }] } } });
+  assert.equal(noDefault.ok, true, JSON.stringify(noDefault.errors));
+  const scoped = applyBudgetRule({
+    rule: 'fileLines',
+    measurements: new Map([['a.mjs', 250], ['b.mjs', 399]]),
+    budgets: noDefault.budgets,
+  });
+  assert.equal(scoped.budget, 400, '规则级预算仍是清单默认那一个数');
+  assert.deepEqual(scoped.violations.map((v) => v.path), ['a.mjs']);
 });
