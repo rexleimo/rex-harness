@@ -40,4 +40,14 @@ export const QUANTITATIVE_STANDARD_RULES = Object.freeze({
     limitations: Object.freeze(['identifier renames hide duplication', 'sub-window similarity is not reported', 'self-repetition inside one file is not reported']),
     dispositions: Object.freeze(['exempt', 'baseline', 'violation']),
   }),
+  reverseDependencies: Object.freeze({
+    // 中文注释：方向本身是项目声明的事实（layers 段），这条规则只是把声明变成红灯；
+    // 没声明分层的项目得到 SKIP，不是得到一批猜测式的违规。
+    measure: 'import edges pointing from an inner layer to an outer layer, per the declared layer order (approximation: edges come from the host reference collector)',
+    budget: 0,
+    coverage: 'matching-entities',
+    requires: Object.freeze(['layers declaration', 'module graph edges']),
+    source: 'rex-engineering-standards §1 依赖方向 / ADR 0002',
+    dispositions: Object.freeze(['exempt', 'baseline', 'violation']),
+  }),
 });

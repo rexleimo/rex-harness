@@ -62,8 +62,8 @@ test('unknown rule ids and non-object inputs are refused', () => {
 
   assert.throws(() => resolveStandardConfig([{ budgets: {} }]), /expects a project config object/u);
   assert.deepEqual([...STANDARD_CONFIG_ERROR_CODES],
-    ['unknown-key', 'invalid-budget', 'missing-reason', 'invalid-baseline'],
-    '四个码是闭集；加第五个之前先问处置动作是不是真的不同');
+    ['unknown-key', 'invalid-budget', 'missing-reason', 'invalid-baseline', 'invalid-layer'],
+    '五个码是闭集；加第六个之前先问处置动作是不是真的不同');
 });
 
 test('baselines freeze stock counts and refuse malformed entries', () => {

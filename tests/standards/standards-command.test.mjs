@@ -82,7 +82,12 @@ test('--json emits one machine-readable record per rule, and git-less roots read
     const lines = [];
     const good = await runStandards({ rootDir: fx.project, rule: 'all', json: true, io: { log: (l) => lines.push(l) } });
     assert.equal(good.exitCode, 0);
-    assert.equal(lines.length, 3, '一条规则一行 JSON：directoryEntries、fileLines、duplicateLines');
+    const records = lines.map((line) => JSON.parse(line));
+    assert.equal(records.length, 4, '一条规则一行 JSON：目录数、行数、重复行、依赖方向');
+    const direction = records.find((entry) => entry.rule === 'reverseDependencies');
+    assert.equal(direction.status, 'skip', '未声明分层、或没拿到模块图，就是没得判');
+    assert.match(direction.reason, /layers|module graph/u,
+      `SKIP 必须说清缺什么，不能静默算通过：${direction.reason ?? 'null'}`);
     const record = JSON.parse(lines[0]);
     assert.deepEqual(Object.keys(record).sort(),
       ['blocking', 'budget', 'exempt', 'measured', 'reason', 'root', 'rule', 'status', 'violations'].sort(),
@@ -193,6 +198,37 @@ test('the CLI route parses flags and passes the exit code through', async () => 
 
     assert.equal(result.exitCode, 1);
     assert.equal(JSON.parse(lines[0]).status, 'fail');
+  } finally {
+    await rm(fx.root, { recursive: true, force: true });
+  }
+});
+
+test('a declared layer order plus a supplied module graph turns an outward-pointing edge red', async () => {
+  // 中文注释：这一条把「声明 + 图 → 红灯」走完整：只有声明没有图不出违规，只有图没有声明也不出违规。
+  const fx = await makeRepo({
+    entries: {
+      'inner/a.mjs': "import { b } from '../outer/b.mjs';\n",
+      'outer/b.mjs': 'export const b = 1;\n',
+    },
+    config: { layers: { order: ['outer', 'inner'], prefixes: { outer: 'outer', inner: 'inner' } } },
+  });
+  try {
+    const quiet = { log: () => {} };
+    const withoutGraph = await runStandards({ rootDir: fx.project, rule: 'reverseDependencies', io: quiet });
+    assert.equal(withoutGraph.results[0].status, 'skip', '有声明但没递图进来是 SKIP，不是违规也不是通过');
+
+    const red = await runStandards({
+      rootDir: fx.project, rule: 'reverseDependencies', io: quiet,
+      edges: new Map([['inner/a.mjs', ['outer/b.mjs']]]),
+    });
+    assert.equal(red.exitCode, 1, '内层指向外层 = 声明禁止的方向，必须红');
+    assert.equal(red.results[0].report.violations[0].path, 'inner/a.mjs');
+
+    const green = await runStandards({
+      rootDir: fx.project, rule: 'reverseDependencies', io: quiet,
+      edges: new Map([['outer/b.mjs', ['inner/a.mjs']]]),
+    });
+    assert.equal(green.exitCode, 0, '同一批文件只改方向就绿：证的是方向判定在起作用，不是 fixture 在放水');
   } finally {
     await rm(fx.root, { recursive: true, force: true });
   }

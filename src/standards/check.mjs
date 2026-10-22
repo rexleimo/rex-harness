@@ -13,6 +13,7 @@ import path from 'node:path';
 
 import { applyBudgetRule, measureDirectoryEntries, measureFileLines } from '../domain/budget-rule.mjs';
 import { measureDuplicateLines } from '../domain/duplication.mjs';
+import { measureReverseDependencyEdges } from '../domain/layer-declaration.mjs';
 import { QUANTITATIVE_STANDARD_RULES } from '../domain/quantitative-rules.mjs';
 import { resolveStandardConfig } from '../domain/standard-config.mjs';
 
@@ -72,7 +73,37 @@ export function loadProjectConfig({
 
 const CONTENT_RULES = new Set(['fileLines', 'duplicateLines']);
 
-function measureForRule({ rule, files, rootDir, extensions, readImpl }) {
+/**
+ * 规则自己声明它需要什么（manifest 的 `requires`）；命令只负责检查这些东西是否齐备。
+ * 缺东西就 SKIP 并说清缺什么——绝不出一个猜测式的违规，也绝不拿“没数据”冒充“很干净”。
+ */
+const REQUIREMENTS = Object.freeze({
+  'layers declaration': ({ layers }) => (layers ? null : 'the project config declares no `layers` section'),
+  'module graph edges': ({ edges }) => (edges ? null : 'no module graph supplied (pass --edges <json: {file: [targets]}>)'),
+});
+
+function missingRequirements({ rule, layers, edges }) {
+  const needs = QUANTITATIVE_STANDARD_RULES[rule].requires ?? [];
+  return needs
+    .map((need) => {
+      const check = REQUIREMENTS[need];
+      // 中文注释：check 返回 null 是「齐备」，不是「缺这个检查」——两者用 ?? 混起来就会把
+      // 完整的输入误报成“本构建供不了这个输入”，把绿判成跳。先分“没这个检查”和“检查过了”。
+      if (!check) return `this build has no supply rule for required input: ${need}`;
+      return check({ layers, edges });
+    })
+    .filter(Boolean);
+}
+
+function measureForRule({ rule, files, rootDir, extensions, readImpl, layers, edges }) {
+  if (rule === 'reverseDependencies') {
+    const candidates = files.filter((file) => extensions.some((ext) => file.endsWith(ext)));
+    return {
+      measurements: measureReverseDependencyEdges(edges, layers),
+      candidates: candidates.length,
+      unreadable: 0,
+    };
+  }
   if (!CONTENT_RULES.has(rule)) {
     return { measurements: measureDirectoryEntries(files), candidates: files.length, unreadable: 0 };
   }
@@ -103,6 +134,8 @@ export async function runStandards({
   gitImpl,
   readImpl = (file) => fs.readFileSync(file, 'utf8'),
   extensions = DEFAULT_SOURCE_EXTENSIONS,
+  layers,
+  edges = null,
 } = {}) {
   const resolved = config ?? loadProjectConfig({ rootDir });
   if (resolved.ok === false) {
@@ -114,6 +147,7 @@ export async function runStandards({
   }
 
   const rules = rule === 'all' ? RULE_IDS : [rule];
+  const layerConfig = layers ?? resolved.layers ?? null;
   let exitCode = 0;
   const results = [];
   for (const id of rules) {
@@ -128,8 +162,18 @@ export async function runStandards({
       continue;
     }
     let measured;
+    // 中文注释：先查规则声明的输入是否齐备：缺了就 SKIP + 原因，而不是拿空数据进预算判定。
+    const unavailable = missingRequirements({ rule: id, layers: layerConfig, edges });
+    if (unavailable.length > 0) {
+      results.push({ rule: id, status: 'skip', exitCode: 0 });
+      emit(io, json, {
+        root: rootDir, rule: id, status: 'skip', reason: unavailable.join('; '),
+        budget: null, measured: null, blocking: null, violations: [], exempt: [],
+      });
+      continue;
+    }
     try {
-      measured = measureForRule({ rule: id, files: tracked.files, rootDir, extensions, readImpl });
+      measured = measureForRule({ rule: id, files: tracked.files, rootDir, extensions, readImpl, layers: layerConfig, edges });
     } catch (error) {
       // 中文注释：度量本身坏了（注入的读器抛错、git 输出形状意外）要结构化地报红，
       // 不是摔一个栈给用户看，也不是静默报 ok。退出码仍是 1，保证 CI 读得到。

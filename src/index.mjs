@@ -99,6 +99,7 @@ export {
 export { DEFAULT_SOURCE_EXTENSIONS, RULE_IDS, loadProjectConfig, runStandards } from './standards/check.mjs';
 export { runStandardsArgs, standardsHelp } from './cli/standards.mjs';
 export { DUPLICATE_WINDOW_LINES, measureDuplicateLines } from './domain/duplication.mjs';
+export { measureReverseDependencyEdges, parseLayerDeclaration, resolveLayer } from './domain/layer-declaration.mjs';
 export {
   presentStandaloneWorkflow,
   readStandaloneWorkflow,

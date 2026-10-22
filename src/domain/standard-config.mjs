@@ -6,21 +6,25 @@
  * 「一条规则两个 owner」的另一种形态。所以这里返回结构化错误，而不是抛异常或忽略。
  *
  * 契约（闭集）：
- * - 顶层只接受 `budgets` / `exemptions` / `baselines`；
- * - 两者的键必须是清单里已有的规则 id；
- * - 预算值必须是正整数；
- * - 豁免项必须带非空 `reason`。
+ * - 顶层只接受 `budgets` / `exemptions` / `baselines` / `layers`；
+ * - 前三个的键必须是清单里已有的规则 id；
+ * - 预算值必须是非负整数（零容忍是合法声明）；
+ * - 豁免项必须带非空 `reason`；
+ * - `layers` 要么不写（那条规则就 SKIP），写了就必须能被 parseLayerDeclaration 解析。
  * 调用签名错误（传非对象）按程序 bug 处理直接抛错；配置内容错误一律走 `{ ok:false, errors }`。
  *
- * 错误码是闭集四个：`unknown-key` / `invalid-budget` / `missing-reason` / `invalid-baseline`。
- * 新增第四个码不是图省事复用：基线条目的处置是"收缩或删掉条目"，与"预算写错"不同。
+ * 错误码是闭集五个：`unknown-key` / `invalid-budget` / `missing-reason` / `invalid-baseline` /
+ * `invalid-layer`。多一个码的门槛和当初第四个一样：处置动作不同——分层写错时你改的是声明本身，
+ * 不是数字、不是存量、也不是补理由。第四个码当年是为了把「收缩条目」和「改预算」分开；
+ * 第五个是为了把「改分层声明」和前面四种都分开。
  * `missing-reason`
  * 覆盖“这条豁免整体不成立”——缺 reason、空白 reason、条目缺 path、条目不是对象、列表不是数组
  * 共用它，因为对调用方来说处置动作相同（补全或删掉这条豁免），而不是五种不同的病。
  */
 import { QUANTITATIVE_STANDARD_RULES } from './quantitative-rules.mjs';
+import { parseLayerDeclaration } from './layer-declaration.mjs';
 
-const ALLOWED_SECTIONS = Object.freeze(['budgets', 'exemptions', 'baselines']);
+const ALLOWED_SECTIONS = Object.freeze(['budgets', 'exemptions', 'baselines', 'layers']);
 const RULE_IDS = Object.freeze(Object.keys(QUANTITATIVE_STANDARD_RULES));
 
 export const STANDARD_CONFIG_ERROR_CODES = Object.freeze([
@@ -30,6 +34,8 @@ export const STANDARD_CONFIG_ERROR_CODES = Object.freeze([
   // 中文注释：第四个码不是图省事复用 invalid-budget：基线条目的处置动作是"收缩条目或删掉条目"，
   // 与"预算值写错了"不是一回事；把两者混成一个码，调用方就分不清该改数字还是该改存量。
   'invalid-baseline',
+  // 中文注释：第五个码不是复用：分层写错时的处置动作是改声明，与改预算、改存量、补理由都不同。
+  'invalid-layer',
 ]);
 
 function isPlainObject(value) {
@@ -106,6 +112,17 @@ function parseBudgets(section, errors) {
     if (parsed !== null) budgets[ruleId] = parsed;
   }
   return budgets;
+}
+
+// 中文注释：不写 layers 是合法选择（这条规则于是 SKIP）；写了就必须是对的。
+function parseLayers(section, errors) {
+  if (section === undefined) return null;
+  try {
+    return parseLayerDeclaration(section);
+  } catch (error) {
+    errors.push({ code: 'invalid-layer', path: 'layers', message: error.message });
+    return null;
+  }
 }
 
 function parseExemptions(section, errors) {
@@ -188,12 +205,14 @@ export function resolveStandardConfig(projectConfig = {}) {
     }
   }
   const budgets = parseBudgets(projectConfig.budgets, errors);
+  const layers = parseLayers(projectConfig.layers, errors);
   const exemptions = parseExemptions(projectConfig.exemptions, errors);
   const baselines = parseBaselines(projectConfig.baselines, errors);
   if (errors.length > 0) return Object.freeze({ ok: false, errors: Object.freeze(errors) });
   return Object.freeze({
     ok: true,
     budgets: Object.freeze(budgets),
+    layers,
     exemptions: Object.freeze(exemptions),
     baselines: Object.freeze(baselines),
   });
