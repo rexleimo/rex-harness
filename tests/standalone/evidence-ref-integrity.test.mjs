@@ -58,6 +58,12 @@ test('a git ref has to look like a commit object id', () => {
     /invalid or placeholder ref/u,
     'git:<非 sha> 只是把占位符换了个前缀，不能算证据',
   );
+  assert.throws(
+    () => validateCommandEvidence(command, [{ kind: 'hardening-diff-recorded', refs: ['git:ABCDEF0123456789ABCDEF'] }],
+      { resolveReceipt: () => null }),
+    /invalid or placeholder ref/u,
+    '大写十六进制不是 git 对象 id；放过它等于允许另一种占位符',
+  );
   const ok = validateCommandEvidence(command, [{ kind: 'hardening-diff-recorded', refs: ['git:72fd26df'] }],
     { resolveReceipt: () => null });
   assert.equal(ok[0].refs[0], 'git:72fd26df');

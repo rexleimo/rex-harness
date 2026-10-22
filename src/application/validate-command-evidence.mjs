@@ -8,7 +8,9 @@ import {
 const PLACEHOLDER_REF = /artifact-or-command-ref|placeholder|真实存在|todo|tbd/iu;
 // 中文注释：`git:` 命名空间只收对象 id。写成 `git:main-head` 这种“位图描述”不是证据，
 // 只是换了个前缀的占位符。存在性证明需要跨仓库/子模块 odb 的边界决定，已列为非目标。
-const GIT_OBJECT_REF = /^git:[0-9a-f]{7,40}$/iu;
+// 中文注释：不带 i —— git 的对象 id 只会是小写十六进制，加上 i 等于把 A-F 也放进来，
+// 那还是占位符换了个写法。
+const GIT_OBJECT_REF = /^git:[0-9a-f]{7,40}$/u;
 const NONZERO_RECEIPT_EVIDENCE = new Set([
   'failing-test-observed',
 ]);
