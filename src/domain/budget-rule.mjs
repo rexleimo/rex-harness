@@ -66,10 +66,32 @@ function indexByPath(entries) {
 }
 
 /**
+ * 中文注释：预算有两种形状：一个整数（整条规则），或 `{default, entries:[{path,budget}]}`（按实体）。
+ * 引擎两边都接受，且不因为形状不对就报错：预算是数据，配置层的闭集校验已经拦过非法形状，
+ * 这里只保证即使调用方直接塞了怪东西进来，度量也能退回清单默认而不是抛控制流。
+ */
+function resolveRuleBudget(value, fallback) {
+  if (Number.isInteger(value) && value > 0) {
+    return { budget: value, index: new Map() };
+  }
+  if (value && typeof value === 'object' && !Array.isArray(value)) {
+    const entries = new Map();
+    for (const entry of Array.isArray(value.entries) ? value.entries : []) {
+      if (entry && typeof entry.path === 'string' && Number.isInteger(entry.budget) && entry.budget > 0) {
+        entries.set(entry.path, entry.budget);
+      }
+    }
+    const budget = Number.isInteger(value.default) && value.default > 0 ? value.default : fallback;
+    return { budget, index: entries };
+  }
+  return { budget: fallback, index: new Map() };
+}
+
+/**
  * @param {object} input
  * @param {string} input.rule            清单里的规则 id
  * @param {Map<string,number>} input.measurements 度量结果（键由调用方定义：目录名或文件路径）
- * @param {Record<string,number>} input.budgets   resolveStandardConfig 解析出的预算
+ * @param {Record<string,number|{default,entries}>} input.budgets   resolveStandardConfig 解析出的预算
  * @param {Record<string,Array<{path,reason}>>} input.exemptions
  * @param {Record<string,Array<{path,count}>>} input.baselines
  * @returns 逐条处置 + 汇总；不抛异常——判定是数据，不是控制流
@@ -78,7 +100,11 @@ export function applyBudgetRule({ rule, measurements, budgets = {}, exemptions =
   if (!isKnownRule(rule)) {
     throw new TypeError(`applyBudgetRule needs a known rule id; known rules are ${RULE_IDS.join(', ')}`);
   }
-  const budget = Number.isInteger(budgets[rule]) ? budgets[rule] : QUANTITATIVE_STANDARD_RULES[rule].budget;
+  const resolvedBudget = resolveRuleBudget(budgets[rule], QUANTITATIVE_STANDARD_RULES[rule].budget);
+  // 中文注释：`report.budget` 始终是规则级预算（--json 字段含义不变）；按实体的收紧只会
+  // 出现在那条处置自己的 detail 里，因为需要那个数字的是被判定者，不是汇总阅读者。
+  const budget = resolvedBudget.budget;
+  const entityBudgets = resolvedBudget.index;
   const exemptionIndex = indexByPath(exemptions[rule]);
   const baselineIndex = indexByPath(baselines[rule]);
 
@@ -89,32 +115,33 @@ export function applyBudgetRule({ rule, measurements, budgets = {}, exemptions =
   const recovered = [];
 
   for (const [path, count] of measurements) {
-    if (count <= budget) {
-      pass.push({ path, count, disposition: 'pass' });
+    const limit = entityBudgets.get(path) ?? budget;
+    if (count <= limit) {
+      pass.push({ path, count, disposition: 'pass', limit });
       // 中文注释：基线条目一旦不再超标就要提示删除，否则基线会变成第二条永久预算。
-      if (baselineIndex.has(path)) recovered.push({ path, count, disposition: 'baseline' });
+      if (baselineIndex.has(path)) recovered.push({ path, count, disposition: 'baseline', limit });
       continue;
     }
     if (exemptionIndex.has(path)) {
       const entry = exemptionIndex.get(path);
-      exempt.push({ path, count, disposition: 'exempt', reason: entry.reason ?? null });
+      exempt.push({ path, count, disposition: 'exempt', reason: entry.reason ?? null, limit });
       continue;
     }
     if (baselineIndex.has(path)) {
       const allowed = baselineIndex.get(path).count;
       if (Number.isInteger(allowed) && count > allowed) {
         violations.push({
-          path, count, disposition: 'violation', kind: 'growth',
+          path, count, disposition: 'violation', kind: 'growth', limit,
           detail: `${path}: ${count} > baseline ${allowed} (shrink only)`,
         });
         continue;
       }
-      baseline.push({ path, count, disposition: 'baseline', allowed: Number.isInteger(allowed) ? allowed : budget });
+      baseline.push({ path, count, disposition: 'baseline', allowed: Number.isInteger(allowed) ? allowed : limit, limit });
       continue;
     }
     violations.push({
-      path, count, disposition: 'violation', kind: 'new',
-      detail: `${path}: ${count} > budget ${budget}`,
+      path, count, disposition: 'violation', kind: 'new', limit,
+      detail: `${path}: ${count} > budget ${limit}`,
     });
   }
 
