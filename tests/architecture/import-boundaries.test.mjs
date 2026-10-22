@@ -2,8 +2,12 @@ import assert from 'node:assert/strict';
 import { access, readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import test from 'node:test';
+import { fileURLToPath } from 'node:url';
 
-const SRC_ROOT = path.join(process.cwd(), 'src');
+// 中文注释：锈定到自己的仓库根，不用 process.cwd()。从宿主仓库根跑时 cwd 会指错仓库，
+// 于是这个实子模块结构的规定会去量宿主：要么 ENOENT，要么更糟——对别人的仓库报一依假违规。
+const REPO_ROOT = path.resolve(fileURLToPath(import.meta.url), '..', '..', '..');
+const SRC_ROOT = path.join(REPO_ROOT, 'src');
 
 async function sourceFiles(directory) {
   const entries = await readdir(directory, { withFileTypes: true });

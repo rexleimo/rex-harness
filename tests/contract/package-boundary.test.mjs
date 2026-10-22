@@ -2,9 +2,13 @@ import assert from 'node:assert/strict';
 import { access, readFile, readdir } from 'node:fs/promises';
 import path from 'node:path';
 import test from 'node:test';
+import { fileURLToPath } from 'node:url';
+
+// 中文注释：包边界测的是本包，不是“调用者所在的仓库”；从宿主根跑时 process.cwd() 会指错。
+const PACKAGE_ROOT = path.resolve(fileURLToPath(import.meta.url), '..', '..', '..');
 
 test('core package exposes CLI and JS API without bundling an MCP server', async () => {
-  const packageRoot = process.cwd();
+  const packageRoot = PACKAGE_ROOT;
   const manifest = JSON.parse(await readFile(path.join(packageRoot, 'package.json'), 'utf8'));
   const publicIndex = await readFile(path.join(packageRoot, 'src', 'index.mjs'), 'utf8');
   const cli = await readFile(path.join(packageRoot, 'bin', 'rex-harness.mjs'), 'utf8');
