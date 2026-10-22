@@ -1,0 +1,44 @@
+/**
+ * 工程标准里**可以用客观事实判定**的那几条，唯一权威在这里。
+ *
+ * 为什么放在子模块公开面：标准文本（`skill-sources/rex-engineering-standards` §4）已经写了
+ * "单文件软上限约 400 行"，而目录条目上限 8 只活在宿主仓库的 AGENTS 与脚本常量里——同一个数字
+ * 有两个 owner 就会漂移。任何检查器（宿主仓库的 `aios` 适配层、子模块自己的 CLI、第三方使用者）
+ * 都从这里读数，项目侧只声明覆盖项与豁免理由。
+ *
+ * 语义类标准（§1 依赖方向、§2 深层模块）不在这个清单里：它们需要项目声明分层，属另一套输入契约。
+ */
+export const QUANTITATIVE_STANDARD_RULES = Object.freeze({
+  directoryEntries: Object.freeze({
+    measure: 'git tracked files grouped by their containing directory',
+    budget: 8,
+    source: 'rex-engineering-standards §4 / host AGENTS.md directory budget',
+    // 存量超标走 ratchet 基线（只许收缩），新增即红灯；豁免必须带 reason。
+    dispositions: Object.freeze(['exempt', 'baseline', 'violation']),
+  }),
+  fileLines: Object.freeze({
+    measure: 'physical lines in one source file, excluding nothing (blank lines count as content)',
+    budget: 400,
+    source: 'rex-engineering-standards §4 行数预算（软上限，超限须在交付说明里写明为何仍是单一职责）',
+    exemptions: Object.freeze(['generated', 'data-driven tables', 'pure data files']),
+    dispositions: Object.freeze(['exempt', 'baseline', 'violation']),
+  }),
+});
+
+/** 项目侧只允许覆盖这三类字段；其余键视为契约外，由解析方拒绝而不是忽略。 */
+export const QUANTITATIVE_RULE_OVERRIDE_KEYS = Object.freeze([
+  'directoryEntries.budget',
+  'fileLines.budget',
+  'fileLines.exemptions',
+]);
+
+export function quantitativeRuleBudget(ruleId, overrides = {}) {
+  const rule = QUANTITATIVE_STANDARD_RULES[ruleId];
+  if (!rule) throw new TypeError(`unknown quantitative standard rule: ${ruleId}`);
+  const override = overrides[`${ruleId}.budget`];
+  if (override === undefined) return rule.budget;
+  if (!Number.isInteger(override) || override <= 0) {
+    throw new TypeError(`${ruleId}.budget override must be a positive integer`);
+  }
+  return override;
+}

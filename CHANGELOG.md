@@ -2,6 +2,14 @@
 
 本文件记录 `rex-harness` 独立产品的公开变化。版本遵循 Semantic Versioning。
 
+## [Unreleased]
+
+### Added
+
+- feat(standards): 公开面导出 `QUANTITATIVE_STANDARD_RULES` / `QUANTITATIVE_RULE_OVERRIDE_KEYS` / `quantitativeRuleBudget()`，
+  把标准 §4 可以客观判定的几条（目录条目 8 / 单文件 400）给出一份机器可读的单一权威。之前这些数字只活在散文和宿主仓常量里，
+  同一个数两个 owner；现在下游使用者与宿主适配层都从公开面读数，项目侧只允许声明覆盖项与豁免理由。语义类标准（§1 依赖方向、
+  §2 模块深度）不在这个清单里。
 ## [0.11.1] - 2026-10-17
 
 ### Fixed

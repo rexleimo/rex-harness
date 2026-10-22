@@ -77,6 +77,11 @@ export {
   normalizeTurnResult,
 } from './domain/turn-contract.mjs';
 export {
+  QUANTITATIVE_STANDARD_RULES,
+  QUANTITATIVE_RULE_OVERRIDE_KEYS,
+  quantitativeRuleBudget,
+} from './domain/quantitative-rules.mjs';
+export {
   presentStandaloneWorkflow,
   readStandaloneWorkflow,
   findStandaloneWorkflow,
