@@ -82,6 +82,10 @@ export {
   quantitativeRuleBudget,
 } from './domain/quantitative-rules.mjs';
 export {
+  resolveStandardConfig,
+  STANDARD_CONFIG_ERROR_CODES,
+} from './domain/standard-config.mjs';
+export {
   presentStandaloneWorkflow,
   readStandaloneWorkflow,
   findStandaloneWorkflow,

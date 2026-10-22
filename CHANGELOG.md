@@ -6,6 +6,10 @@
 
 ### Added
 
+- feat(standards): 新增公开面 `resolveStandardConfig()` / `STANDARD_CONFIG_ERROR_CODES`：项目侧配置只允许声明
+  `budgets` 与 `exemptions`，未知键、非正整数预算、缺 `reason` 的豁免返回结构化错误（`unknown-key` /
+  `invalid-budget` / `missing-reason`）而不是静默回落默认值——静默豁免等于给规则偷偷加第二个 owner。
+  配套 `tests/domain/standard-config.test.mjs` 5 条用例。
 - feat(standards): 公开面导出 `QUANTITATIVE_STANDARD_RULES` / `QUANTITATIVE_RULE_OVERRIDE_KEYS` / `quantitativeRuleBudget()`，
   把标准 §4 可以客观判定的几条（目录条目 8 / 单文件 400）给出一份机器可读的单一权威。之前这些数字只活在散文和宿主仓常量里，
   同一个数两个 owner；现在下游使用者与宿主适配层都从公开面读数，项目侧只允许声明覆盖项与豁免理由。语义类标准（§1 依赖方向、
