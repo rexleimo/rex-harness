@@ -6,25 +6,30 @@
  * 「一条规则两个 owner」的另一种形态。所以这里返回结构化错误，而不是抛异常或忽略。
  *
  * 契约（闭集）：
- * - 顶层只接受 `budgets` / `exemptions`；
+ * - 顶层只接受 `budgets` / `exemptions` / `baselines`；
  * - 两者的键必须是清单里已有的规则 id；
  * - 预算值必须是正整数；
  * - 豁免项必须带非空 `reason`。
  * 调用签名错误（传非对象）按程序 bug 处理直接抛错；配置内容错误一律走 `{ ok:false, errors }`。
  *
- * 错误码是闭集三个：`unknown-key` / `invalid-budget` / `missing-reason`。其中 `missing-reason`
+ * 错误码是闭集四个：`unknown-key` / `invalid-budget` / `missing-reason` / `invalid-baseline`。
+ * 新增第四个码不是图省事复用：基线条目的处置是"收缩或删掉条目"，与"预算写错"不同。
+ * `missing-reason`
  * 覆盖“这条豁免整体不成立”——缺 reason、空白 reason、条目缺 path、条目不是对象、列表不是数组
  * 共用它，因为对调用方来说处置动作相同（补全或删掉这条豁免），而不是五种不同的病。
  */
 import { QUANTITATIVE_STANDARD_RULES } from './quantitative-rules.mjs';
 
-const ALLOWED_SECTIONS = Object.freeze(['budgets', 'exemptions']);
+const ALLOWED_SECTIONS = Object.freeze(['budgets', 'exemptions', 'baselines']);
 const RULE_IDS = Object.freeze(Object.keys(QUANTITATIVE_STANDARD_RULES));
 
 export const STANDARD_CONFIG_ERROR_CODES = Object.freeze([
   'unknown-key',
   'invalid-budget',
   'missing-reason',
+  // 中文注释：第四个码不是图省事复用 invalid-budget：基线条目的处置动作是"收缩条目或删掉条目"，
+  // 与"预算值写错了"不是一回事；把两者混成一个码，调用方就分不清该改数字还是该改存量。
+  'invalid-baseline',
 ]);
 
 function isPlainObject(value) {
@@ -94,6 +99,39 @@ function parseExemptions(section, errors) {
  * @param {object} projectConfig 项目侧声明（budgets / exemptions），未知键不忽略而是报错
  * @returns {{ ok: boolean, budgets?: object, exemptions?: object, errors?: Array<{code,path,message}> }}
  */
+/** 中文注释：baselines 是存量冻结表：条目 { path, count }，count 必须是正整数。 */
+function parseBaselines(section, errors) {
+  const baselines = {};
+  if (section === undefined) return baselines;
+  if (!isPlainObject(section)) {
+    errors.push({ code: 'invalid-baseline', path: 'baselines', message: 'baselines must be an object of rule id to a list of { path, count }' });
+    return baselines;
+  }
+  for (const [ruleId, entries] of Object.entries(section)) {
+    if (!RULE_IDS.includes(ruleId)) {
+      errors.push({ code: 'unknown-key', path: `baselines.${ruleId}`, message: `unknown rule id; known rules are ${RULE_IDS.join(', ')}` });
+      continue;
+    }
+    if (!Array.isArray(entries)) {
+      errors.push({ code: 'invalid-baseline', path: `baselines.${ruleId}`, message: 'baseline list must be an array of { path, count }' });
+      continue;
+    }
+    baselines[ruleId] = entries.map((entry, index) => {
+      const path = `baselines.${ruleId}[${index}]`;
+      if (!isPlainObject(entry) || typeof entry.path !== 'string' || !entry.path) {
+        errors.push({ code: 'invalid-baseline', path, message: 'baseline entry needs a non-empty path' });
+        return { path: null, count: null };
+      }
+      if (!Number.isInteger(entry.count) || entry.count <= 0) {
+        errors.push({ code: 'invalid-baseline', path, message: `baseline for ${entry.path} needs a positive integer count` });
+        return { path: entry.path, count: null };
+      }
+      return { path: entry.path, count: entry.count };
+    });
+  }
+  return baselines;
+}
+
 export function resolveStandardConfig(projectConfig = {}) {
   if (!isPlainObject(projectConfig)) {
     throw new TypeError('resolveStandardConfig expects a project config object');
@@ -106,6 +144,12 @@ export function resolveStandardConfig(projectConfig = {}) {
   }
   const budgets = parseBudgets(projectConfig.budgets, errors);
   const exemptions = parseExemptions(projectConfig.exemptions, errors);
+  const baselines = parseBaselines(projectConfig.baselines, errors);
   if (errors.length > 0) return Object.freeze({ ok: false, errors: Object.freeze(errors) });
-  return Object.freeze({ ok: true, budgets: Object.freeze(budgets), exemptions: Object.freeze(exemptions) });
+  return Object.freeze({
+    ok: true,
+    budgets: Object.freeze(budgets),
+    exemptions: Object.freeze(exemptions),
+    baselines: Object.freeze(baselines),
+  });
 }

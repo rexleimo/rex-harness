@@ -59,7 +59,34 @@ test('unknown rule ids and non-object inputs are refused', () => {
     && e.path === 'budgets.maxCyclomaticComplexity'), JSON.stringify(unknown.errors));
 
   assert.throws(() => resolveStandardConfig([{ budgets: {} }]), /expects a project config object/u);
-  assert.deepEqual([...STANDARD_CONFIG_ERROR_CODES], ['unknown-key', 'invalid-budget', 'missing-reason']);
+  assert.deepEqual([...STANDARD_CONFIG_ERROR_CODES],
+    ['unknown-key', 'invalid-budget', 'missing-reason', 'invalid-baseline'],
+    '四个码是闭集；加第五个之前先问处置动作是不是真的不同');
+});
+
+test('baselines freeze stock counts and refuse malformed entries', () => {
+  const declared = resolveStandardConfig({
+    baselines: { directoryEntries: [{ path: 'scripts/tests', count: 12 }] },
+  });
+  assert.equal(declared.ok, true, JSON.stringify(declared.errors));
+  assert.deepEqual(declared.baselines.directoryEntries, [{ path: 'scripts/tests', count: 12 }]);
+
+  // count 写错的正是要单独成码的理由：处置是"删条目或收缩"，不是"改预算数字"
+  const badCount = resolveStandardConfig({ baselines: { directoryEntries: [{ path: 'x', count: '12' }] } });
+  assert.equal(badCount.ok, false);
+  assert.ok(badCount.errors.some((e) => e.code === 'invalid-baseline' && e.path === 'baselines.directoryEntries[0]'),
+    JSON.stringify(badCount.errors));
+
+  const zeroCount = resolveStandardConfig({ baselines: { directoryEntries: [{ path: 'x', count: 0 }] } });
+  assert.equal(zeroCount.ok, false, 'count 0 等于把条目变成第二条预算，必须拒');
+
+  const unknownRule = resolveStandardConfig({ baselines: { maxDepth: [{ path: 'x', count: 3 }] } });
+  assert.equal(unknownRule.ok, false);
+  assert.ok(unknownRule.errors.some((e) => e.code === 'unknown-key' && e.path === 'baselines.maxDepth'),
+    JSON.stringify(unknownRule.errors));
+
+  const absent = resolveStandardConfig({});
+  assert.deepEqual(absent.baselines, {}, '不声明就等于没有存量，不是隐式豁免');
 });
 
 test('a malformed exemption entry is refused with missing-reason, not silently accepted', () => {

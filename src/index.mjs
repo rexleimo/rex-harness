@@ -88,6 +88,12 @@ export {
   resolveStandardConfig,
   STANDARD_CONFIG_ERROR_CODES,
 } from './domain/standard-config.mjs';
+
+export {
+  applyBudgetRule,
+  measureDirectoryEntries,
+  measureFileLines,
+} from './domain/budget-rule.mjs';
 export {
   presentStandaloneWorkflow,
   readStandaloneWorkflow,
