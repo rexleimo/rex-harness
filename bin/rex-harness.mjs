@@ -5,6 +5,7 @@ import { runEvidence } from '../src/cli/evidence.mjs';
 import { explainFacts } from '../src/cli/explain.mjs';
 import { runInit } from '../src/cli/init.mjs';
 import { runReceipt } from '../src/cli/receipt.mjs';
+import { runStandardsArgs } from '../src/cli/standards.mjs';
 import { runStart } from '../src/cli/start.mjs';
 import { runResume, runStatus } from '../src/cli/status.mjs';
 import { runSettle } from '../src/cli/settle.mjs';
@@ -22,6 +23,9 @@ try {
   } else if (command === 'init') {
     result = runInit(args);
     process.exitCode = result.status === 'conflicts' ? 2 : 0;
+  } else if (command === 'standards') {
+    result = await runStandardsArgs(args);
+    process.exitCode = result.exitCode ?? 0;
   } else if (command === 'explain') {
     result = explainFacts(args);
   } else if (command === 'start') {
