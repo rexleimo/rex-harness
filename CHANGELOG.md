@@ -2,6 +2,21 @@
 
 本文件记录 `rex-harness` 独立产品的公开变化。版本遵循 Semantic Versioning。
 
+## [0.13.0] - 2026-10-26
+
+### Added
+
+- **`rex-debug` 把“做完了某个阶段”写成可核对的证据**（`skill-sources/rex-debug/SKILL.md`）。此前它只列出五个阶段，却没说什么才算做完，于是“回路能复现”“考虑过 5 个假设”“这是正确的测试接缝”“修复已验证”都可以没有产物地说出口，审阅方也无法分辨。现在：
+  - 阶段 1 先要求建立**能跑的反馈回路**再谈假设：10 种构造手段按速度排序，四条回路判据（red-capable / deterministic / fast / agent-runnable），每条回路断言附**执行回执**；非确定性问题必须先给复现率契约并把复现率提上去，回路建不出来就是 `blocked` 而不是一个说得过去的猜测。
+  - 阶段 2 先写 3-5 个按可能性排序、**可证伪**的假设（各自说明“观察到什么就排除它”），每个探针必须写明它区分哪些假设；性能问题先记录基线测量才允许提因。
+  - 阶段 3 把“不存在正确的测试接缝”当作一条**发现**退回阶段 2，而不是硬挤一个能变红的测试；假红必须与 pristine 基线 diff 后才能判定，不允许宜称“偶发”。
+  - 阶段 4/5：插桩统一 `[DEBUG-xxxx]` 标记（清理是一次 grep），抓取前先脱敏，清理写进变更摘要，确认的假设随修复一起进 commit/PR 供后人证伪。
+  - 交付状态词表**不变**（`blocked`/`degraded`/`partial`/`complete`/`verified`）：按 `skill-sources/PROMPT-AUTHORING.md`，新判据是自报证据字段而不是新状态——加状态词是闭集漏口。
+
+### Fixed
+
+- **`skill-sources/**` 整树钉 LF，不再只钉 `SKILL.md`**。原规则只覆 `skill-sources/**/SKILL.md`，而 `core.autocrlf=true` 会把**任何未钉的文本资产在检出时刷成 CRLF**：实测本仓 41 个 skill-sources 文件里 23 个磁盘为 CRLF（`rex-debug/evals/evals.json` 磁盘 1240B 对 blob 1217B，`typesafe-ai/LICENSE` 1089B 对 1068B），而**blob 全为纯 LF**。宿主侧的投影守卫是逐字节快照全等，于是 21 字节的行尾差被当成内容变化，永久挡住未受管副本的收养。现在 `skill-sources/** text=auto eol=lf`（`text=auto` 保留 git 自身的二进制识别；本树当前零二进制）。工作树刷新只做“删除并恢复磁盘上为 CRLF 且 `git diff --quiet` 通过的文件”：刷新后 CRLF 计数为 0，**没有一个 blob 发生变动**（`git status -- skill-sources` 为空，`git add --renormalize` 因而是空操作）。
+
 ## [0.12.0] - 2026-10-22
 
 ### Added
