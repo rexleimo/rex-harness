@@ -1,6 +1,9 @@
-# Keep canonical skill sources LF-only so training-certification hashes are
-# byte-identical across Windows checkouts and CI (Linux) checkouts.
-skill-sources/**/SKILL.md text eol=lf
+# Keep EVERY canonical skill asset LF-only, not just SKILL.md, so training-certification hashes
+# are byte-identical across Windows checkouts and CI (Linux) checkouts. The projection guard is a
+# byte-for-byte snapshot equality and core.autocrlf=true rewrites unpinned assets to CRLF on
+# Windows: measured 2026-10-26, 23 of 41 skill-source assets here were CRLF on disk (LICENSE
+# 1089B/checkout vs 1068B/blob) while every blob is LF. text=auto keeps binary detection.
+skill-sources/** text=auto eol=lf
 # Projection history is machine-read (JSON.parse) and line-ending agnostic;
 # pin LF so future digest appends never produce whole-file churn.
 src/clients/projection-history.json text eol=lf
