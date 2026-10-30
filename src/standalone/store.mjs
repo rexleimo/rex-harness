@@ -309,6 +309,7 @@ export function startStandaloneWorkflow({
     createActivationId,
     profile,
     now,
+    resolveReceipt: (ref) => resolveStandaloneExecutionReceipt({ rootDir: paths.root, ref }),
   }));
   writeWorkflow(paths, workflow);
   return presentStandaloneWorkflow(workflow, {

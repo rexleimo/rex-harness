@@ -54,6 +54,11 @@ test('canonical skills are discoverable and keep activation logic out of prompts
       assert.equal(evalSuite.evals.filter((item) => item.split === 'train').length, 30);
       assert.equal(evalSuite.evals.filter((item) => item.split === 'validation').length, 5);
       // 保留完整的 35 条 rex-tdd 训练与验证案例，避免训练后丢失边界覆盖。
+    } else if (entry.name === 'rex-requirements') {
+      assert.equal(evalSuite.skill_name, entry.name);
+      assert.equal(evalSuite.evals.length, 8);
+      assert.equal(evalSuite.evals.filter((item) => item.split === 'train').length, 6);
+      assert.equal(evalSuite.evals.filter((item) => item.split === 'validation').length, 2);
     } else {
       assert.equal(evalSuite.skill_name, entry.name);
       assert.ok(evalSuite.evals.length >= 2 && evalSuite.evals.length <= 3);

@@ -11,7 +11,8 @@ export const requirementsCapability = Object.freeze({
   priority: 80,
   exclusiveGroup: 'software-process',
   requiredEvidence: Object.freeze([
-    // 收敛组：验收标准或假设记录二选一，为澄清会话提供时间盒出口，防止无限询问。
+    // 保留旧 Command 的证据形状；assumptions 只承载低影响默认值。
+    // 工作流还验证类型化 readiness，不能仅靠证据种类解锁实施。
     Object.freeze({ anyOf: Object.freeze(['acceptance-criteria-recorded', 'assumptions-recorded']) }),
     Object.freeze({ anyOf: Object.freeze(['non-goals-recorded', 'assumptions-recorded']) }),
     'first-slice-identified',
@@ -21,7 +22,7 @@ export const requirementsCapability = Object.freeze({
     id: 'software.requirements.clarify.recipe',
     stages: Object.freeze([Object.freeze({
       id: 'clarify',
-      objective: '澄清可观察行为、非目标与第一个可交付切片；未决项可记录为假设收敛。',
+      objective: '闭合关键决策依赖，记录正常/失败路径和可行性依据；未决关键项必须保持 blocked，不得以假设替代 readiness。',
       requiredEvidence: Object.freeze([
         Object.freeze({ anyOf: Object.freeze(['acceptance-criteria-recorded', 'assumptions-recorded']) }),
         Object.freeze({ anyOf: Object.freeze(['non-goals-recorded', 'assumptions-recorded']) }),

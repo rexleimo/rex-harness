@@ -27,8 +27,8 @@ function assertConvergenceContract(activation) {
   const command = nextCommand(activation);
   assert.equal(command.stageId, 'clarify');
 
-  // 契约必须提供 anyOf 收敛组：验收标准或假设记录都可以完成澄清阶段，
-  // 防止澄清会话无限循环（时间盒出口）。
+  // 这里只验证低层 Activation 的证据形状；完整 Workflow 还要求 typed readiness。
+  // anyOf 的兼容性不代表关键未知可被假设关闭。
   const anyOf = command.expectedEvidence.find((item) => item && typeof item === 'object' && item.anyOf);
   assert.ok(anyOf, 'expectedEvidence must include an anyOf convergence group');
   assert.deepEqual([...anyOf.anyOf].sort(), ['acceptance-criteria-recorded', 'assumptions-recorded']);
@@ -53,7 +53,7 @@ test('完整验收证据（兼容路径）仍可完成澄清阶段', () => {
   assert.equal(completed.activation.status, 'completed');
 });
 
-test('澄清超预算后记录假设即可收敛解锁（防死循环出口）', () => {
+test('低层 Activation 兼容假设证据，是否可推进软件工作流另由 readiness 约束', () => {
   const activation = startActivation(requirementsDecision(), { activationId: 'activation:req-converge-3' });
   const completed = advanceActivation(activation, [
     { kind: 'assumptions-recorded', refs: ['artifact:assumptions'] },

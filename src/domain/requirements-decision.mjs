@@ -1,3 +1,4 @@
+import { normalizeRequirementsReadiness } from './requirements-readiness.mjs';
 import { OBSERVATION } from './observation-kinds.mjs';
 import { normalizeObservations } from './observation-kinds.mjs';
 
@@ -13,6 +14,7 @@ const DECISION_KEYS = new Set([
   'nonGoals',
   'firstSlice',
   'observations',
+  'readiness',
 ]);
 const FIRST_SLICE_KEYS = new Set(['outcome', 'verification']);
 const DECISION_OBSERVATIONS = new Set(Object.values(OBSERVATION));
@@ -83,6 +85,8 @@ export function normalizeRequirementsDecision(raw = {}) {
     nonGoals,
     firstSlice,
     observations: Object.freeze(observations),
+    // 历史 artifact 保持可读；新提交是否允许推进由工作流边界验证。
+    ...(raw.readiness === undefined ? {} : { readiness: normalizeRequirementsReadiness(raw.readiness) }),
   });
 }
 

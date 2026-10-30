@@ -2,6 +2,19 @@
 
 本文件记录 `rex-harness` 独立产品的公开变化。版本遵循 Semantic Versioning。
 
+## [1.0.0] - 2026-10-30
+
+### Breaking changes
+
+- Requirements-stage submissions and new requests carrying a requirements decision must include `readiness`. The typed record reports decision ids/dependencies/status/impact/rationale/evidence, happy/failure walkthroughs, feasibility and alignment. Ready cannot contain open nodes, critical assumptions, unknown feasibility or pending alignment. Missing/blocked readiness retains the current clarification Command and token; declared nested receipt refs use the existing receipt validator.
+- Historical decisions still normalize and read. A historical partial clarification can add readiness without changing its accepted fields; old later-stage runs are not silently reinterpreted. New callers must enrich their records rather than relying on evidence-kind completion.
+
+### Changed
+
+- `rex-requirements` adopts upstream decision-tree/frontier analysis and stronger closure, adds evidence-backed feasibility walkthroughs, and removes three-round automatic implementation unlock. It keeps one-decision-at-a-time interaction, fact research and reuse of existing authorization.
+- Eight authored eval scenarios cover dependency discovery, critical assumptions, failure paths, low-impact defaults, preserved scope and legacy enrichment. Static certification and deterministic runtime tests do not constitute a model-performance benchmark.
+- Prepared locally for release; no tag, push or publication is implied by this entry. Public contract tightening warrants a major version under repository policy.
+
 ## [0.13.0] - 2026-10-26
 
 ### Added

@@ -10,8 +10,8 @@ import {
   normalizeTestabilityDecision,
   validateTestabilityDecisionReceipt,
 } from '../domain/testability-decision.mjs';
-import { normalizeRequirementsDecision } from '../domain/requirements-decision.mjs';
 import { normalizeExplicitIntent } from '../domain/explicit-intent.mjs';
+import { assertReadinessEvidence, resolveRequirementsDecision, requirementsReadinessBlocker } from './requirements-boundary.mjs';
 import { analyzeExecutionProfile } from './execution-profile.mjs';
 
 export const SOFTWARE_WORKFLOW_ID = 'adaptive-software-delivery';
@@ -175,43 +175,6 @@ function resolveTestabilityDecision(workflow, evidence, suppliedDecision, resolv
   return decision;
 }
 
-function requirementsDecisionEvidenceRefs(evidence) {
-  return new Set((evidence || [])
-    .filter((item) => item?.kind === 'requirements-decision-recorded')
-    .flatMap((item) => item.refs || []));
-}
-
-function resolveRequirementsDecision(workflow, evidence, suppliedDecision) {
-  if (!isRequirementsStage(workflow.currentActivation)) {
-    if (suppliedDecision !== undefined) {
-      throw new Error('requirements decision can only be submitted at the requirements clarify stage');
-    }
-    return workflow.requirementsDecision || null;
-  }
-  const refs = requirementsDecisionEvidenceRefs(evidence);
-  const persisted = workflow.requirementsDecision || null;
-  if (refs.size === 0) {
-    if (suppliedDecision !== undefined) {
-      throw new Error('requirements decision requires requirements-decision-recorded evidence');
-    }
-    return persisted;
-  }
-  if (suppliedDecision === undefined) {
-    if (!persisted) {
-      throw new Error('requirements-decision-recorded evidence requires a typed requirements decision');
-    }
-    if (!refs.has(persisted.decisionRef)) {
-      throw new Error('requirements decisionRef must be included in requirements-decision-recorded evidence');
-    }
-    return persisted;
-  }
-  const decision = normalizeRequirementsDecision(suppliedDecision);
-  if (!refs.has(decision.decisionRef)) {
-    throw new Error('requirements decisionRef must be included in requirements-decision-recorded evidence');
-  }
-  return decision;
-}
-
 function commandContract(workflow) {
   if (['completed', 'blocked'].includes(workflow?.status) && !workflow.currentActivation && !workflow.currentCommand) {
     return Object.freeze({ expectedEvidence: Object.freeze([]) });
@@ -358,6 +321,7 @@ export function startSoftwareWorkflow({
   profile = 'default',
   providerBindings = [],
   createActivationId,
+  resolveReceipt,
   now = new Date(),
 } = {}) {
   const id = text(workflowActivationId);
@@ -384,6 +348,11 @@ export function startSoftwareWorkflow({
         null,
         normalizedRequest.requirementsDecision,
       );
+  if (evaluated.requirementsDecision) {
+    const blocker = requirementsReadinessBlocker(evaluated.requirementsDecision);
+    if (blocker) throw new Error(blocker);
+    assertReadinessEvidence(evaluated.requirementsDecision, { resolveReceipt });
+  }
   const current = startCapability(evaluated.decision, {
     workflowActivationId: id,
     stepIndex: 0,
@@ -491,11 +460,21 @@ export function advanceSoftwareWorkflow(workflow, evidence = [], {
     testabilityDecision,
     resolveReceipt,
   );
-  const resolvedRequirementsDecision = resolveRequirementsDecision(
-    workflow,
-    normalizedEvidence,
-    requirementsDecision,
-  );
+  const requirementsStage = isRequirementsStage(workflow.currentActivation);
+  if (!requirementsStage && requirementsDecision !== undefined) {
+    throw new Error('requirements decision can only be submitted at the requirements clarify stage');
+  }
+  const resolvedRequirementsDecision = requirementsStage
+    ? resolveRequirementsDecision(workflow, normalizedEvidence, requirementsDecision, { resolveReceipt })
+    : workflow.requirementsDecision;
+  const readinessBlocker = requirementsStage && resolvedRequirementsDecision
+    ? requirementsReadinessBlocker(resolvedRequirementsDecision) : '';
+  if (readinessBlocker) {
+    return Object.freeze({
+      outcome: 'blocked', blockedReason: readinessBlocker, workflow,
+      completedActivation: null, missingEvidence: Object.freeze(['requirements-decision-recorded']), nextCapability: null,
+    });
+  }
 
   const capabilityResult = advanceActivation(workflow.currentActivation, normalizedEvidence, {
     profile: workflow.profile,
@@ -511,7 +490,7 @@ export function advanceSoftwareWorkflow(workflow, evidence = [], {
       currentActivation: capabilityResult.activation,
       currentCommand: capabilityResult.command,
       testabilityDecision: workflow.testabilityDecision,
-      requirementsDecision: workflow.requirementsDecision || resolvedRequirementsDecision,
+      requirementsDecision: resolvedRequirementsDecision || workflow.requirementsDecision,
       updatedAt,
     });
     return Object.freeze({

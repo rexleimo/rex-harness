@@ -3,20 +3,58 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "A user asks to 'add retries to the payment callback' without specifying retry counts, backoff, failure thresholds, or what happens to the order state on final failure. The request names a concrete feature but lacks acceptance criteria. You judge the request vague and classify it as a grill intent. Clarify the expected behavior without designing the implementation yet.",
-      "expected_output": "A compact requirements record that identifies the unresolved behavior, asks only decision-changing questions (one at a time, with a recommended answer), and defines observable acceptance criteria.",
+      "split": "train",
+      "prompt": "A user asks to add retries to payment callbacks. Counts, final failure state and duplicate-event behavior are undefined. A retry-count answer reveals that callbacks may arrive out of order. Clarify before implementing.",
+      "expected_output": "Build and update a dependency graph including order state, idempotency and final failure. Investigate existing facts, ask one frontier decision with a recommendation, and retain blocked readiness until critical downstream choices close. Do not implement.",
       "files": []
     },
     {
       "id": 2,
-      "prompt": "Two teams use the term workspace differently in the same codebase. The requirements capability has been activated via a grill intent to resolve the vocabulary and acceptance boundary before the migration proceeds.",
-      "expected_output": "A terminology decision with explicit in-scope and out-of-scope meanings, remaining unknowns, and testable acceptance conditions.",
+      "split": "train",
+      "prompt": "The requirements Command is active. After three questions the user has not decided whether a failed migration deletes source records. A first slice and one acceptance criterion already exist. The operator wants progress.",
+      "expected_output": "Report the deletion/recovery choice as critical and open, preserve blocked readiness, show safe independent investigation and the exact pending decision. Three questions, a first slice and assumptions-recorded cannot authorize destructive behavior or complete clarification.",
       "files": []
     },
     {
       "id": 3,
-      "prompt": "The requirements capability has been activated for a vague request. After three rounds of answers the acceptance criteria are still partially unresolved. Clarify how to converge without asking more questions.",
-      "expected_output": "Record the unresolved items as assumptions (assumptions-recorded), keep the confirmed acceptance criteria and first slice, and unlock implementation without inventing user decisions or starting a second plan.",
+      "split": "train",
+      "prompt": "The accepted user request specifies all report behavior and authorizes implementation. Only newest-first versus oldest-first sorting is unspecified and either passes the same accepted criteria. Existing source inspection supports feasibility.",
+      "expected_output": "Record an explicit low-impact reversible sorting default with rationale, reuse accepted user instructions for confirmed alignment, cite happy/failure walkthroughs and inspection evidence, and return a ready typed decision without asking for duplicate approval or invoking implementation.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "split": "train",
+      "prompt": "A proposed workflow reads messages, changes a record and promises automatic rollback. The record-write API is documented, but rollback support is unknown and no probe has run. The user has approved the intended outcome.",
+      "expected_output": "Walk the happy and partial-failure paths, identify rollback as a critical feasibility dependency, inspect available APIs or run a minimal authorized probe, and remain blocked if unsupported. Product alignment alone does not prove the workflow can run.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "split": "train",
+      "prompt": "There are two open decisions: where data is stored, and whether the selected store supports retention. Retention depends on storage. A third independent naming decision is also open. The agent has not yet read the repository configuration.",
+      "expected_output": "Read the configuration for facts, represent the storage-to-retention dependency, ask one currently answerable decision with a recommendation, then recompute the frontier. Do not ask the user facts available in files, silently resolve retention or batch dependent questions.",
+      "files": []
+    },
+    {
+      "id": 6,
+      "split": "train",
+      "prompt": "A previously accepted requirements decision is persisted. A new user message changes external notification behavior. You can add a readiness field to historical unfinished decisions, but the current behavior change is not part of the original scope.",
+      "expected_output": "Preserve the accepted decision, report the new goal as a new workflow requirement and do not rewrite the old decision under readiness enrichment. Record authorized alignment from actual messages rather than inventing it.",
+      "files": []
+    },
+    {
+      "id": 7,
+      "split": "validation",
+      "prompt": "A nightly import proposal says read the feed, merge results and notify. It has no behavior for empty feeds, repeated inputs or a notification failure after a successful merge. Someone claims the spec is done because all seven template fields are filled.",
+      "expected_output": "Challenge the completion claim with an end-to-end and failure walkthrough, expand the downstream state/duplicate/notification decisions, separate factual investigation from user choices, and keep critical gaps blocked despite template completeness. Avoid imposing a scheduler or AI when unnecessary.",
+      "files": []
+    },
+    {
+      "id": 8,
+      "split": "validation",
+      "prompt": "A legacy requirements document is readable but lacks readiness. The user says continue the same task, and previous instructions already resolve the desired behavior. Available tests demonstrate the relevant interface; no new user choice is needed.",
+      "expected_output": "Reuse prior authorization and accepted scope, add real decision dependencies and walkthrough/feasibility refs, and submit the enriched typed readiness record for the current Command. Do not treat legacy evidence alone as ready, demand a new approval, fabricate a probe or start the next Provider.",
       "files": []
     }
   ]
